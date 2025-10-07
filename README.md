@@ -1,0 +1,2 @@
+# WebSocioFront
+Aplicación Web Socios
