@@ -1,3 +1,29 @@
 ﻿@inherits LayoutComponentBase
 
 @Body
+
+@inject IJSRuntime JS
+
+<button class="theme-toggle" @onclick="ToggleTheme">
+    @(isDarkMode ? "🌞 Claro" : "🌙 Oscuro")
+</button>
+
+@code {
+    bool isDarkMode = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+           
+            await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", "light");
+        }
+    }
+
+    async Task ToggleTheme()
+    {
+        isDarkMode = !isDarkMode;
+        var theme = isDarkMode ? "dark" : "light";
+        await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", theme);
+    }
+}
