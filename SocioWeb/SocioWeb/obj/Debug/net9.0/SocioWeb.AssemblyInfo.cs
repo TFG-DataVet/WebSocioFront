@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SocioWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c9ebe44693bc5442e003bc005c5927aaca5e629")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ffff9581eb766980b1c04050b5e7a0a762f7c16")]
 [assembly: System.Reflection.AssemblyProductAttribute("SocioWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SocioWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

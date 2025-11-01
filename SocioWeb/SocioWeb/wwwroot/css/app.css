@@ -89,9 +89,10 @@ code {
 
 
 :root[data-theme='light'] {
-    --color-primary: #8C9EFF;
+   
+    --color-primary: #88B6F2;
     --color-background: #FFFDF7;
-    --color-primary-hover: #7C8FEA;
+    --color-primary-hover: #88ABF2;
     --color-surface: #FFFFFF;
     --color-text: #1F2937;
     --color-border: #E5E7EB;
@@ -131,11 +132,47 @@ body {
     color: var(--color-text);
 }
 
+.rz-panelmenu {
+    background-color: var(--color-surface) !important;
+}
+
+.rz-panelmenu-item {
+    color: var(--color-text) !important;
+}
+
+.rz-panelmenu-item:hover {
+    background-color: var(--color-primary-hover) !important;
+    color: var(--color-background) !important;
+    
+}
+
+.rz-panel, .rz-card {
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
+    color: var(--color-text) !important;
+    border-radius: 12px;
+}
+.rz-layout{
+    background-color: var(--color-surface) !important;
+}
+.rz-sidebar{
+    background-color: var(--color-primary) !important;
+    border-radius: 7px;
+}
+
+.rz-stack{
+    background-color: var(--color-background) !important;
+    
+}
+.rz-sidebarToggle{
+    background-color: var(--color-primary-hover) !important;
+}
 
 .theme-toggle {
     position: absolute;
     top: 1rem;
     right: 1rem;
+    z-index: 2000;
     background-color: var(--color-primary);
     color: white;
     border: none;

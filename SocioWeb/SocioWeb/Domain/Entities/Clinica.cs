@@ -7,7 +7,7 @@ public class Clinica
     // Identificador único de la clínica (PK)
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id_Clinica { get; set; } 
+        public long Id_Clinica { get; set; } 
 
         
         [Required(ErrorMessage = "El nombre de la clínica es obligatorio.")]
@@ -37,18 +37,8 @@ public class Clinica
         // Branding
         public string? Logo_Url { get; set; } 
         public string? Horario_Atencion { get; set; } 
-
-        // Geolocalización
-        [Column(TypeName = "decimal(10, 8)")]
-        public decimal? Latitud { get; set; } 
         
-        [Column(TypeName = "decimal(11, 8)")]
-        public decimal? Longitud { get; set; } 
-
         // Estado del SaaS (Suscripción)
         public string? Estado_Suscripcion { get; set; } = "Activo"; 
-
-        // Trazabilidad
-        [DataType(DataType.Date)]
-        public DateTime Fecha_Alta { get; set; } = DateTime.Now; 
+        
     }

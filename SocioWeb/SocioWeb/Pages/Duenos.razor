@@ -1,0 +1,119 @@
+﻿@page "/Duenos"
+@using SocioWeb.Domain.Entities
+
+
+<RadzenLayout>
+<RadzenHeader>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+        <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+        <RadzenText> Header </RadzenText>
+    </RadzenStack>
+</RadzenHeader>
+
+<RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenPanelMenu>
+        <RadzenPanelMenuItem Text="Home" Icon="home" Path="/home"/>
+        <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/Duenos"/>
+        <RadzenPanelMenuItem Text="Mascotas" Icon="pets" Path="/mascotas"/>
+        <RadzenPanelMenuItem Text="Citas" Icon="event_note" Path="/citas"/>
+        <RadzenPanelMenuItem Text="Productos" Icon="store" Path="/productos"/>
+        <RadzenPanelMenuItem Text="Calendario" Icon="event" Path="/calendario"/>
+    </RadzenPanelMenu>
+    <div class="rz-p-4">
+        Sidebar
+    </div>
+</RadzenSidebar>
+<RadzenBody>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Placeholder</RadzenText>
+            <RadzenTextBox Placeholder="Search..." Change=@(args => OnChange(args, "TextBox with placeholder")) Style="width: 100%" aria-label="TextBox with placeholder" />
+            
+        </RadzenCard>
+        <hr style="margin-bottom:20px;" />
+
+        <RadzenTable style="height:335px">
+            <RadzenTableHeader>
+                <RadzenTableHeaderRow>
+                    @for (var i = 0; i < cols; i++)
+                    {
+                        var col = i;
+                        <RadzenTableHeaderCell Style="width:150px">
+                            @($"Column {col}")
+                        </RadzenTableHeaderCell>
+                    }
+                </RadzenTableHeaderRow>
+            </RadzenTableHeader>
+            <RadzenTableBody>
+                @for (var i = 0; i < rows; i++)
+                {
+                    var row = i;
+                    <RadzenTableRow>
+                        @for (var j = 0; j < cols; j++)
+                        {
+                            var cell = j;
+                            <RadzenTableCell>
+                                @($"Cell {row} {cell}")
+                            </RadzenTableCell>
+                        }
+                    </RadzenTableRow>
+                }
+            </RadzenTableBody>
+        </RadzenTable>
+      
+        <RadzenCard Style="margin-top:20px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; background:linear-gradient(135deg, #f9fafb 0%, #eef3f9 100%);">
+
+            
+            <div style="display:flex; align-items:center; padding:20px; background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color:white;">
+                <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png" Size="70px" Style="margin-right:15px; border:3px solid white;" />
+                <div>
+                    <RadzenText Text="Manolo" Style="font-size:22px; font-weight:600; margin:0;" />
+                    <RadzenText Text="Cliente desde 2021" Style="opacity:0.9; font-size:13px;" />
+                </div>
+            </div>
+
+           
+            <div style="padding:20px;">
+                <RadzenRow>
+                    <RadzenColumn Size="6">
+                        <RadzenLabel Text="📞 Teléfono:" Style="color:#007bff; font-weight:600;" />
+                        <RadzenText Text=" 627675137" Style="margin-left:5px; color:#333;" />
+                        <br />
+                        <RadzenLabel Text="📧 Email:" Style="color:#007bff; font-weight:600;" />
+                        <RadzenText Text=" manolo@gmail.com" Style="margin-left:5px; color:#333;" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenLabel Text="🏠 Dirección:" Style="color:#007bff; font-weight:600;" />
+                        <RadzenText Text=" Calle Manolín" Style="margin-left:5px; color:#333;" />
+                        <br />
+                        <RadzenLabel Text="📝 Notas:" Style="color:#007bff; font-weight:600;" />
+                        <RadzenText Text=" Cliente responsable y puntual." Style="margin-left:5px; color:#333;" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </div>
+        </RadzenCard>
+
+
+        
+    </RadzenColumn>
+</RadzenBody>
+</RadzenLayout>
+
+
+@code {
+    Dueno dueno = new Dueno();
+    int rows = 50;
+    int cols = 50;
+    bool sidebar1Expanded = true;
+    void OnChange(string value, string name)
+    {
+        
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        
+    }
+}
