@@ -86,3 +86,105 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+
+:root[data-theme='light'] {
+   
+    --color-primary: #88B6F2;
+    --color-background: #FFFDF7;
+    --color-primary-hover: #88ABF2;
+    --color-surface: #FFFFFF;
+    --color-text: #1F2937;
+    --color-border: #E5E7EB;
+}
+
+:root[data-theme='dark'] {
+    --color-primary: #A7C7E7;
+    --color-background: #1E1E2F;
+    --color-primary-hover: #8FB6DC;
+    --color-surface: #2C2C3A;
+    --color-text: #F9FAFB;
+    --color-border: #444455;
+}
+
+
+body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+.rz-button {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: white !important;
+}
+
+.rz-card {
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-border);
+}
+
+.rz-inputtext, .rz-password {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.rz-panelmenu {
+    background-color: var(--color-surface) !important;
+}
+
+.rz-panelmenu-item {
+    color: var(--color-text) !important;
+}
+
+.rz-panelmenu-item:hover {
+    background-color: var(--color-primary-hover) !important;
+    color: var(--color-background) !important;
+    
+}
+
+.rz-panel, .rz-card {
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
+    color: var(--color-text) !important;
+    border-radius: 12px;
+}
+.rz-layout{
+    background-color: var(--color-surface) !important;
+}
+.rz-sidebar{
+    background-color: var(--color-primary) !important;
+    border-radius: 7px;
+}
+
+.rz-stack{
+    background-color: var(--color-background) !important;
+    
+}
+.rz-sidebarToggle{
+    background-color: var(--color-primary-hover) !important;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2000;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+}
+
