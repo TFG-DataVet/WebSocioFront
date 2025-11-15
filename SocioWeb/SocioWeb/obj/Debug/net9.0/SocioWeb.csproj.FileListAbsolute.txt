@@ -1066,10 +1066,10 @@ C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0
 C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\zxqbft5n0j-mr3uo6cs01.gz
 C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\l4vh6fpld7-crglxpjzn3.gz
 C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\fyj6arbsr0-xdauio2m2k.gz
-C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.nxu1mv8pdt.wasm
-C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.e28utxy68o.pdb
-C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.nxu1mv8pdt.wasm.gz
-C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.e28utxy68o.pdb.gz
-C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\6trv7295bh-nxu1mv8pdt.gz
-C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\k9mac6cnyg-e28utxy68o.gz
-C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\0xhc5zphe8-stpgqiklxd.gz
+C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.k5wxk5qk7x.wasm
+C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.re0i53a76x.pdb
+C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.k5wxk5qk7x.wasm.gz
+C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\bin\Debug\net9.0\wwwroot\_framework\SocioWeb.re0i53a76x.pdb.gz
+C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\6trv7295bh-k5wxk5qk7x.gz
+C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\k9mac6cnyg-re0i53a76x.gz
+C:\Users\velez\Desktop\TFG Mova\WebSocioFront\SocioWeb\SocioWeb\obj\Debug\net9.0\compressed\0xhc5zphe8-d9ydyce867.gz

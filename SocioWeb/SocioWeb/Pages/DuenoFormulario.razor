@@ -1,0 +1,126 @@
+﻿@page "/DuenoFormulario"
+@using SocioWeb.Domain.Entities
+
+@inject NavigationManager Nav
+
+    <RadzenLayout>
+        <RadzenHeader>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+                <RadzenText> Header </RadzenText>
+            </RadzenStack>
+        </RadzenHeader>
+
+        <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+            <RadzenPanelMenu>
+                <RadzenPanelMenuItem Text="Home" Icon="home" Path="/home"/>
+                <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/Duenos"/>
+                <RadzenPanelMenuItem Text="Mascotas" Icon="pets" Path="/mascotas"/>
+                <RadzenPanelMenuItem Text="Citas" Icon="event_note" Path="/citas"/>
+                <RadzenPanelMenuItem Text="Productos" Icon="store" Path="/productos"/>
+                <RadzenPanelMenuItem Text="Calendario" Icon="event" Path="/calendario"/>
+            </RadzenPanelMenu>
+            <div class="rz-p-4">
+                Sidebar
+            </div>
+        </RadzenSidebar>
+        <RadzenBody Style="padding:0; margin:0;">
+
+            <div style="
+            width:100%;
+            height:100%;
+            background:#f3e5e8;
+            padding:60px;
+            box-sizing:border-box;
+            border-radius:0;
+        ">
+                <h1 style="color:#4b3e48; font-weight:bold; margin-bottom:20px;">
+                    ¡Queremos conocerte!
+                </h1>
+                <h3 style="color:#6d5d66; margin-bottom:40px;">
+                    Cuéntanos un poco sobre ti.
+                </h3>
+
+                <EditForm Model="@dueno" OnValidSubmit="Guardar">
+                    <DataAnnotationsValidator />
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px;">
+
+                        <!-- Nombre -->
+                        <div>
+                            <label>Nombre</label>
+                            <RadzenTextBox @bind-Value="@dueno.Name" Placeholder="Tu nombre"
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                            <RadzenRequiredValidator Component="Name" Text="Obligatorio" />
+                        </div>
+
+                        <!-- Apellido -->
+                        <div>
+                            <label>Apellido</label>
+                            <RadzenTextBox @bind-Value="@dueno.LastName" Placeholder="Tu apellido"
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                            <RadzenRequiredValidator Component="LastName" Text="Obligatorio" />
+                        </div>
+
+                       
+                        <div>
+                            <label>Teléfono</label>
+                            <RadzenTextBox @bind-Value="@dueno.Phone" Placeholder="Tu teléfono"
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                        </div>
+
+                       
+                        <div>
+                            <label>Email</label>
+                            <RadzenTextBox @bind-Value="@dueno.Email" Placeholder="email@ejemplo.com"
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                            <RadzenEmailValidator Component="Email" Text="Email inválido" />
+                        </div>
+
+                        <div>
+                            <label>Dirección</label>
+                            <RadzenTextBox @bind-Value="@dueno.Phone" Placeholder="Calle/Número..."
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                        </div>
+
+                    </div>
+                    
+                    
+
+                 
+                    <div style="display:flex; justify-content:space-between; margin-top:40px;">
+
+                        <RadzenButton Text="Atrás"
+                                      Style="border-radius:20px; background:white; color:#4b3e48; width:120px;" />
+
+                        <RadzenButton Text="Siguiente ➜"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Style="border-radius:20px; background:#4b3e48; color:white; width:140px;" />
+                    </div>
+
+                    <img src="Imagenes/Cute%20Drawing%20Ideas%20-%20Beautiful%20Dawn%20Designs.png"
+                         style="position:absolute;  width:300px; opacity:0.75;" />
+
+                </EditForm>
+
+            </div>
+       
+        </RadzenBody>
+    
+    </RadzenLayout>
+
+
+    
+
+
+
+@code {
+    bool sidebar1Expanded = true;
+    private Dueno dueno = new();
+
+    private void Guardar()
+    {
+        // TODO: guardar en la base de datos
+        Nav.NavigateTo("/confirmacion");
+    }
+}

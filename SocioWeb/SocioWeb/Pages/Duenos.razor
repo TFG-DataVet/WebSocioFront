@@ -34,13 +34,25 @@
                 <RadzenCard Style="margin-top:20px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; background:linear-gradient(135deg, #f9fafb 0%, #eef3f9 100%);">
 
             
-                    <div style="display:flex; align-items:center; padding:20px; background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color:white;">
-                        <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png" Size="70px" Style="margin-right:15px; border:3px solid white;" />
+                    <div style="display:flex; align-items:center; padding:20px; 
+            background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color:white;">
+
+                        <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png"
+                                      Size="70px"
+                                      Style="margin-right:15px; border:3px solid white;" />
+
                         <div>
-                            <RadzenText Text="Manolo" Style="font-size:22px; font-weight:600; margin:0;" />
-                            <RadzenText Text="Cliente desde 2021" Style="opacity:0.9; font-size:13px;" />
+
+                            <RadzenLink Path="/PerfilDueno"
+                                        Style="text-decoration:none; color:white;">
+                                <span style="font-size:22px; font-weight:600;">Manolo</span>
+                            </RadzenLink>
+
+                            <RadzenText Text="Cliente desde 2021"
+                                        Style="opacity:0.9; font-size:13px; display:block;" />
                         </div>
                     </div>
+
 
                     <div style="padding:20px;">
                         <RadzenRow>
@@ -61,8 +73,7 @@
                             </RadzenColumn>
                         </RadzenRow>
                     </div>
-                </RadzenCard>
-                <RadzenCard Style="margin-top:20px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; background:linear-gradient(135deg, #f9fafb 0%, #eef3f9 100%);">
+                    <RadzenCard Style="margin-top:20px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; background:linear-gradient(135deg, #f9fafb 0%, #eef3f9 100%);">
 
                     <div style="display:flex; align-items:center; padding:20px; background:linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); color:white;">
                         <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png" Size="70px" Style="margin-right:15px; border:3px solid white;" />
@@ -92,6 +103,8 @@
                         </RadzenRow>
                     </div>
                 </RadzenCard>
+                </RadzenCard>
+                
 
                 
             }

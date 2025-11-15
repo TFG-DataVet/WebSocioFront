@@ -40,6 +40,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2l0YXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/velez/Desktop/TFG Mova/WebSocioFront/SocioWeb/SocioWeb/Pages/DuenoFormulario.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRHVlbm9Gb3JtdWxhcmlvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/velez/Desktop/TFG Mova/WebSocioFront/SocioWeb/SocioWeb/Pages/Duenos.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRHVlbm9zLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -50,6 +54,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/velez/Desktop/TFG Mova/WebSocioFront/SocioWeb/SocioWeb/Pages/Mascotas.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFzY290YXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/velez/Desktop/TFG Mova/WebSocioFront/SocioWeb/SocioWeb/Pages/PerfilDueno.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGVyZmlsRHVlbm8ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/velez/Desktop/TFG Mova/WebSocioFront/SocioWeb/SocioWeb/Pages/Productos.razor]

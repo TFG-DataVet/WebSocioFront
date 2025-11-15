@@ -1,0 +1,154 @@
+﻿@page "/PerfilDueno" 
+@using SocioWeb.Domain.Entities
+@inject NavigationManager Nav
+
+<!-- {id:long}-->
+
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+            <RadzenText> Header </RadzenText>
+        </RadzenStack>
+    </RadzenHeader>
+
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/home"/>
+            <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/Duenos"/>
+            <RadzenPanelMenuItem Text="Mascotas" Icon="pets" Path="/mascotas"/>
+            <RadzenPanelMenuItem Text="Citas" Icon="event_note" Path="/citas"/>
+            <RadzenPanelMenuItem Text="Productos" Icon="store" Path="/productos"/>
+            <RadzenPanelMenuItem Text="Calendario" Icon="event" Path="/calendario"/>
+        </RadzenPanelMenu>
+        <div class="rz-p-4">
+            Sidebar
+        </div>
+    </RadzenSidebar>
+    <RadzenBody>
+        <RadzenCard>
+
+            <!-- Cabecera -->
+            <div style="display:flex; gap:25px; align-items:center; margin-bottom:30px;">
+
+                <!-- Imagen del perfil -->
+                <div style="
+                width:120px; 
+                height:120px; 
+                border-radius:50%; 
+                background:#d9d9d9; 
+                display:flex; 
+                align-items:center; 
+                justify-content:center;
+                font-size:50px;
+                color:#6c6c6c;
+            ">
+                    🐶
+                </div>
+
+                <!-- Info básica -->
+                <div>
+                    <h2 style="margin:0; color:#333;">@dueno.Name @dueno.LastName</h2>
+                    <h4 style="margin:5px 0; color:#777;">Dueño registrado</h4>
+
+                    <RadzenButton Text="Editar perfil" Icon="edit"
+                                  Style="margin-right:10px; border-radius:10px;"
+                                  Click="@EditarPerfil"/>
+
+                    <RadzenButton Text="Ver mascotas" Icon="pets"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Style="border-radius:10px; background:#4b3e48; color:white;"
+                                  Click="@VerMascotas"/>
+                </div>
+            </div>
+
+            <!-- Datos personales -->
+            <h3 style="color:#4b3e48; margin-bottom:20px;">Información personal</h3>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px; padding:10px;">
+
+                <div>
+                    <label style="color:#777;">Nombre</label>
+                    <div style="font-size:18px; color:#333;">@dueno.Name</div>
+                </div>
+
+                <div>
+                    <label style="color:#777;">Apellido</label>
+                    <div style="font-size:18px; color:#333;">@dueno.LastName</div>
+                </div>
+
+                <div>
+                    <label style="color:#777;">Email</label>
+                    <div style="font-size:18px; color:#333;">@dueno.Email</div>
+                </div>
+
+                <div>
+                    <label style="color:#777;">Teléfono</label>
+                    <div style="font-size:18px; color:#333;">@dueno.Phone</div>
+                </div>
+
+                <div>
+                    <label style="color:#777;">Estado de la app</label>
+                    <div style="font-size:18px; color:#333;">@dueno.StatusApp</div>
+                </div>
+
+                <div>
+                    <label style="color:#777;">Notificaciones</label>
+                    <div style="font-size:18px; color:#333;">@dueno.AcceptedNotification</div>
+                </div>
+
+            </div>
+
+            <hr style="margin:30px 0;" />
+
+            <!-- Auditoría -->
+            <h3 style="color:#4b3e48; margin-bottom:20px;">Registro del sistema</h3>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px;">
+                <div>
+                    <label style="color:#777;">Creado el</label>
+                    <div style="font-size:18px; color:#333;">@dueno.CreatedAt.ToLocalTime()</div>
+                </div>
+
+                <div>
+                    <label style="color:#777;">Última actualización</label>
+                    <div style="font-size:18px; color:#333;">@dueno.UpdatedAt?.ToLocalTime()</div>
+                </div>
+            </div>
+
+        </RadzenCard>
+
+
+    </RadzenBody>
+    
+</RadzenLayout>
+
+
+
+
+@code {
+    bool sidebar1Expanded = true;
+    [Parameter] public long id { get; set; }
+
+    // Aquí simulas los datos. Debes reemplazar con DB o servicio real.
+    Dueno dueno = new()
+    {
+        Name = "Manolo",
+        LastName = "Jiménez",
+        Email = "carlos@email.com",
+        Phone = "555-123456",
+        StatusApp = StatusApp.Activo,
+        CreatedAt = DateTime.UtcNow
+    };
+
+    void EditarPerfil()
+    {
+        Nav.NavigateTo($"/DuenoFormulario");   //{id}
+    }
+
+    void VerMascotas()
+    {
+        Nav.NavigateTo($"/dueno/{id}/mascotas");
+    }
+}

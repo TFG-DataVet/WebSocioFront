@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "SocioWeb",
   "resources": {
-    "hash": "sha256-IMcJ+Hno4OZCdWIa3iBBe1sRWTCmMp12oC1FDv/7EG8=",
+    "hash": "sha256-V/zdXpTx9YOdoL6pB1ATz3yvPB4PXB/juHxyb+4Io14=",
     "fingerprinting": {
       "Microsoft.AspNetCore.Authorization.z6jo10m0rd.wasm": "Microsoft.AspNetCore.Authorization.wasm",
       "Microsoft.AspNetCore.Components.65wbz7t8mt.wasm": "Microsoft.AspNetCore.Components.wasm",
@@ -202,8 +202,8 @@
       "icudt_CJK.tjcz0u77k5.dat": "icudt_CJK.dat",
       "icudt_EFIGS.tptq2av103.dat": "icudt_EFIGS.dat",
       "icudt_no_CJK.lfu7j35m59.dat": "icudt_no_CJK.dat",
-      "SocioWeb.nxu1mv8pdt.wasm": "SocioWeb.wasm",
-      "SocioWeb.e28utxy68o.pdb": "SocioWeb.pdb"
+      "SocioWeb.k5wxk5qk7x.wasm": "SocioWeb.wasm",
+      "SocioWeb.re0i53a76x.pdb": "SocioWeb.pdb"
     },
     "jsModuleNative": {
       "dotnet.native.9ih887ebfz.js": "sha256-oS7IRiQoVt9ThQ7Y2UM3XoeY0JqPD02cg9IvRdufn2w="
@@ -414,10 +414,10 @@
       "WindowsBase.vy2l5u79y6.wasm": "sha256-ufB9Mo5joMyUs3DzXWWBFFIZNEVrt6h9N5stYB6Oln4=",
       "mscorlib.xd6mv31d55.wasm": "sha256-1YSLR2eZt3ceALFV//vZUF2AloxVil3VlrW1zZYPSEI=",
       "netstandard.kaml52uspo.wasm": "sha256-HLEwBpLfzKw2/zGSVzHzFJxznCkt/WIjahrziiMrOpA=",
-      "SocioWeb.nxu1mv8pdt.wasm": "sha256-JTuj5GiHXcXGXv9IO2P0nRKkMP0il77fNXBm2GNf5+k="
+      "SocioWeb.k5wxk5qk7x.wasm": "sha256-CIm9dNK2G3VF4seftU2qF5yulX/9XBmaALVibWmxSMQ="
     },
     "pdb": {
-      "SocioWeb.e28utxy68o.pdb": "sha256-VoWZHVGsZSc5JKPKijSFZfESSZF35O9s1dg8woxSZAM="
+      "SocioWeb.re0i53a76x.pdb": "sha256-k0OhnxI+I/FJ6TLnbBMH0AypdItmQBHHbzhHOz55Kjk="
     }
   },
   "cacheBootResources": true,
