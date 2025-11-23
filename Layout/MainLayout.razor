@@ -1,0 +1,55 @@
+﻿@using Microsoft.JSInterop
+@inherits LayoutComponentBase
+@inject IJSRuntime JS
+
+
+@* <button class="theme-toggle" @onclick="ToggleTheme"> *@
+@*     @(isDarkMode ? "🌞 Claro" : "🌙 Oscuro") *@
+@* </button> *@
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack
+            Orientation="Orientation.Horizontal"
+            AlignItems="AlignItems.Center"
+            JustifyContent="JustifyContent.SpaceBetween"
+            Gap="0"
+            class="rz-pr-6">
+            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded )"/>
+            <RadzenText Text="Header" TagName="TagName.H5" TextStyle="TextStyle.H6"/>
+            <RadzenButton Text="@(isDarkMode ? "🌞" : "🌙")" Click="@ToggleTheme" Variant="Variant.Filled" class="theme-toggle"/>
+        </RadzenStack>
+    </RadzenHeader>
+    
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+        <NavBar/>
+    </RadzenSidebar>
+    
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+    
+</RadzenLayout>
+
+
+
+@code {
+    bool sidebar1Expanded = true;
+    bool isDarkMode = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+           
+            await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", "light");
+        }
+    }
+
+    async Task ToggleTheme()
+    {
+        isDarkMode = !isDarkMode;
+        var theme = isDarkMode ? "dark" : "light";
+        await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", theme);
+    }
+}

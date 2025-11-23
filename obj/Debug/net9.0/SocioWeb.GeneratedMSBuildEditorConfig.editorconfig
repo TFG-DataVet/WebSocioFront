@@ -1,0 +1,117 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = SocioWeb
+build_property.RootNamespace = SocioWeb
+build_property.ProjectDir = /Users/jesussantiago/Programación/DataVet/web/SocioWeb/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = false
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/jesussantiago/Programación/DataVet/web/SocioWeb
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L01haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Layout/NavBar.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L05hdkJhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Calendario.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2FsZW5kYXJpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Citas.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2l0YXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Duenos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRHVlbm9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSG9tZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Mascotas.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTWFzY290YXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Productos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJvZHVjdG9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Registro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUmVnaXN0cm8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/App.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvQXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvTGF5b3V0L01haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Calendario.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvQ2FsZW5kYXJpby5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Citas.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvQ2l0YXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Duenos.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvRHVlbm9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvSG9tZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Mascotas.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvTWFzY290YXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Productos.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvUHJvZHVjdG9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Registro.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvUmVnaXN0cm8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvX0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-la24cfsxyy
+
+[/Users/jesussantiago/Programación/DataVet/web/SocioWeb/SocioWeb/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = U29jaW9XZWIvUGFnZXMvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-teuznx8igp

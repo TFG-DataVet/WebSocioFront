@@ -1,0 +1,53 @@
+﻿@page "/login"
+
+<RadzenStack Orientation="Orientation.Vertical" Gap="1rem" Reverse="false" 
+             JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" 
+             Wrap="FlexWrap.Wrap" Style="min-height: 100vh;">
+    
+    <RadzenText TextStyle="TextStyle.DisplayH1" 
+                Style="color: var(--color-primary); text-align:center; font-weight:bold;">
+        Bienvenido a DataVet
+    </RadzenText>
+
+    <h2 style="text-align:center;">Inicia sesión</h2>
+
+    <input placeholder="Usuario" @bind="username" />
+    <input type="password" placeholder="Contraseña" @bind="password" />
+    <RadzenButton 
+        ButtonStyle="ButtonStyle.Primary" 
+        Text="Entrar" 
+        Style="width:150px; margin-top:1rem;" 
+        class="login-button"
+        Click="LoginUser"
+    />
+
+    <img src="\Imagenes\mascotas4.png" 
+         alt="Veterinaria" 
+         class="login-bottom-image" />
+    
+    <img src="\Imagenes\mascotas5.png" 
+         alt="Veterinaria" 
+         class="login-top-image" />
+    
+</RadzenStack>
+
+
+   
+
+
+
+@code {
+    string username;
+    string password;
+
+    [Inject] NavigationManager Navigation { get; set; }
+
+    void LoginUser()
+    {
+        if(username?.Trim().ToLower() == "admin" && password?.Trim() == "1234")
+        {
+            Navigation.NavigateTo("/home");
+        }
+    }
+
+}
