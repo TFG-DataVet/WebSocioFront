@@ -1,0 +1,25 @@
+# --- Build ---
+bin/
+obj/
+
+# --- Configuración local (Rider, VS, etc.) ---
+*.DotSettings.user
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db
+
+# --- Logs y temporales ---
+*.log
+*.tmp
+*.bak
+# --- Publicaciones locales ---
+
+/publish/
+/dist/
+/out/
