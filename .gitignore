@@ -1,25 +1,56 @@
-# --- Build ---
+#########################
+#   BUILD & COMPILACIÓN #
+#########################
 bin/
 obj/
+**/bin/
+**/obj/
 
-# --- Configuración local (Rider, VS, etc.) ---
+#########################
+#   IDE / CONFIG LOCAL  #
+#########################
+# Rider / IntelliJ
+.idea/
 *.DotSettings.user
-*.csproj.user
+
+# Visual Studio
+.vs/
 *.suo
 *.user
 *.userosscache
+*.csproj.user
 *.sln.docstates
 
-# --- Sistema ---
+# VS Code
+.vscode/
+
+#########################
+#   SISTEMA OPERATIVO   #
+#########################
 .DS_Store
 Thumbs.db
 
-# --- Logs y temporales ---
+#########################
+#   LOGS / TEMPORALES   #
+#########################
 *.log
 *.tmp
 *.bak
-# --- Publicaciones locales ---
+*.cache
 
-/publish/
-/dist/
-/out/
+#########################
+#   PUBLICACIONES / OUT #
+#########################
+publish/
+dist/
+out/
+
+#########################
+#   OTROS                #
+#########################
+# Archivos de bloqueo de NuGet generados solos
+project.lock.json
+project.nuget.cache
+
+# Archivos de settings no compartibles
+*.env
