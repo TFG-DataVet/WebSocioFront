@@ -1,1 +1,345 @@
-﻿@page "/createPet"
+﻿@page "/create-pet"
+
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Registrar Mascota</PageTitle>
+
+<RadzenRow class="dt-page-register">
+    <RadzenColumn Size="10" Offset="1">
+        <RadzenCard class="rz-p-8">
+            
+            @* Image *@
+            <RadzenRow class="rz-mb-10">
+                <RadzenColumn Size="12">
+                    <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                        <RadzenImage Path="images/register-icon.png" AlternateText="community"
+                                     Style="width: 10rem; border-radius: 5rem; background-color: #f2f2f2"/>
+                    </RadzenStack>
+
+                </RadzenColumn>
+            </RadzenRow>
+
+            @* Formulario *@
+            <RadzenTemplateForm TItem="RegisterPetForm" Data="@FormData" Submit="@HandleSubmit" >
+
+                @* Primera Fila *@
+                <RadzenRow class="rz-mb-3">
+                    <!-- Nombre -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Nombre" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenTextBox
+                                    Style="width: 100%;"
+                                    Name="NamePet"
+                                    @bind-Value="FormData.NamePet"/>
+                                <RadzenRequiredValidator
+                                    Component="NamePet"
+                                    Text="El nombre es obligatorio."
+                                    Style="color: red;"/>
+                                <RadzenRegexValidator
+                                    Component="NamePet"
+                                    Pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+                                    Text="Solo se aceptan letras."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+
+                    </RadzenColumn>
+                    
+                    <!-- Fecha nacimiento -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Fecha de nacimiento" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenDatePicker
+                                    @bind-Value="FormData.Birthday"
+                                    DateFormat="yyyy-MM-dd"
+                                    Name="Birthday"
+                                    Style="width: 100%;"/>
+                                <RadzenRequiredValidator
+                                    Component="Birthday"
+                                    Text="Debe ingresar la fecha."
+                                    Style="color:red;"/>
+                                <RadzenCompareValidator
+                                    Component="Birthday"
+                                    Operator="CompareOperator.LessThan"
+                                    Value="@(DateTime.Today)"
+                                    Text="La fecha debe ser menor al día de hoy."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <!-- Weight -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Peso" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenTextBox
+                                    Style="width: 100%;"
+                                    Name="Weight"
+                                    
+                                    @bind-Value="FormData.Weight"/>
+                                <RadzenRequiredValidator
+                                    Component="Weight"
+                                    Text="El peso es obligatorio."
+                                    Style="color: red;"/>
+                                <RadzenRegexValidator
+                                    Component="Weight"
+                                    Pattern="^(100|[1-9]?[0-9])$"
+                                    Text="Solo se aceptan numero de 0 al 100."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                
+                <RadzenRow class="rz-mb-3">
+                    <!-- Especie -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Especie" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+                                <RadzenDropDown
+                                    @bind-Value="FormData.Species"
+                                    Data="@SpeciesOptions"
+                                    Name="Species"
+                                    Placeholder="Seleccione especie"
+                                    Style="width: 100%;"/>
+                                <RadzenRequiredValidator
+                                    Component="Species"
+                                    Text="Debe seleccionar una especie."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <!-- Raza -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Raza" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenDropDown
+                                    @bind-Value="FormData.Breed"
+                                    Data="@BreedDogOptions"
+                                    Name="Breed"
+                                    Placeholder="Seleccione raza"
+                                    Style="width: 100%;"/>
+                                <RadzenRequiredValidator
+                                    Component="Breed"
+                                    Text="Debe seleccionar una raza."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+
+                    </RadzenColumn>
+
+                    <!-- Sex -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Sex" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenDropDown
+                                    @bind-Value="FormData.Sex"
+                                    Data="@SexOptions"
+                                    Placeholder="Seleccione sexo"
+                                    Name="Sex"
+                                    Style="width: 100%;"/>
+                                <RadzenRequiredValidator
+                                    Component="Sex"
+                                    Text="Debe seleccionar una opción."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    
+                </RadzenRow>
+
+                @* Segunda fila *@
+                <RadzenRow class="rz-mb-3">
+                    <!-- Nombre -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Nombre" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenTextBox
+                                    Style="width: 100%;"
+                                    Name="NamePet"
+                                    @bind-Value="FormData.NamePet"/>
+                                <RadzenRequiredValidator
+                                    Component="NamePet"
+                                    Text="El nombre es obligatorio."
+                                    Style="color: red;"/>
+                                <RadzenRegexValidator
+                                    Component="NamePet"
+                                    Pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+                                    Text="Solo se aceptan letras."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+
+                    </RadzenColumn>
+
+                    <!-- Otro atributo -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Nombre" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenTextBox
+                                    Style="width: 100%;"
+                                    Name="NamePet"
+                                    @bind-Value="FormData.NamePet"/>
+                                <RadzenRequiredValidator
+                                    Component="NamePet"
+                                    Text="El nombre es obligatorio."
+                                    Style="color: red;"/>
+                                <RadzenRegexValidator
+                                    Component="NamePet"
+                                    Pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+                                    Text="Solo se aceptan letras."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <!-- Otro atributo -->
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Nombre" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenTextBox
+                                    Style="width: 100%;"
+                                    Name="NamePet"
+                                    @bind-Value="FormData.NamePet"/>
+                                <RadzenRequiredValidator
+                                    Component="NamePet"
+                                    Text="El nombre es obligatorio."
+                                    Style="color: red;"/>
+                                <RadzenRegexValidator
+                                    Component="NamePet"
+                                    Pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+                                    Text="Solo se aceptan letras."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                @* Tercera fila *@
+                <RadzenRow class="rz-mb-6">
+                    
+                    <!-- Fecha nacimiento -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Fecha de nacimiento" class="rz-w-100">
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenDatePicker
+                                    @bind-Value="FormData.Birthday"
+                                    DateFormat="yyyy-MM-dd"
+                                    Name="Birthday"
+                                    Style="width: 100%;"/>
+                                <RadzenRequiredValidator
+                                    Component="Birthday"
+                                    Text="Debe ingresar la fecha."
+                                    Style="color:red;"/>
+                                <RadzenCompareValidator
+                                    Component="Birthday"
+                                    Operator="CompareOperator.LessThan"
+                                    Value="@(DateTime.Today)"
+                                    Text="La fecha debe ser menor al día de hoy."
+                                    Style="color:red;"/>
+                            </RadzenStack>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <!-- Edad calculada (solo lectura) -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Edad (años)" class="rz-w-100">
+                            <RadzenTextBox Value="@AgeCalculated" ReadOnly="true" class="rz-w-100"/>
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                @* Button de envio *@
+                <RadzenRow>
+                    <RadzenColumn Size="12">
+                        <RadzenStack AlignItems="AlignItems.Center" Style="background-color: transparent" class="dt-background-none"> 
+                            <RadzenButton   
+                                ButtonStyle="ButtonStyle.Primary"
+                                Icon="save"
+                                Text="Registrar"
+                                Type="Submit"
+                                class="rz-w-25"
+                                Style="margin: auto"/>
+                        </RadzenStack>
+                    </RadzenColumn>
+                </RadzenRow>
+
+            </RadzenTemplateForm>
+
+        </RadzenCard>    
+    </RadzenColumn>
+    
+</RadzenRow>
+@code {
+
+    public RegisterPetForm FormData { get; set; } = new();
+
+    public List<string> SpeciesOptions { get; set; } = new()
+    {
+        "Perro", "Gato", "Ave"
+    };
+
+    public List<string> BreedDogOptions { get; set; } = new()
+    {
+        "Golden Retriver", "Labrador"
+    };
+
+    public List<string> BreedGatOptions { get; set; } = new()
+    {
+        "Amarillo", "verde"
+    };
+
+    public List<string> BreedBirdOptions { get; set; } = new()
+    {
+        "Loro", "Canario", "Aguila"
+    };
+
+    private List<string> SexOptions { get; set; } = new()
+    {
+        "yes", "no"
+    };
+    
+
+    // ---- Lógica de cálculo automático ----
+    private string AgeCalculated =>
+        FormData.Birthday.HasValue
+            ? $"{CalculateAge(FormData.Birthday.Value)} años"
+            : string.Empty;
+
+    private int CalculateAge(DateTime birthday)
+    {
+        var today = DateTime.Today;
+        int age = today.Year - birthday.Year;
+        if (birthday.Date > today.AddYears(-age)) age--;
+        return age;
+    }
+
+    // ---- Submit ----
+    private void HandleSubmit()
+    {
+        // Acá haría la llamada a la API o lo que necesite
+        Console.WriteLine("Mascota registrada exitosamente");
+    }
+
+    // ---- Modelo separado y tipado ----
+    public class RegisterPetForm
+    {
+        public string?      NamePet     { get; set; }
+        public string?      Species     { get; set; }
+        public DateTime?    Birthday    { get; set; }
+        public string?      Breed       { get; set; }
+        public string?      Sex         { get; set; }
+        public string?      Weight      { get; set; }
+    }
+}
+
+<style>
+        
+    .dt-page-register .rz-stack{
+        
+        background-color: transparent !important;
+    }
+</style>
