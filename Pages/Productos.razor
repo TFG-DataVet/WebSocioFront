@@ -1,6 +1,42 @@
 ﻿@page "/productos"
-<h3>productos</h3>
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+            <RadzenText> Header </RadzenText>
+        </RadzenStack>
+    </RadzenHeader>
+
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/home"/>
+            <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/Duenos"/>
+            <RadzenPanelMenuItem Text="Mascotas" Icon="pets" Path="/mascotas"/>
+            <RadzenPanelMenuItem Text="Citas" Icon="event_note" Path="/citas"/>
+            <RadzenPanelMenuItem Text="Productos" Icon="store" Path="/productos"/>
+            <RadzenPanelMenuItem Text="Calendario" Icon="event" Path="/calendario"/>
+        </RadzenPanelMenu>
+        <div class="rz-p-4">
+            Sidebar
+        </div>
+    </RadzenSidebar>
+    <RadzenBody>
+        
+        <h3>productos</h3>
+       
+    </RadzenBody>
+    
+</RadzenLayout>
+
 
 @code {
-    
+
+    bool sidebar1Expanded = true;
+
+    void OnChange(string value, string name)
+    {
+
+    }
+
 }

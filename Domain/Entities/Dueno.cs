@@ -37,6 +37,11 @@ public class Dueno
 
     [Required(ErrorMessage = "La contraseña es obligatoria.")]
     public string PasswordHash { get; set; } = string.Empty;
+    public string IdentificationNumber { get; set; }
+    public string Street { get; set; }
+    public string PostalCode { get; set; }
+    public string City { get; set; }
+    public string Comentarios { get; set; }
 
     // Estado de la app y notificaciones
     public StatusApp StatusApp { get; set; } = StatusApp.Activo;
