@@ -1,0 +1,106 @@
+﻿@page "/"
+@using SocioWeb.Domain.Entities
+
+<PageTitle>Home</PageTitle>
+<RadzenCard Style="background: #4e73df; color: white; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom:1rem;">
+        <h4 class="mb-1">Bienvenido @VeterinarioNombre</h4>
+        <h2 class="fw-bold">@ClinicaNombre</h2>
+    </RadzenCard>
+
+    <!-- Panel de información rápida -->
+    <RadzenRow Style="margin-bottom:1rem;">
+        <RadzenColumn Size="3">
+            <RadzenCard Style="text-align:center; background:#1cc88a; color:white;">
+                <h3>🐾</h3>
+                <h4>Mascotas registradas</h4>
+                <h2>@TotalMascotas</h2>
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn Size="3">
+            <RadzenCard Style="text-align:center; background:#36b9cc; color:white;">
+                <h3>👨‍👩‍👧‍👦</h3>
+                <h4>Dueños activos</h4>
+                <h2>@TotalDuenos</h2>
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn Size="3">
+            <RadzenCard Style="text-align:center; background:#f6c23e; color:white;">
+                <h3>📅</h3>
+                <h4>Citas para hoy</h4>
+                <h2>@CitasHoy</h2>
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn Size="3">
+            <RadzenCard Style="text-align:center; background:#e74a3b; color:white;">
+                <h3>💊</h3>
+                <h4>Productos en stock</h4>
+                <h2>@ProductosStock</h2>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <!-- Calendario diario -->
+    <RadzenCard Style="border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:1rem;">
+        <h3>Calendario de hoy (@DateTime.Now.ToString("dd/MM/yyyy"))</h3>
+        <RadzenDataGrid Data="@HorasDelDia" TItem="HoraDelDia" ShowPagingSummary="false" ShowPaging="false" ShowFilterRow="false" Style="width:100%;">
+            <Columns>
+                <RadzenDataGridColumn TItem="HoraDelDia" Property="Hora" Title="Hora" Width="100px"/>
+                <RadzenDataGridColumn TItem="HoraDelDia" Property="Evento" Title="Evento"/>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenCard>
+
+    <!-- Avisos recientes -->
+    <RadzenCard Style="border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+        <h3>Avisos recientes</h3>
+        <RadzenListView Data="@AvisosRecientes" TItem="string">
+            <Template Context="aviso">
+                <p>• aviso</p>
+            </Template>
+        </RadzenListView>
+    </RadzenCard>
+    
+@code {
+    bool sidebar1Expanded = true;
+
+    string VeterinarioNombre = "Dr. Pérez";
+    string ClinicaNombre = "Clínica PetCare";
+
+    // Panel de información rápida
+    int TotalMascotas = 128;
+    int TotalDuenos = 87;
+    int CitasHoy = 12;
+    int ProductosStock = 54;
+
+    // Clase para cada hora del día
+    public class HoraDelDia
+    {
+        public string Hora { get; set; }
+        public string Evento { get; set; }
+    }
+
+    List<HoraDelDia> HorasDelDia = new List<HoraDelDia>();
+
+    // Avisos recientes
+    List<string> AvisosRecientes = new List<string>
+    {
+        "💉 Nueva vacuna disponible contra la rabia.",
+        "🕐 Horario extendido los sábados hasta las 6 p.m.",
+        "🎉 Promoción: 20% en baños medicados durante noviembre."
+    };
+
+    protected override void OnInitialized()
+    {
+        // Generar horas del día (8:00 a 20:00)
+        for (int h = 8; h <= 20; h++)
+        {
+            HorasDelDia.Add(new HoraDelDia
+            {
+                Hora = $"{h}:00",
+                Evento = "" // Aquí puedes llenar con citas/eventos reales
+            });
+        }
+    }
+}
+
+
