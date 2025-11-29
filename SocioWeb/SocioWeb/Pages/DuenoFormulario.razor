@@ -62,6 +62,12 @@
                             <RadzenRequiredValidator Component="LastName" Text="Obligatorio" />
                         </div>
 
+                        <div>
+                            <label>Número Identificación</label>
+                            <RadzenTextBox @bind-Value="@dueno.LastName" Placeholder="Tu número de identificación"
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                            <RadzenRequiredValidator Component="LastName" Text="Obligatorio" />
+                        </div>
                        
                         <div>
                             <label>Teléfono</label>
@@ -78,8 +84,18 @@
                         </div>
 
                         <div>
-                            <label>Dirección</label>
+                            <label>Calle</label>
                             <RadzenTextBox @bind-Value="@dueno.Phone" Placeholder="Calle/Número..."
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                        </div>
+                        <div>
+                            <label>Código Postal</label>
+                            <RadzenTextBox @bind-Value="@dueno.Phone" Placeholder="número código postal"
+                                           Style="width:100%; background:white; border-radius:10px;" />
+                        </div>
+                        <div>
+                            <label>Ciudad</label>
+                            <RadzenTextBox @bind-Value="@dueno.Phone" Placeholder="ciudad"
                                            Style="width:100%; background:white; border-radius:10px;" />
                         </div>
 
