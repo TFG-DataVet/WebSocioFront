@@ -10,18 +10,24 @@
     <!-- Panel de información rápida -->
     <RadzenRow Style="margin-bottom:1rem;">
         <RadzenColumn Size="3">
-            <RadzenCard Style="text-align:center; background:#1cc88a; color:white;">
-                <h3>🐾</h3>
-                <h4>Mascotas registradas</h4>
-                <h2>@TotalMascotas</h2>
-            </RadzenCard>
+            <RadzenColumn Size="3">
+                <RadzenLink Path="/create-pet" Style="text-decoration:none;">
+                    <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
+                        <h3>👨‍👩‍🐾‍👦</h3>
+                        <h4>Nueva mascota</h4>
+                        <h2>+</h2>
+                    </RadzenCard>
+                </RadzenLink>
+            </RadzenColumn>
         </RadzenColumn>
         <RadzenColumn Size="3">
-            <RadzenCard Style="text-align:center; background:#36b9cc; color:white;">
-                <h3>👨‍👩‍👧‍👦</h3>
-                <h4>Dueños activos</h4>
-                <h2>@TotalDuenos</h2>
-            </RadzenCard>
+            <RadzenLink Path="/DuenoFormulario" Style="text-decoration:none;">
+                <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
+                    <h3>👨‍👩‍👧‍👦</h3>
+                    <h4>Nuevo dueño</h4>
+                    <h2>+</h2>
+                </RadzenCard>
+            </RadzenLink>
         </RadzenColumn>
         <RadzenColumn Size="3">
             <RadzenCard Style="text-align:center; background:#f6c23e; color:white;">

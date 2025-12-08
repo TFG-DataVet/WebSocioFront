@@ -1,5 +1,6 @@
-﻿@page "/PerfilDueno"
+﻿@page "/PerfilMascota"
 @using global::SocioWeb.Domain.Entities
+
 @inject NavigationManager Nav
 
 <RadzenLayout>
@@ -13,7 +14,7 @@
     <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="Home" Icon="home" Path="/home" />
-            <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/Duenos" />
+            <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/duenos" />
             <RadzenPanelMenuItem Text="Mascotas" Icon="pets" Path="/mascotas" />
             <RadzenPanelMenuItem Text="Citas" Icon="event_note" Path="/citas" />
             <RadzenPanelMenuItem Text="Productos" Icon="store" Path="/productos" />
@@ -26,17 +27,16 @@
 
             <!-- Cabecera -->
             <div style="display:flex; gap:25px; align-items:center; margin-bottom:30px;">
-
                 <div style="
                     width:120px; height:120px; border-radius:50%;
                     background:#d9d9d9; display:flex; align-items:center;
                     justify-content:center; font-size:50px; color:#6c6c6c;">
-                    🐶
+                    🐾
                 </div>
 
                 <div>
-                    <h2 style="margin:0; color:#333;">@dueno.Name @dueno.LastName</h2>
-                    <h4 style="margin:5px 0; color:#777;">Dueño registrado</h4>
+                    <h2 style="margin:0; color:#333;">@mascota.Nombre</h2>
+                    <h4 style="margin:5px 0; color:#777;">Mascota registrada</h4>
 
                     @if (!isEditing)
                     {
@@ -52,32 +52,38 @@
                                       Click="@Cancelar" />
                     }
 
-                    <RadzenButton Text="Ver mascotas" Icon="pets"
+                    <RadzenButton Text="Ver dueño" Icon="account_box"
                                   ButtonStyle="ButtonStyle.Primary"
                                   Style="border-radius:10px; background:#4b3e48; color:white;"
-                                  Click="@VerMascotas" />
+                                  Click="@VerDueno" />
                 </div>
             </div>
 
-            <!-- Datos personales -->
-            <h3 style="color:#4b3e48; margin-bottom:20px;">Información personal</h3>
+            <!-- Info mascota -->
+            <h3 style="color:#4b3e48; margin-bottom:20px;">Información de la mascota</h3>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px; padding:10px;">
 
-                @Campo("Nombre", dueno.Name, v => dueno.Name = v)
-                @Campo("Apellido", dueno.LastName, v => dueno.LastName = v)
-                @Campo("Número Identificación", dueno.IdentificationNumber, v => dueno.IdentificationNumber = v)
-                @Campo("Email", dueno.Email, v => dueno.Email = v)
-                @Campo("Teléfono", dueno.Phone, v => dueno.Phone = v)
+                @Campo("Nombre", mascota.Nombre, v => mascota.Nombre = v)
+                @Campo("Especie", mascota.Especie, v => mascota.Especie = v)
+                @Campo("Raza", mascota.Raza, v => mascota.Raza = v)
+                <select @bind="mascota.Sexo" class="form-select">
+                    @foreach (var sexo in Enum.GetValues(typeof(Sexo)))
+                    {
+                        <option value="@sexo">@sexo</option>
+                    }
+                </select>
 
-                @Campo("Calle", dueno.Street, v => dueno.Street = v)
-                @Campo("Código Postal", dueno.PostalCode, v => dueno.PostalCode = v)
-                @Campo("Ciudad", dueno.City, v => dueno.City = v)
 
-                @Campo("Estado de la app", dueno.StatusApp.ToString(), null)
-                @Campo("Comentarios", dueno.Comentarios,v => dueno.Comentarios = v)
-               
-
+                @Campo("Fecha nacimiento", mascota.FechaDeNacimiento.ToShortDateString(),
+                       v => mascota.FechaDeNacimiento = DateTime.Parse(v))
+                
+                @Campo("Peso (kg)", mascota.Peso.ToString(), 
+                       v => mascota.Peso = int.Parse(v))
+                @Campo("Número chip", mascota.ChipIdentificatorio, v => mascota.ChipIdentificatorio = v)
+                @Campo("Operaciones", mascota.CualesOperaciones, v => mascota.CualesOperaciones = v)
+                @Campo("Enfermedades", mascota.CualesEnfermedades, v => mascota.CualesEnfermedades = v)
+                @Campo("Vacunas", mascota.CualesVacunas, v => mascota.CualesVacunas = v)
             </div>
 
             <hr style="margin:30px 0;" />
@@ -86,8 +92,8 @@
             <h3 style="color:#4b3e48; margin-bottom:20px;">Registro del sistema</h3>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px;">
-                @Campo("Creado el", dueno.CreatedAt.ToLocalTime().ToString(), null)
-                @Campo("Última actualización", dueno.UpdatedAt?.ToLocalTime().ToString(), null)
+                @Campo("Creado el", mascota.CreatedAt.ToLocalTime().ToString(), null)
+                @Campo("Última actualización", mascota.UpdatedAt?.ToLocalTime().ToString(), null)
             </div>
 
             @if (isEditing)
@@ -103,50 +109,44 @@
 
         </RadzenCard>
     </RadzenBody>
-
 </RadzenLayout>
 
 @code {
-
     bool sidebar1Expanded = true;
     bool isEditing = false;
 
-    Dueno dueno = new()
+    Mascota mascota = new()
     {
-        Name = "Manolo",
-        LastName = "Jiménez",
-        IdentificationNumber = "12345678X",
-        Email = "carlos@email.com",
-        Phone = "555-123456",
-        Street = "Calle Mayor 22",
-        PostalCode = "28001",
-        City = "Madrid",
-        Comentarios = "",
-        StatusApp = StatusApp.Activo,
+        Nombre = "Toby",
+        Especie = "Perro",
+        Raza = "Labrador",
+        Sexo = Sexo.Macho,
+        FechaDeNacimiento = new DateTime(2021, 05, 20),
+        Peso = 24,
+        ChipIdentificatorio = "CHIP123456789",
+        CualesEnfermedades = "",
+        CualesOperaciones = "",
+        CualesVacunas = "",
         CreatedAt = DateTime.UtcNow,
         UpdatedAt = DateTime.UtcNow
     };
 
-    void VerMascotas()
+    void VerDueno()
     {
-        Nav.NavigateTo("/dueno/1/mascotas");
+        Nav.NavigateTo("/PerfilDueno");
     }
 
     void Guardar()
     {
-        // Aquí guardarías los cambios en DB
-        dueno.UpdatedAt = DateTime.UtcNow;
+        mascota.UpdatedAt = DateTime.UtcNow;
         isEditing = false;
     }
 
     void Cancelar()
     {
-        // Si quieres: recargar datos desde la BD
         isEditing = false;
     }
 
-
-    // ⬇️ Componente reutilizable Campo()
     RenderFragment Campo(string label, string valor, Action<string>? onChange) => __builder =>
     {
         <div>
@@ -157,7 +157,6 @@
                 <div style="font-size:18px; color:#333;">
                     @valor
                     <RadzenIcon Icon="edit" Style="font-size:18px; color:#aaa; margin-left:8px;" />
-
                 </div>
             }
             else
