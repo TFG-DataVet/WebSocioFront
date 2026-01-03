@@ -1,7 +1,7 @@
 ﻿@page "/create-pet"
 
 @using System.ComponentModel.DataAnnotations
-
+@inject NavigationManager Nav
 <PageTitle>Registrar Mascota</PageTitle>
 
 <RadzenRow class="dt-page-register">
@@ -20,7 +20,7 @@
             </RadzenRow>
 
             @* Formulario *@
-            <RadzenTemplateForm TItem="RegisterPetForm" Data="@FormData" Submit="@HandleSubmit" >
+            <RadzenTemplateForm TItem="RegisterPetForm" Data="@FormData" Submit="@GuardarDatos" >
 
                 @* Primera Fila *@
                 <RadzenRow class="rz-mb-3">
@@ -259,21 +259,49 @@
                             <RadzenButton   
                                 ButtonStyle="ButtonStyle.Primary"
                                 Icon="save"
-                                Text="Registrar"
+                                Text="Registrar y salir"
                                 Type="Submit"
                                 class="rz-w-25"
                                 Style="margin: auto"/>
                         </RadzenStack>
                     </RadzenColumn>
                 </RadzenRow>
+                
 
             </RadzenTemplateForm>
+            
+            <RadzenButton
+                ButtonStyle="ButtonStyle.Primary"
+                Text="Añadir mascota"
+                Click="@GuardarYNavegar"
+                Style="margin:auto" />
+
+         
 
         </RadzenCard>    
     </RadzenColumn>
     
 </RadzenRow>
 @code {
+    
+    async Task GuardarYNavegar()
+    {
+        // 1️⃣ Guardar datos (lo que tengas en pantalla)
+        // await PetService.SavePet(pet);
+
+        // 2️⃣ Navegar
+        Nav.NavigateTo("/create-pet");
+    }
+
+    async Task GuardarDatos()
+    {
+        // Aquí llamas a tu servicio o API
+        // EJEMPLO:
+        // await PetService.SavePet(pet);
+
+        await Task.CompletedTask; // placeholder
+        Nav.NavigateTo("/");
+    }
 
     public RegisterPetForm FormData { get; set; } = new();
 

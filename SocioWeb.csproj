@@ -12,4 +12,8 @@
         <PackageReference Include="Radzen.Blazor" Version="8.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Domain\" />
+    </ItemGroup>
+
 </Project>

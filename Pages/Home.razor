@@ -1,70 +1,119 @@
 ﻿@page "/"
 
-
 <PageTitle>Home</PageTitle>
-<RadzenCard Style="background: #4e73df; color: white; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom:1rem;">
-        <h4 class="mb-1">Bienvenido @VeterinarioNombre</h4>
-        <h2 class="fw-bold">@ClinicaNombre</h2>
-    </RadzenCard>
 
-    <!-- Panel de información rápida -->
-    <RadzenRow Style="margin-bottom:1rem;">
-        <RadzenColumn Size="3">
-            <RadzenColumn Size="3">
-                <RadzenLink Path="/create-pet" Style="text-decoration:none;">
-                    <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
-                        <h3>👨‍👩‍🐾‍👦</h3>
-                        <h4>Nueva mascota</h4>
-                        <h2>+</h2>
-                    </RadzenCard>
-                </RadzenLink>
-            </RadzenColumn>
-        </RadzenColumn>
-        <RadzenColumn Size="3">
-            <RadzenLink Path="/DuenoFormulario" Style="text-decoration:none;">
-                <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
-                    <h3>👨‍👩‍👧‍👦</h3>
-                    <h4>Nuevo dueño</h4>
-                    <h2>+</h2>
-                </RadzenCard>
-            </RadzenLink>
-        </RadzenColumn>
-        <RadzenColumn Size="3">
-            <RadzenCard Style="text-align:center; background:#f6c23e; color:white;">
-                <h3>📅</h3>
-                <h4>Citas para hoy</h4>
-                <h2>@CitasHoy</h2>
+<!-- BIENVENIDA -->
+<RadzenCard Style="
+    background:#4e73df;
+    color:white;
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom:1rem;">
+
+    <RadzenStack Gap="5">
+        <RadzenText Text="@($"Bienvenido {VeterinarioNombre}")"
+                    Style="font-size:18px; opacity:0.9;" />
+        <RadzenText Text="@ClinicaNombre"
+                    Style="font-size:28px; font-weight:700;" />
+    </RadzenStack>
+
+</RadzenCard>
+
+<!-- PANEL DE INFORMACIÓN RÁPIDA -->
+<RadzenRow Style="margin-bottom:1rem;">
+
+    <RadzenColumn Size="3">
+        <RadzenLink Path="/create-pet" Style="text-decoration:none;">
+            <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
+                <RadzenStack AlignItems="AlignItems.Center" Gap="5">
+                    <RadzenText Text="👨‍👩‍🐾‍👦" Style="font-size:26px;" />
+                    <RadzenText Text="Nueva mascota" Style="font-weight:600;" />
+                    <RadzenText Text="+" Style="font-size:32px; font-weight:700;" />
+                </RadzenStack>
             </RadzenCard>
-        </RadzenColumn>
-        <RadzenColumn Size="3">
-            <RadzenCard Style="text-align:center; background:#e74a3b; color:white;">
-                <h3>💊</h3>
-                <h4>Productos en stock</h4>
-                <h2>@ProductosStock</h2>
+        </RadzenLink>
+    </RadzenColumn>
+
+    <RadzenColumn Size="3">
+        <RadzenLink Path="/DuenoFormulario" Style="text-decoration:none;">
+            <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
+                <RadzenStack AlignItems="AlignItems.Center" Gap="5">
+                    <RadzenText Text="👨‍👩‍👧‍👦" Style="font-size:26px;" />
+                    <RadzenText Text="Nuevo dueño" Style="font-weight:600;" />
+                    <RadzenText Text="+" Style="font-size:32px; font-weight:700;" />
+                </RadzenStack>
             </RadzenCard>
-        </RadzenColumn>
-    </RadzenRow>
+        </RadzenLink>
+    </RadzenColumn>
 
-    <!-- Calendario diario -->
-    <RadzenCard Style="border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:1rem;">
-        <h3>Calendario de hoy (@DateTime.Now.ToString("dd/MM/yyyy"))</h3>
-        <RadzenDataGrid Data="@HorasDelDia" TItem="HoraDelDia" ShowPagingSummary="false" ShowPaging="false" ShowFilterRow="false" Style="width:100%;">
-            <Columns>
-                <RadzenDataGridColumn TItem="HoraDelDia" Property="Hora" Title="Hora" Width="100px"/>
-                <RadzenDataGridColumn TItem="HoraDelDia" Property="Evento" Title="Evento"/>
-            </Columns>
-        </RadzenDataGrid>
-    </RadzenCard>
+    <RadzenColumn Size="3">
+        <RadzenCard Style="text-align:center; background:#f6c23e; color:white;">
+            <RadzenStack AlignItems="AlignItems.Center" Gap="5">
+                <RadzenText Text="📅" Style="font-size:26px;" />
+                <RadzenText Text="Citas para hoy" Style="font-weight:600;" />
+                <RadzenText Text=@CitasHoy.ToString()
+                            Style="font-size:32px; font-weight:700;" />
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
 
-    <!-- Avisos recientes -->
-    <RadzenCard Style="border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-        <h3>Avisos recientes</h3>
-        <RadzenListView Data="@AvisosRecientes" TItem="string">
-            <Template Context="aviso">
-                <p>• aviso</p>
-            </Template>
-        </RadzenListView>
-    </RadzenCard>
+    <RadzenColumn Size="3">
+        <RadzenCard Style="text-align:center; background:#e74a3b; color:white;">
+            <RadzenStack AlignItems="AlignItems.Center" Gap="5">
+                <RadzenText Text="💊" Style="font-size:26px;" />
+                <RadzenText Text="Productos en stock" Style="font-weight:600;" />
+                <RadzenText Text=@ProductosStock.ToString()
+                            Style="font-size:32px; font-weight:700;" />
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+
+</RadzenRow>
+
+<!-- CALENDARIO DIARIO -->
+<RadzenCard Style="
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom:1rem;">
+
+    <RadzenText Text="@($"Calendario de hoy ({DateTime.Now:dd/MM/yyyy})")"
+                Style="font-size:20px; font-weight:600; margin-bottom:10px;" />
+
+    <RadzenDataGrid Data="@HorasDelDia"
+                    TItem="HoraDelDia"
+                    ShowPaging="false"
+                    ShowPagingSummary="false"
+                    ShowFilterRow="false"
+                    Style="width:100%;">
+        <Columns>
+            <RadzenDataGridColumn TItem="HoraDelDia"
+                                  Property="Hora"
+                                  Title="Hora"
+                                  Width="100px" />
+            <RadzenDataGridColumn TItem="HoraDelDia"
+                                  Property="Evento"
+                                  Title="Evento" />
+        </Columns>
+    </RadzenDataGrid>
+
+</RadzenCard>
+
+<!-- AVISOS RECIENTES -->
+<RadzenCard Style="
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+
+    <RadzenText Text="Avisos recientes"
+                Style="font-size:20px; font-weight:600; margin-bottom:10px;" />
+
+    <RadzenListView Data="@AvisosRecientes" TItem="string">
+        <Template Context="aviso">
+            <RadzenText Text="@($"• {AvisosRecientes}")" />
+        </Template>
+    </RadzenListView>
+
+</RadzenCard>
+
     
 @code {
     bool sidebar1Expanded = true;
@@ -72,23 +121,20 @@
     string VeterinarioNombre = "Dr. Pérez";
     string ClinicaNombre = "Clínica PetCare";
 
-    // Panel de información rápida
     int TotalMascotas = 128;
     int TotalDuenos = 87;
     int CitasHoy = 12;
     int ProductosStock = 54;
 
-    // Clase para cada hora del día
     public class HoraDelDia
     {
         public string Hora { get; set; }
         public string Evento { get; set; }
     }
 
-    List<HoraDelDia> HorasDelDia = new List<HoraDelDia>();
+    List<HoraDelDia> HorasDelDia = new();
 
-    // Avisos recientes
-    List<string> AvisosRecientes = new List<string>
+    List<string> AvisosRecientes = new()
     {
         "💉 Nueva vacuna disponible contra la rabia.",
         "🕐 Horario extendido los sábados hasta las 6 p.m.",
@@ -97,16 +143,16 @@
 
     protected override void OnInitialized()
     {
-        // Generar horas del día (8:00 a 20:00)
         for (int h = 8; h <= 20; h++)
         {
             HorasDelDia.Add(new HoraDelDia
             {
                 Hora = $"{h}:00",
-                Evento = "" // Aquí puedes llenar con citas/eventos reales
+                Evento = ""
             });
         }
     }
 }
+
 
 

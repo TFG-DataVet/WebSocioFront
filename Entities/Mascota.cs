@@ -7,7 +7,7 @@ public class Mascota
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long IdMascota { get; set; }
+    public String IdMascota { get; set; }
 
     // Relaciones
     [Required]

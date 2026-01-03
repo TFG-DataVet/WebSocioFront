@@ -1,100 +1,237 @@
-﻿@page "/MenuMacotas"
-<RadzenBody>
-<RadzenColumn Size="12" SizeMD="4">
-    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Mascotas</RadzenText>
-    <RadzenTextBox @bind-Value="searchText" Placeholder="Buscar..." Style="width: 100%" />
+﻿@page "/Mascotas"
+@inject NavigationManager Nav
+@using global::SocioWeb.Domain.Entities
 
-    @if (!string.IsNullOrEmpty(searchText) && 
-         searchText.Contains("rocky", StringComparison.OrdinalIgnoreCase))
-    {
-        <!-- TARJETA DEL DUEÑO -->
-        <RadzenCard Style="margin-top:20px; border-radius:16px; 
-                          box-shadow:0 4px 20px rgba(0,0,0,0.1); 
-                          overflow:hidden; 
-                          background:linear-gradient(135deg, #f9fafb 0%, #eef3f9 100%);">
+<RadzenLayout>
 
-            <div style="display:flex; align-items:center; padding:20px; 
-                        background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
-                        color:white;">
+    <!-- ================= HEADER CON FILTROS ================= -->
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     Gap="10"
+                     Style="padding:10px 20px">
 
-                <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png"
-                              Size="70px"
-                              Style="margin-right:15px; border:3px solid white;" />
+            <RadzenText Text="Mascotas" TextStyle="TextStyle.H5" />
 
-                <div>
+            <RadzenTextBox @bind-Value="filtroNombre"
+                           Placeholder="Nombre mascota"
+                           Style="width:180px" />
 
-                    <RadzenLink Path="/PerfilDueno"
-                                Style="text-decoration:none; color:white;">
-                        <span style="font-size:22px; font-weight:600;">Manolo</span>
-                    </RadzenLink>
+            <RadzenTextBox @bind-Value="filtroEspecie"
+                           Placeholder="Especie"
+                           Style="width:150px" />
 
-                    <RadzenText Text="Cliente desde 2021"
-                                Style="opacity:0.9; font-size:13px; display:block;" />
-                </div>
-            </div>
+            <RadzenButton Icon="filter_alt"
+                          Text="Filtrar"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Click="@AplicarFiltros" />
+        </RadzenStack>
+    </RadzenHeader>
 
-            <!-- TARJETA DE MASCOTA -->
-            <RadzenCard Style="margin-top:20px; border-radius:16px; 
-                               box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; 
-                               background:linear-gradient(135deg, #f9fafb 0%, #eef3f9 100%);">
+    <!-- ================= BODY ================= -->
+    <RadzenBody>
+        <RadzenRow>
+            <RadzenColumn Size="12">
 
-                <div style="display:flex; align-items:center; padding:20px; 
-                            background:linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); 
-                            color:white;">
-                    
-                    <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png" 
-                                  Size="70px" 
-                                  Style="margin-right:15px; border:3px solid white;" />
-                    
-                    <div>
+                @foreach (var mascota in mascotasFiltradas)
+                {
+                    <!-- DIV envolvente para capturar el click -->
+                    <div style="cursor:pointer;" @onclick="@(() => IrAPerfilMascota(mascota.IdMascota))">
 
-                        <RadzenLink Path="/PerfilMascota"
-                                    Style="text-decoration:none; color:white;">
-                            <span style="font-size:22px; font-weight:600;">Rocky</span>
-                        </RadzenLink>
+                        <RadzenCard Style="
+                            margin-bottom:30px;
+                            border-radius:16px;
+                            box-shadow:0 4px 20px rgba(0,0,0,0.1);
+                            overflow:hidden;">
 
-                        <RadzenText Text="Cliente desde 2021"
-                                    Style="opacity:0.9; font-size:13px; display:block;" />
-                    </div>
-                </div>
+                            <!-- HEADER MASCOTA -->
+                            <RadzenStack Orientation="Orientation.Horizontal"
+                                         AlignItems="AlignItems.Center"
+                                         JustifyContent="JustifyContent.SpaceBetween"
+                                         Style="
+                                            padding:20px;
+                                            background:linear-gradient(135deg,#ff9a9e 0%,#fad0c4 100%);
+                                            color:white;">
 
-                <div style="padding:20px;">
-                    <RadzenRow>
-                        <RadzenColumn Size="6">
-                            <RadzenLabel Text="🐾 Especie:" Style="color:#007bff; font-weight:600;" />
-                            <RadzenText Text=" Perro" Style="margin-left:5px; color:#333;" />
-                            <br />
+                                <RadzenStack Orientation="Orientation.Horizontal"
+                                             AlignItems="AlignItems.Center"
+                                             Gap="15">
 
-                            <RadzenLabel Text="🐶 Raza:" Style="color:#007bff; font-weight:600;" />
-                            <RadzenText Text=" Labrador" Style="margin-left:5px; color:#333;" />
-                        </RadzenColumn>
+                                    <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png"
+                                                  Size="70px"
+                                                  Style="border:3px solid white;" />
 
-                        <RadzenColumn Size="6">
-                            <RadzenLabel Text="🎂 Edad:" Style="color:#007bff; font-weight:600;" />
-                            <RadzenText Text=" 3 años" Style="margin-left:5px; color:#333;" />
-                            <br />
+                                    <RadzenStack Gap="2">
+                                        <RadzenText Text="@mascota.Nombre"
+                                                    Style="font-size:22px; font-weight:600;" />
+                                        <RadzenText Text="@mascota.Especie"
+                                                    Style="opacity:0.9; font-size:13px;" />
+                                    </RadzenStack>
+                                </RadzenStack>
 
-                            <RadzenLabel Text="❤️ Notas de salud:" Style="color:#007bff; font-weight:600;" />
-                            <RadzenText Text=" Vacunas al día, muy activo." 
-                                        Style="margin-left:5px; color:#333;" />
-                        </RadzenColumn>
-                    </RadzenRow>
-                </div>
-            </RadzenCard>
+                                <!-- BOTÓN DUEÑO -->
+                                <RadzenButton Icon="person"
+                                              Text="Dueño"
+                                              ButtonStyle="ButtonStyle.Light"
+                                              Style="background:transparent; color:white;"
+                                              Click="@(() => ToggleDueno(mascota.IdMascota))"
+                                              @onclick:stopPropagation="true" />
+                            </RadzenStack>
 
-        </RadzenCard>
-    }
+                            <!-- INFO MASCOTA -->
+                            <RadzenStack Style="padding:20px;">
+                                <RadzenRow>
+                                    <RadzenColumn Size="6">
+                                        <RadzenText Text="🐾 Raza"
+                                                    Style="font-weight:600;" />
+                                        <RadzenText Text="@mascota.Raza" />
 
-</RadzenColumn>
-</RadzenBody>
+                                        <RadzenText Text="🎂 Edad"
+                                                    Style="font-weight:600; margin-top:10px;" />
+                                        <RadzenText Text="@($"{mascota.Edad} años")" />
+                                    </RadzenColumn>
+
+                                    <RadzenColumn Size="6">
+                                        <RadzenText Text="⚖️ Peso"
+                                                    Style="font-weight:600;" />
+                                        <RadzenText Text="@($"{mascota.Peso} kg")" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenStack>
+
+                            <!-- DUEÑO DESPLEGABLE -->
+                            @if (duenosVisibles.Contains(mascota.IdMascota))
+                            {
+                                <RadzenCard Style="
+                                    margin:20px;
+                                    border-radius:16px;
+                                    overflow:hidden;">
+
+                                    <RadzenStack Orientation="Orientation.Horizontal"
+                                                 AlignItems="AlignItems.Center"
+                                                 Gap="15"
+                                                 Style="
+                                                    padding:20px;
+                                                    background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
+                                                    color:white;">
+
+                                        <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png"
+                                                      Size="60px" />
+
+                                        <RadzenStack Gap="2">
+                                            <RadzenLink Path="@($"/PerfilDueno/{mascota.Dueno.Id}")"
+                                                        Style="text-decoration:none; color:white;">
+                                                <RadzenText Text="@mascota.Dueno.Name"
+                                                            Style="font-size:18px; font-weight:600;" />
+                                            </RadzenLink>
+
+                                            <RadzenText Text="@mascota.Dueno.Email"
+                                                        Style="font-size:13px; opacity:0.9;" />
+                                        </RadzenStack>
+                                    </RadzenStack>
+
+                                    <RadzenStack Style="padding:20px;">
+                                        <RadzenText Text="📞 Teléfono"
+                                                    Style="font-weight:600;" />
+                                        <RadzenText Text="@mascota.Dueno.Phone" />
+
+                                        <RadzenText Text="🏠 Dirección"
+                                                    Style="font-weight:600; margin-top:10px;" />
+                                        <RadzenText Text="@mascota.Dueno.Street" />
+                                    </RadzenStack>
+
+                                </RadzenCard>
+                            }
+
+                        </RadzenCard>
+                    </div> <!-- fin div clickeable -->
+                }
+
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenBody>
+
+</RadzenLayout>
 
 @code {
-    string searchText = "";
 
-    Mascota mascota = new Mascota();
+    List<Mascota> mascotas = new();
+    List<Mascota> mascotasFiltradas = new();
 
-    protected override async Task OnInitializedAsync()
+    string filtroNombre = "";
+    string filtroEspecie = "";
+
+    HashSet<string> duenosVisibles = new();
+
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
+        var dueno1 = new Dueno
+        {
+            Id = "1",
+            Name = "Juan Pérez",
+            Email = "juan@email.com",
+            Phone = "123456789",
+            Street = "Av. Siempre Viva 742"
+        };
+
+        var dueno2 = new Dueno
+        {
+            Id = "2",
+            Name = "María López",
+            Email = "maria@email.com",
+            Phone = "987654321",
+            Street = "Calle Falsa 123"
+        };
+
+        mascotas = new List<Mascota>
+        {
+            new Mascota
+            {
+                IdMascota = "M1",
+                Nombre = "Rocky",
+                Especie = "Perro",
+                Raza = "Labrador",
+                Edad = 5,
+                Peso = 28,
+                Dueno = dueno1
+            },
+            new Mascota
+            {
+                IdMascota = "M2",
+                Nombre = "Michi",
+                Especie = "Gato",
+                Raza = "Siames",
+                Edad = 3,
+                Peso = 6,
+                Dueno = dueno2
+            }
+        };
+
+        mascotasFiltradas = mascotas;
+    }
+
+    void AplicarFiltros()
+    {
+        mascotasFiltradas = mascotas
+            .Where(m =>
+                (string.IsNullOrEmpty(filtroNombre) ||
+                 m.Nombre.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filtroEspecie) ||
+                 m.Especie.Contains(filtroEspecie, StringComparison.OrdinalIgnoreCase))
+            )
+            .ToList();
+    }
+
+    void ToggleDueno(string mascotaId)
+    {
+        if (duenosVisibles.Contains(mascotaId))
+            duenosVisibles.Remove(mascotaId);
+        else
+            duenosVisibles.Add(mascotaId);
+    }
+
+    void IrAPerfilMascota(string idMascota)
+    {
+        Nav.NavigateTo($"/PerfilMascota/{idMascota}");
     }
 }

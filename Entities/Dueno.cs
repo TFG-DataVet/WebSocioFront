@@ -7,7 +7,7 @@ public class Dueno
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id { get; set; }
+    public String Id { get; set; }
 
     // Relación con Clinica
     [Required(ErrorMessage = "La clínica es obligatoria.")]
@@ -17,7 +17,7 @@ public class Dueno
     public Clinica? Clinic { get; set; }
 
     // Relación con Mascotas
-    public List<long>? IdMascotas { get; set; } = new List<long>();
+    public List<Mascota>? Mascotas { get; set; } = new List<Mascota>();
 
     // Datos personales
     [Required(ErrorMessage = "El nombre es obligatorio.")]
@@ -42,6 +42,7 @@ public class Dueno
     public string PostalCode { get; set; }
     public string City { get; set; }
     public string Comentarios { get; set; }
+    public List<LogEntry> Historial { get; set; } = new();
 
     // Estado de la app y notificaciones
     public StatusApp StatusApp { get; set; } = StatusApp.Activo;
