@@ -5,8 +5,7 @@ namespace SocioWeb.Domain.Entities;
 
 public class Dueno
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    
     public String Id { get; set; }
 
     // Relación con Clinica

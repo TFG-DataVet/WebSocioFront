@@ -5,8 +5,7 @@ namespace SocioWeb.Domain.Entities;
 public class Clinica
 {
     // Identificador único de la clínica (PK)
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         public long Id_Clinica { get; set; } 
 
         

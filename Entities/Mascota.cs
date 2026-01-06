@@ -5,8 +5,7 @@ namespace SocioWeb.Domain.Entities;
 
 public class Mascota
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    
     public String IdMascota { get; set; }
 
     // Relaciones
