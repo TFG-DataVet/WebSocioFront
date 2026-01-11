@@ -100,7 +100,7 @@
                             <RadzenText Text="@dueno.Street"/>
 
                             <RadzenText Text="📝 Notas" Style="font-weight:600; margin-top:10px;"/>
-                            <RadzenText Text="@dueno.Comentarios"/>
+                            <RadzenText Text="@dueno.Coments"/>
                         </RadzenColumn>
                     </RadzenRow>
                 </RadzenStack>
@@ -108,7 +108,7 @@
                 <!-- MASCOTAS -->
                 @if (mascotasVisibles.Contains(dueno.Id))
                 {
-                    @foreach (var mascota in dueno.Mascotas)
+                    @foreach (var mascota in dueno.Pet)
                     {
                         <RadzenCard Style="
                                     margin:20px;
@@ -127,7 +127,7 @@
                                               Size="60px"/>
 
                                 <RadzenStack Gap="2">
-                                    <RadzenText Text="@mascota.Nombre"
+                                    <RadzenText Text="@mascota.Name"
                                                 Style="font-size:20px; font-weight:600;"/>
                                     <RadzenText Text="@($"Mascota de {dueno.Name}")"
                                                 Style="font-size:13px; opacity:0.9;"/>
@@ -138,16 +138,16 @@
                                 <RadzenRow>
                                     <RadzenColumn Size="6">
                                         <RadzenText Text="🐾 Especie" Style="font-weight:600;"/>
-                                        <RadzenText Text="@mascota.Especie"/>
+                                        <RadzenText Text="@mascota.Specie"/>
 
                                         <RadzenText Text="🐶 Raza"
                                                     Style="font-weight:600; margin-top:10px;"/>
-                                        <RadzenText Text="@mascota.Raza"/>
+                                        <RadzenText Text="@mascota.Breed"/>
                                     </RadzenColumn>
 
                                     <RadzenColumn Size="6">
                                         <RadzenText Text="🎂 Edad" Style="font-weight:600;"/>
-                                        <RadzenText Text="@($"{mascota.Edad} años")"/>
+                                        <RadzenText Text="@($"{mascota.Age} años")"/>
                                     </RadzenColumn>
                                 </RadzenRow>
                             </RadzenStack>
@@ -185,23 +185,23 @@
             Street = "Av. Siempre Viva 742",
             City = "Madrid",
             PostalCode = "28001",
-            Comentarios = "Cliente frecuente",
+            Coments = "Cliente frecuente",
             CreatedAt = new DateTime(2020, 5, 10),
-            Mascotas = new List<Mascota>
+            Pet = new List<Domain.Entities.Pet>
             {
-                new Mascota
+                new Domain.Entities.Pet
                 {
-                    Nombre = "Rocky",
-                    Especie = "Perro",
-                    Raza = "Labrador",
-                    Edad = 5
+                    Name = "Rocky",
+                    Specie = "Perro",
+                    Breed = "Labrador",
+                    Age = 5
                 },
-                new Mascota
+                new Domain.Entities.Pet
                 {
-                    Nombre = "Luna",
-                    Especie = "Gato",
-                    Raza = "Siames",
-                    Edad = 3
+                    Name = "Luna",
+                    Specie = "Gato",
+                    Breed = "Siames",
+                    Age = 3
                 }
             }
         };
@@ -215,16 +215,16 @@
             Street = "Calle Falsa 123",
             City = "Barcelona",
             PostalCode = "08001",
-            Comentarios = "Nueva cliente",
+            Coments = "Nueva cliente",
             CreatedAt = new DateTime(2022, 3, 15),
-            Mascotas = new List<Mascota>
+            Pet = new List<Domain.Entities.Pet>
             {
-                new Mascota
+                new Domain.Entities.Pet
                 {
-                    Nombre = "Michi",
-                    Especie = "Gato",
-                    Raza = "Criollo",
-                    Edad = 2
+                    Name = "Michi",
+                    Specie = "Gato",
+                    Breed = "Criollo",
+                    Age = 2
                 }
             }
         };

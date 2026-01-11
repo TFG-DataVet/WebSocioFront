@@ -1,10 +1,10 @@
 ﻿@page "/Citas"
 
 <RadzenText Text="Citas"/>
-@cita.Id
+@_appointment.Id
 
 @code {
-    Cita cita = new Cita();
+    Appointment _appointment = new Appointment();
 
     void OnChange(string value, string name)
     {

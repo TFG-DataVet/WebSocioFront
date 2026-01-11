@@ -68,7 +68,7 @@
                             <RadzenStack Gap="2">
                                 <RadzenLink Path="@($"/PerfilProducto/{producto.Id}")"
                                             Style="text-decoration:none;">
-                                    <RadzenText Text="@producto.Nombre"
+                                    <RadzenText Text="@producto.Name"
                                                 Style="font-size:22px;
                                        font-weight:600;
                                        color:white;
@@ -77,7 +77,7 @@
                                        box-shadow:none;"/>
                                 </RadzenLink>
 
-                                <RadzenText Text="@producto.Categoria"
+                                <RadzenText Text="@producto.Category"
                                             Style="opacity:0.9;
                                    font-size:13px;
                                    color:white;
@@ -88,7 +88,7 @@
 
                         </RadzenStack>
 
-                        <RadzenText Text="@($"{producto.Precio:C}")"
+                        <RadzenText Text="@($"{producto.Price:C}")"
                                     Style="font-size:20px; font-weight:600;"/>
                     </RadzenStack>
 
@@ -99,7 +99,7 @@
                             <RadzenColumn Size="6">
                                 <RadzenStack Gap="6">
                                     <RadzenLabel Text="🏷 Marca:" Style="font-weight:600;"/>
-                                    <RadzenText Text="@producto.Marca"/>
+                                    <RadzenText Text="@producto.Brand"/>
 
                                     <RadzenLabel Text="📦 Stock:" Style="font-weight:600;"/>
                                     <RadzenText Text="@producto.Stock.ToString()"/>
@@ -112,7 +112,7 @@
                                     <RadzenText Text="@producto.CreatedAt.ToShortDateString()"/>
 
                                     <RadzenLabel Text="📝 Descripción:" Style="font-weight:600;"/>
-                                    <RadzenText Text="@producto.Descripcion"/>
+                                    <RadzenText Text="@producto.Description"/>
                                 </RadzenStack>
                             </RadzenColumn>
 
@@ -143,23 +143,23 @@
             new Producto
             {
                 Id = "1",
-                Nombre = "Alimento Premium Perro",
-                Categoria = "Alimentos",
-                Marca = "DogPlus",
-                Precio = 29.99m,
+                Name = "Alimento Premium Perro",
+                Category = "Alimentos",
+                Brand = "DogPlus",
+                Price = 29.99m,
                 Stock = 15,
-                Descripcion = "Bolsa 10kg alimento balanceado",
+                Description = "Bolsa 10kg alimento balanceado",
                 CreatedAt = new DateTime(2023, 1, 10)
             },
             new Producto
             {
                 Id = "2",
-                Nombre = "Arena para Gato",
-                Categoria = "Higiene",
-                Marca = "CatClean",
-                Precio = 12.50m,
+                Name = "Arena para Gato",
+                Category = "Higiene",
+                Brand = "CatClean",
+                Price = 12.50m,
                 Stock = 5,
-                Descripcion = "Arena aglomerante",
+                Description = "Arena aglomerante",
                 CreatedAt = new DateTime(2024, 2, 5)
             }
         };
@@ -175,9 +175,9 @@
                 (!fechaDesde.HasValue || p.CreatedAt >= fechaDesde) &&
                 (!fechaHasta.HasValue || p.CreatedAt <= fechaHasta) &&
                 (string.IsNullOrEmpty(filtroCategoria) ||
-                 p.Categoria.Contains(filtroCategoria, StringComparison.OrdinalIgnoreCase)) &&
+                 p.Category.Contains(filtroCategoria, StringComparison.OrdinalIgnoreCase)) &&
                 (string.IsNullOrEmpty(filtroMarca) ||
-                 p.Marca.Contains(filtroMarca, StringComparison.OrdinalIgnoreCase)) &&
+                 p.Brand.Contains(filtroMarca, StringComparison.OrdinalIgnoreCase)) &&
                 (!stockMinimo.HasValue || p.Stock >= stockMinimo)
             )
             .ToList();

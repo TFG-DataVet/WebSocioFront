@@ -59,10 +59,10 @@
 
                             <RadzenStack Gap="2">
                                 <RadzenText 
-                                    Text="@mascota.Nombre"
+                                    Text="@mascota.Name"
                                     Style="font-size:22px; font-weight:600;"/>
                                 <RadzenText 
-                                    Text="@mascota.Especie"
+                                    Text="@mascota.Specie"
                                     Style="opacity:0.9; font-size:13px;"/>
                             </RadzenStack>
                         </RadzenStack>
@@ -85,13 +85,13 @@
                                     Text="🐾 Raza"
                                     Style="font-weight:600;"/>
                                 <RadzenText 
-                                    Text="@mascota.Raza"/>
+                                    Text="@mascota.Breed"/>
 
                                 <RadzenText 
                                     Text="🎂 Edad"
                                     Style="font-weight:600; margin-top:10px;"/>
                                 <RadzenText 
-                                    Text="@($"{mascota.Edad} años")"/>
+                                    Text="@($"{mascota.Age} años")"/>
                             </RadzenColumn>
 
                             <RadzenColumn Size="6">
@@ -99,7 +99,7 @@
                                     Text="⚖️ Peso"
                                     Style="font-weight:600;"/>
                                 
-                                <RadzenText Text="@($"{mascota.Peso} kg")"/>
+                                <RadzenText Text="@($"{mascota.Weight} kg")"/>
                             </RadzenColumn>
                         </RadzenRow>
                     </RadzenStack>
@@ -158,8 +158,8 @@
     
 @code {
 
-    List<Mascota> mascotas = new();
-    List<Mascota> mascotasFiltradas = new();
+    List<Domain.Entities.Pet> mascotas = new();
+    List<Domain.Entities.Pet> mascotasFiltradas = new();
 
     string filtroNombre = "";
     string filtroEspecie = "";
@@ -186,26 +186,26 @@
             Street = "Calle Falsa 123"
         };
 
-        mascotas = new List<Mascota>
+        mascotas = new List<Domain.Entities.Pet>
         {
-            new Mascota
+            new Domain.Entities.Pet
             {
                 Id = "M1",
-                Nombre = "Rocky",
-                Especie = "Perro",
-                Raza = "Labrador",
-                Edad = 5,
-                Peso = 28,
+                Name = "Rocky",
+                Specie = "Perro",
+                Breed = "Labrador",
+                Age = 5,
+                Weight = 28,
                 Dueno = dueno1
             },
-            new Mascota
+            new Domain.Entities.Pet
             {
                 Id = "M2",
-                Nombre = "Michi",
-                Especie = "Gato",
-                Raza = "Siames",
-                Edad = 3,
-                Peso = 6,
+                Name = "Michi",
+                Specie = "Gato",
+                Breed = "Siames",
+                Age = 3,
+                Weight = 6,
                 Dueno = dueno2
             }
         };
@@ -218,9 +218,9 @@
         mascotasFiltradas = mascotas
             .Where(m =>
                 (string.IsNullOrEmpty(filtroNombre) ||
-                 m.Nombre.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase)) &&
+                 m.Name.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase)) &&
                 (string.IsNullOrEmpty(filtroEspecie) ||
-                 m.Especie.Contains(filtroEspecie, StringComparison.OrdinalIgnoreCase))
+                 m.Specie.Contains(filtroEspecie, StringComparison.OrdinalIgnoreCase))
             )
             .ToList();
     }

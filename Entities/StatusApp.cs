@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public enum StatusApp
 {
-    Activo,
-    Inactivo,
-    Suspendido
+    Active,
+    Inactive,
+    Stop
 }
