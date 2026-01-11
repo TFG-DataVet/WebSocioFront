@@ -1,8 +1,6 @@
 ﻿@page "/DuenoFormulario"
 @inject NavigationManager Nav
 
-
-
 <RadzenStack Gap="20px" Style="max-width:900px; margin:auto;">
     <RadzenText Text="¡Queremos conocerte!"
                 Style="color:#4b3e48; font-weight:bold;"
@@ -75,8 +73,6 @@
     </EditForm>
 </RadzenStack>
 
-
-
 @code {
     private Dueno dueno = new();
 
@@ -90,5 +86,4 @@
     {
         Nav.NavigateTo("/create-pet");
     }
-
 }

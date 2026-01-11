@@ -58,38 +58,47 @@
                                           Style="border:3px solid white;"/>
 
                             <RadzenStack Gap="2">
-                                <RadzenText Text="@mascota.Nombre"
-                                            Style="font-size:22px; font-weight:600;"/>
-                                <RadzenText Text="@mascota.Especie"
-                                            Style="opacity:0.9; font-size:13px;"/>
+                                <RadzenText 
+                                    Text="@mascota.Nombre"
+                                    Style="font-size:22px; font-weight:600;"/>
+                                <RadzenText 
+                                    Text="@mascota.Especie"
+                                    Style="opacity:0.9; font-size:13px;"/>
                             </RadzenStack>
                         </RadzenStack>
 
                         <!-- BOTÓN DUEÑO -->
-                        <RadzenButton Icon="person"
-                                      Text="Dueño"
-                                      ButtonStyle="ButtonStyle.Light"
-                                      Style="background:transparent; color:white;"
-                                      Click="@(() => ToggleDueno(mascota.Id))"
-                                      @onclick:stopPropagation="true"/>
+                        <RadzenButton 
+                            Icon="person"
+                            Text="Dueño"
+                            ButtonStyle="ButtonStyle.Light"
+                            Style="background:transparent; color:white;"
+                            Click="@(() => ToggleDueno(mascota.Id))"
+                            @onclick:stopPropagation="true"/>
                     </RadzenStack>
 
                     <!-- INFO MASCOTA -->
                     <RadzenStack Style="padding:20px;">
                         <RadzenRow>
                             <RadzenColumn Size="6">
-                                <RadzenText Text="🐾 Raza"
-                                            Style="font-weight:600;"/>
-                                <RadzenText Text="@mascota.Raza"/>
+                                <RadzenText 
+                                    Text="🐾 Raza"
+                                    Style="font-weight:600;"/>
+                                <RadzenText 
+                                    Text="@mascota.Raza"/>
 
-                                <RadzenText Text="🎂 Edad"
-                                            Style="font-weight:600; margin-top:10px;"/>
-                                <RadzenText Text="@($"{mascota.Edad} años")"/>
+                                <RadzenText 
+                                    Text="🎂 Edad"
+                                    Style="font-weight:600; margin-top:10px;"/>
+                                <RadzenText 
+                                    Text="@($"{mascota.Edad} años")"/>
                             </RadzenColumn>
 
                             <RadzenColumn Size="6">
-                                <RadzenText Text="⚖️ Peso"
-                                            Style="font-weight:600;"/>
+                                <RadzenText 
+                                    Text="⚖️ Peso"
+                                    Style="font-weight:600;"/>
+                                
                                 <RadzenText Text="@($"{mascota.Peso} kg")"/>
                             </RadzenColumn>
                         </RadzenRow>

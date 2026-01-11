@@ -1,11 +1,12 @@
 ﻿@page "/login"
 
-<RadzenStack Orientation="Orientation.Vertical" Gap="1rem" Reverse="false"
+<RadzenStack Orientation="Orientation.Vertical" Gap="1rem" 
              JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center"
              Wrap="FlexWrap.Wrap" Style="min-height: 100vh;">
 
-    <RadzenText TextStyle="TextStyle.DisplayH1"
-                Style="color: var(--color-primary); text-align:center; font-weight:bold;">
+    <RadzenText 
+        TextStyle="TextStyle.DisplayH1"
+        Style="color: var(--color-primary); text-align:center; font-weight:bold;">
         Bienvenido a DataVet
     </RadzenText>
 
@@ -30,11 +31,6 @@
          class="login-top-image"/>
 
 </RadzenStack>
-
-
-
-
-
 
 @code {
     string username;
