@@ -9,26 +9,27 @@
             JustifyContent="JustifyContent.SpaceBetween"
             Gap="0"
             class="rz-pr-6">
-            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded )"/>
+            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)"/>
             <RadzenText Text="Header" TagName="TagName.H5" TextStyle="TextStyle.H6"/>
-            <RadzenButton Text="@(isDarkMode ? "🌞" : "🌙")" Click="@ToggleTheme" Variant="Variant.Filled" class="theme-toggle"/>
+            <RadzenButton Text="@(isDarkMode ? "🌞" : "🌙")" Click="@ToggleTheme" Variant="Variant.Filled"
+                          class="theme-toggle"/>
         </RadzenStack>
     </RadzenHeader>
-    
+
     <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
         <NavBar/>
     </RadzenSidebar>
-    
+
     <RadzenBody>
         @Body
     </RadzenBody>
 
-    <RadzenSidebar Position="SidebarPosition.Right" >
+    <RadzenSidebar Position="SidebarPosition.Right">
         <div class="rz-p-4" Style="min-width: 70px; width: 30vw; max-width: 300px;">
             Right Sidebar
         </div>
     </RadzenSidebar>
-    
+
 </RadzenLayout>
 
 
@@ -42,7 +43,6 @@
     {
         if (firstRender)
         {
-           
             await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", "light");
         }
     }
@@ -53,5 +53,6 @@
         var theme = isDarkMode ? "dark" : "light";
         await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", theme);
     }
+
 }
 

@@ -1,0 +1,176 @@
+﻿@page "/PerfilProducto/{Id}"
+@inject NavigationManager Nav
+
+<RadzenCard>
+
+    <!-- CABECERA -->
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 Gap="25"
+                 AlignItems="AlignItems.Center"
+                 Style="margin-bottom:30px;">
+
+        <RadzenCard Style="
+                    width:120px;
+                    height:120px;
+                    border-radius:50%;
+                    background:#d9d9d9;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:50px;
+                    color:#6c6c6c;">
+            📦
+        </RadzenCard>
+
+        <RadzenStack Gap="5">
+            <RadzenText Text="@producto.Nombre"
+                        Style="font-size:24px; font-weight:600; color:#333;"/>
+            <RadzenText Text="Producto registrado"
+                        Style="color:#777;"/>
+
+            @if (!isEditing)
+            {
+                <RadzenButton Text="Editar producto"
+                              Icon="edit"
+                              Style="border-radius:10px;"
+                              Click="@(() => isEditing = true)"/>
+            }
+            else
+            {
+                <RadzenButton Text="Cancelar"
+                              Icon="close"
+                              ButtonStyle="ButtonStyle.Danger"
+                              Style="border-radius:10px;"
+                              Click="@Cancelar"/>
+            }
+        </RadzenStack>
+    </RadzenStack>
+
+    <!-- INFORMACIÓN DEL PRODUCTO -->
+    <RadzenText Text="Información del producto"
+                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
+    <RadzenRow Gap="25">
+        <RadzenColumn Size="6">@Campo("Nombre", producto.Nombre, v => producto.Nombre = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Categoría", producto.Categoria, v => producto.Categoria = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Marca", producto.Marca, v => producto.Marca = v)</RadzenColumn>
+        <RadzenColumn
+            Size="6">@Campo("Precio", producto.Precio.ToString(), v => producto.Precio = decimal.Parse(v))</RadzenColumn>
+        <RadzenColumn
+            Size="6">@Campo("Stock", producto.Stock.ToString(), v => producto.Stock = int.Parse(v))</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Estado", producto.Activo ? "Activo" : "Inactivo", null)</RadzenColumn>
+        <RadzenColumn
+            Size="12">@Campo("Descripción", producto.Descripcion, v => producto.Descripcion = v)</RadzenColumn>
+    </RadzenRow>
+
+    <RadzenDivider Style="margin:30px 0;"/>
+
+    <!-- AUDITORÍA -->
+    <RadzenText Text="Registro del sistema"
+                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
+    <RadzenRow Gap="25">
+        <RadzenColumn Size="6">
+            @Campo("Creado el", producto.CreatedAt.ToLocalTime().ToString(), null)
+        </RadzenColumn>
+        <RadzenColumn Size="6">
+            @Campo("Última actualización", producto.UpdatedAt?.ToLocalTime().ToString(), null)
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenDivider Style="margin:30px 0;"/>
+
+    <!-- HISTORIAL -->
+    <RadzenText Text="Historial"
+                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
+    @if (producto.Historial != null && producto.Historial.Any())
+    {
+        <RadzenDataList Data="@producto.Historial" TItem="LogEntry">
+            <Template Context="log">
+                <RadzenCard Style="margin-bottom:10px;">
+                    <RadzenText Text="@($"{log.Fecha.ToLocalTime():g} - {log.Descripcion}")"/>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+    }
+    else
+    {
+        <RadzenText Text="Sin historial registrado"
+                    Style="font-style:italic; color:#777;"/>
+    }
+
+    @if (isEditing)
+    {
+        <RadzenStack AlignItems="AlignItems.End" Style="margin-top:30px;">
+            <RadzenButton Text="Guardar cambios"
+                          Icon="save"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Style="background:#4b3e48; color:white; border-radius:10px;"
+                          Click="@Guardar"/>
+        </RadzenStack>
+    }
+
+</RadzenCard>
+
+@code {
+
+    [Parameter] public string Id { get; set; }
+
+    bool isEditing = false;
+
+    Producto producto = new Producto
+    {
+        Id = "1",
+        Nombre = "Alimento Premium Perro",
+        Categoria = "Alimentos",
+        Marca = "DogPlus",
+        Precio = 29.99m,
+        Stock = 15,
+        Activo = true,
+        Descripcion = "Bolsa 10kg alimento balanceado",
+        CreatedAt = DateTime.UtcNow.AddMonths(-3),
+        UpdatedAt = DateTime.UtcNow,
+        Historial = new List<LogEntry>
+        {
+            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-10), Descripcion = "Producto creado" },
+            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-2), Descripcion = "Actualización de stock" }
+        }
+    };
+
+    void Guardar()
+    {
+        producto.UpdatedAt = DateTime.UtcNow;
+        isEditing = false;
+    }
+
+    void Cancelar()
+    {
+        isEditing = false;
+    }
+
+    RenderFragment Campo(string label, string valor, Action<string>? onChange) => __builder =>
+    {
+        <RadzenStack Gap="5">
+            <RadzenText Text="@label" Style="color:#777;"/>
+
+            @if (!isEditing)
+            {
+                <RadzenText Text="@valor"
+                            Style="font-size:18px; color:#333;"/>
+            }
+            else if (onChange != null)
+            {
+                <RadzenTextBox Value="@valor"
+                               Change="@(e => onChange(e.ToString()))"
+                               Style="width:100%; background:white; border-radius:10px;"/>
+            }
+            else
+            {
+                <RadzenText Text="@valor"
+                            Style="font-size:18px; color:#333;"/>
+            }
+        </RadzenStack>
+        ;
+    };
+}

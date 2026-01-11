@@ -1,42 +1,185 @@
-﻿@page "/productos"
+﻿@page "/Productos"
+@inject NavigationManager Nav
 
-<RadzenLayout>
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
-            <RadzenText> Header </RadzenText>
-        </RadzenStack>
-    </RadzenHeader>
+<!-- ================= FILTROS ================= -->
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 Gap="10"
+                 Style="padding:10px 20px">
 
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
-        <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/home"/>
-            <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/Duenos"/>
-            <RadzenPanelMenuItem Text="Mascotas" Icon="pets" Path="/mascotas"/>
-            <RadzenPanelMenuItem Text="Citas" Icon="event_note" Path="/citas"/>
-            <RadzenPanelMenuItem Text="Productos" Icon="store" Path="/productos"/>
-            <RadzenPanelMenuItem Text="Calendario" Icon="event" Path="/calendario"/>
-        </RadzenPanelMenu>
-        <div class="rz-p-4">
-            Sidebar
-        </div>
-    </RadzenSidebar>
-    <RadzenBody>
-        
-        <h3>productos</h3>
-       
-    </RadzenBody>
-    
-</RadzenLayout>
+        <RadzenText Text="Productos" TextStyle="TextStyle.H5"/>
 
+        <RadzenDatePicker @bind-Value="fechaDesde"
+                          Placeholder="Desde"
+                          Style="width:160px"/>
+
+        <RadzenDatePicker @bind-Value="fechaHasta"
+                          Placeholder="Hasta"
+                          Style="width:160px"/>
+
+        <RadzenTextBox @bind-Value="filtroCategoria"
+                       Placeholder="Categoría"
+                       Style="width:150px"/>
+
+        <RadzenTextBox @bind-Value="filtroMarca"
+                       Placeholder="Marca"
+                       Style="width:150px"/>
+
+        <RadzenNumeric @bind-Value="stockMinimo"
+                       Placeholder="Stock mín."
+                       Style="width:120px"/>
+
+        <RadzenButton Icon="filter_alt"
+                      Text="Filtrar"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Click="@AplicarFiltros"/>
+    </RadzenStack>
+
+<!-- ================= TABLA ================= -->
+
+    <RadzenRow>
+        <RadzenColumn Size="12">
+
+            @foreach (var producto in productosFiltrados)
+            {
+                <RadzenCard Style="margin-bottom:30px;
+                                       border-radius:16px;
+                                       box-shadow:0 4px 20px rgba(0,0,0,0.1);
+                                       overflow:hidden;
+                                       cursor:pointer;"
+                            Click="@(() => Nav.NavigateTo($"/PerfilProducto/{producto.Id}"))">
+
+                    <!-- HEADER PRODUCTO -->
+                    <RadzenStack Orientation="Orientation.Horizontal"
+                                 AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.SpaceBetween"
+                                 Style="padding:20px;
+                                            background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                                            color:white;">
+
+                        <RadzenStack Orientation="Orientation.Horizontal"
+                                     AlignItems="AlignItems.Center"
+                                     Gap="15">
+
+                            <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/679/679720.png"
+                                          Size="70px"
+                                          Style="border:3px solid white;"/>
+
+                            <RadzenStack Gap="2">
+                                <RadzenLink Path="@($"/PerfilProducto/{producto.Id}")"
+                                            Style="text-decoration:none;">
+                                    <RadzenText Text="@producto.Nombre"
+                                                Style="font-size:22px;
+                                       font-weight:600;
+                                       color:white;
+                                       background:transparent;
+                                       padding:0;
+                                       box-shadow:none;"/>
+                                </RadzenLink>
+
+                                <RadzenText Text="@producto.Categoria"
+                                            Style="opacity:0.9;
+                                   font-size:13px;
+                                   color:white;
+                                   background:transparent;
+                                   padding:0;"/>
+
+                            </RadzenStack>
+
+                        </RadzenStack>
+
+                        <RadzenText Text="@($"{producto.Precio:C}")"
+                                    Style="font-size:20px; font-weight:600;"/>
+                    </RadzenStack>
+
+                    <!-- INFO PRODUCTO -->
+                    <RadzenStack Style="padding:20px;">
+                        <RadzenRow>
+
+                            <RadzenColumn Size="6">
+                                <RadzenStack Gap="6">
+                                    <RadzenLabel Text="🏷 Marca:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.Marca"/>
+
+                                    <RadzenLabel Text="📦 Stock:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.Stock.ToString()"/>
+                                </RadzenStack>
+                            </RadzenColumn>
+
+                            <RadzenColumn Size="6">
+                                <RadzenStack Gap="6">
+                                    <RadzenLabel Text="📅 Alta:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.CreatedAt.ToShortDateString()"/>
+
+                                    <RadzenLabel Text="📝 Descripción:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.Descripcion"/>
+                                </RadzenStack>
+                            </RadzenColumn>
+
+                        </RadzenRow>
+                    </RadzenStack>
+
+                </RadzenCard>
+            }
+        </RadzenColumn>
+    </RadzenRow>
 
 @code {
 
-    bool sidebar1Expanded = true;
+    List<Producto> productos = new();
+    List<Producto> productosFiltrados = new();
 
-    void OnChange(string value, string name)
+    DateTime? fechaDesde;
+    DateTime? fechaHasta;
+
+    string filtroCategoria = "";
+    string filtroMarca = "";
+    int? stockMinimo;
+
+    protected override void OnInitialized()
     {
+        productos = new List<Producto>
+        {
+            new Producto
+            {
+                Id = "1",
+                Nombre = "Alimento Premium Perro",
+                Categoria = "Alimentos",
+                Marca = "DogPlus",
+                Precio = 29.99m,
+                Stock = 15,
+                Descripcion = "Bolsa 10kg alimento balanceado",
+                CreatedAt = new DateTime(2023, 1, 10)
+            },
+            new Producto
+            {
+                Id = "2",
+                Nombre = "Arena para Gato",
+                Categoria = "Higiene",
+                Marca = "CatClean",
+                Precio = 12.50m,
+                Stock = 5,
+                Descripcion = "Arena aglomerante",
+                CreatedAt = new DateTime(2024, 2, 5)
+            }
+        };
 
+        productos = productos.OrderBy(p => p.CreatedAt).ToList();
+        productosFiltrados = productos;
     }
 
+    void AplicarFiltros()
+    {
+        productosFiltrados = productos
+            .Where(p =>
+                (!fechaDesde.HasValue || p.CreatedAt >= fechaDesde) &&
+                (!fechaHasta.HasValue || p.CreatedAt <= fechaHasta) &&
+                (string.IsNullOrEmpty(filtroCategoria) ||
+                 p.Categoria.Contains(filtroCategoria, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filtroMarca) ||
+                 p.Marca.Contains(filtroMarca, StringComparison.OrdinalIgnoreCase)) &&
+                (!stockMinimo.HasValue || p.Stock >= stockMinimo)
+            )
+            .ToList();
+    }
 }

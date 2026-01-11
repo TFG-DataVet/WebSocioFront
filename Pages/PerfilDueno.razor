@@ -1,120 +1,174 @@
-﻿@page "/PerfilDueno"
-@using SocioWeb.Domain.Entities
+﻿@page "/PerfilDueno/{Id}"
 @inject NavigationManager Nav
 
-<RadzenLayout>
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
-            <RadzenText> Header </RadzenText>
-        </RadzenStack>
-    </RadzenHeader>
+<RadzenCard>
 
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
-        <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/home" />
-            <RadzenPanelMenuItem Text="Dueños" Icon="account_box" Path="/Duenos" />
-            <RadzenPanelMenuItem Text="Mascotas" Icon="pets" Path="/mascotas" />
-            <RadzenPanelMenuItem Text="Citas" Icon="event_note" Path="/citas" />
-            <RadzenPanelMenuItem Text="Productos" Icon="store" Path="/productos" />
-            <RadzenPanelMenuItem Text="Calendario" Icon="event" Path="/calendario" />
-        </RadzenPanelMenu>
-    </RadzenSidebar>
+    <!-- CABECERA -->
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 Gap="25"
+                 AlignItems="AlignItems.Center"
+                 Style="margin-bottom:30px;">
 
-    <RadzenBody>
-        <RadzenCard>
-
-            <!-- Cabecera -->
-            <div style="display:flex; gap:25px; align-items:center; margin-bottom:30px;">
-
-                <div style="
-                    width:120px; height:120px; border-radius:50%;
-                    background:#d9d9d9; display:flex; align-items:center;
-                    justify-content:center; font-size:50px; color:#6c6c6c;">
-                    🐶
-                </div>
-
-                <div>
-                    <h2 style="margin:0; color:#333;">@dueno.Name @dueno.LastName</h2>
-                    <h4 style="margin:5px 0; color:#777;">Dueño registrado</h4>
-
-                    @if (!isEditing)
-                    {
-                        <RadzenButton Text="Editar perfil" Icon="edit"
-                                      Style="margin-right:10px; border-radius:10px;"
-                                      Click="@(() => isEditing = true)" />
-                    }
-                    else
-                    {
-                        <RadzenButton Text="Cancelar" Icon="close"
-                                      Style="margin-right:10px; border-radius:10px;"
-                                      ButtonStyle="ButtonStyle.Danger"
-                                      Click="@Cancelar" />
-                    }
-
-                    <RadzenButton Text="Ver mascotas" Icon="pets"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Style="border-radius:10px; background:#4b3e48; color:white;"
-                                  Click="@VerMascotas" />
-                </div>
-            </div>
-
-            <!-- Datos personales -->
-            <h3 style="color:#4b3e48; margin-bottom:20px;">Información personal</h3>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px; padding:10px;">
-
-                @Campo("Nombre", dueno.Name, v => dueno.Name = v)
-                @Campo("Apellido", dueno.LastName, v => dueno.LastName = v)
-                @Campo("Número Identificación", dueno.IdentificationNumber, v => dueno.IdentificationNumber = v)
-                @Campo("Email", dueno.Email, v => dueno.Email = v)
-                @Campo("Teléfono", dueno.Phone, v => dueno.Phone = v)
-
-                @Campo("Calle", dueno.Street, v => dueno.Street = v)
-                @Campo("Código Postal", dueno.PostalCode, v => dueno.PostalCode = v)
-                @Campo("Ciudad", dueno.City, v => dueno.City = v)
-
-                @Campo("Estado de la app", dueno.StatusApp.ToString(), null)
-                @Campo("Comentarios", dueno.Comentarios,v => dueno.Comentarios = v)
-               
-
-            </div>
-
-            <hr style="margin:30px 0;" />
-
-            <!-- Auditoría -->
-            <h3 style="color:#4b3e48; margin-bottom:20px;">Registro del sistema</h3>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px;">
-                @Campo("Creado el", dueno.CreatedAt.ToLocalTime().ToString(), null)
-                @Campo("Última actualización", dueno.UpdatedAt?.ToLocalTime().ToString(), null)
-            </div>
-
-            @if (isEditing)
-            {
-                <div style="margin-top:30px; text-align:right;">
-                    <RadzenButton Text="Guardar cambios"
-                                  Icon="save"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Style="background:#4b3e48; color:white; border-radius:10px;"
-                                  Click="@Guardar" />
-                </div>
-            }
-
+        <RadzenCard Style="
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            background:#d9d9d9;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:50px;
+            color:#6c6c6c;">
+            🐶
         </RadzenCard>
-    </RadzenBody>
 
-</RadzenLayout>
+        <RadzenStack Gap="5">
+            <RadzenText Text="@($"{dueno.Name} {dueno.LastName}")"
+                        Style="font-size:24px; font-weight:600; color:#333;"/>
+            <RadzenText Text="Dueño registrado"
+                        Style="color:#777;"/>
+
+            @if (!isEditing)
+            {
+                <RadzenButton Text="Editar perfil"
+                              Icon="edit"
+                              Style="border-radius:10px;"
+                              Click="@(() => isEditing = true)"/>
+            }
+            else
+            {
+                <RadzenButton Text="Cancelar"
+                              Icon="close"
+                              ButtonStyle="ButtonStyle.Danger"
+                              Style="border-radius:10px;"
+                              Click="@Cancelar"/>
+            }
+        </RadzenStack>
+    </RadzenStack>
+
+    <!-- INFORMACIÓN PERSONAL -->
+    <RadzenText
+        Text="Información personal"
+        Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+    
+    <RadzenRow Gap="25">
+        <RadzenColumn Size="6">@Campo("Nombre", dueno.Name, v => dueno.Name = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Apellido", dueno.LastName, v => dueno.LastName = v)</RadzenColumn>
+        <RadzenColumn
+            Size="6">@Campo("Número Identificación", dueno.IdentificationNumber, v => dueno.IdentificationNumber = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Email", dueno.Email, v => dueno.Email = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Teléfono", dueno.Phone, v => dueno.Phone = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Calle", dueno.Street, v => dueno.Street = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Código Postal", dueno.PostalCode, v => dueno.PostalCode = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Ciudad", dueno.City, v => dueno.City = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Estado de la app", dueno.StatusApp.ToString(), null)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Comentarios", dueno.Comentarios, v => dueno.Comentarios = v)</RadzenColumn>
+    </RadzenRow>
+
+    <RadzenDivider Style="margin:30px 0;"/>
+
+    <!-- AUDITORÍA -->
+    <RadzenText 
+        Text="Registro del sistema"
+        Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
+    <RadzenRow Gap="25">
+        <RadzenColumn Size="6">
+            @Campo("Creado el", dueno.CreatedAt.ToLocalTime().ToString(), null)
+        </RadzenColumn>
+        <RadzenColumn Size="6">
+            @Campo("Última actualización", dueno.UpdatedAt?.ToLocalTime().ToString(), null)
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenDivider Style="margin:30px 0;"/>
+
+    <!-- MASCOTAS -->
+    <RadzenText 
+        Text="Mascotas"
+        Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
+    @if (dueno.Mascotas != null && dueno.Mascotas.Any())
+    {
+        <RadzenCarousel Style="height:250px;">
+            @foreach (var mascota in dueno.Mascotas)
+            {
+                <RadzenCard Style="width:220px; margin:10px; cursor:pointer;"
+                            Click="@(() => Nav.NavigateTo($"/Mascota/{mascota.Id}"))">
+
+                    <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png"
+                                  Size="60px"
+                                  Style="margin-bottom:10px;"/>
+
+                    <RadzenText Text="@mascota.Nombre" Style="font-weight:600;"/>
+                    <RadzenText Text="@($"Especie: {mascota.Especie}")"
+                                Style="font-size:12px; opacity:0.8;"/>
+                    <RadzenText Text="@($"Raza: {mascota.Raza}")"
+                                Style="font-size:12px; opacity:0.8;"/>
+                    <RadzenText Text="@($"{mascota.Edad} años")"
+                                Style="font-size:12px; opacity:0.8;"/>
+                </RadzenCard>
+            }
+        </RadzenCarousel>
+    }
+    else
+    {
+        <RadzenText 
+            Text="Sin mascotas registradas"
+            Style="font-style:italic; color:#777;"/>
+    }
+
+    <RadzenDivider Style="margin:30px 0;"/>
+
+    <!-- HISTORIAL -->
+    <RadzenText 
+        Text="Historial"
+        Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
+    @if (dueno.Historial != null && dueno.Historial.Any())
+    {
+        <RadzenDataList Data="@dueno.Historial" TItem="LogEntry">
+            <Template Context="log">
+                <RadzenCard Style="margin-bottom:10px;">
+                    <RadzenText Text="@($"{log.Fecha.ToLocalTime():g} - {log.Descripcion}")"/>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+    }
+    else
+    {
+        <RadzenText 
+            Text="Sin historial registrado"
+            Style="font-style:italic; color:#777;"/>
+    }
+
+    @if (isEditing)
+    {
+        <RadzenStack AlignItems="AlignItems.End" Style="margin-top:30px;">
+            <RadzenButton 
+                Text="Guardar cambios"
+                Icon="save"
+                ButtonStyle="ButtonStyle.Primary"
+                Style="background:#4b3e48; color:white; border-radius:10px;"
+                Click="@Guardar"/>
+            
+        </RadzenStack>
+    }
+
+</RadzenCard>
+
+
 
 @code {
 
-    bool sidebar1Expanded = true;
+    [Parameter] public string Id { get; set; }
     bool isEditing = false;
 
-    Dueno dueno = new()
+    // Datos de prueba usando tipos del dominio
+    Dueno dueno = new Dueno
     {
-        Name = "Manolo",
-        LastName = "Jiménez",
+        Name = "Juan",
+        LastName = "Pérez",
         IdentificationNumber = "12345678X",
         Email = "carlos@email.com",
         Phone = "555-123456",
@@ -124,55 +178,54 @@
         Comentarios = "",
         StatusApp = StatusApp.Activo,
         CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow
+        UpdatedAt = DateTime.UtcNow,
+        Mascotas = new List<Mascota>
+        {
+            new Mascota { Id = "1", Nombre = "Rocky", Especie = "Perro", Raza = "Labrador", Edad = 3 },
+            new Mascota { Id = "2", Nombre = "Luna", Especie = "Gato", Raza = "Siames", Edad = 2 }
+        },
+        Historial = new List<LogEntry>
+        {
+            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-3), Descripcion = "Creación de perfil" },
+            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-1), Descripcion = "Actualización de email" }
+        }
     };
-
-    void VerMascotas()
-    {
-        Nav.NavigateTo("/dueno/1/mascotas");
-    }
 
     void Guardar()
     {
-        // Aquí guardarías los cambios en DB
         dueno.UpdatedAt = DateTime.UtcNow;
         isEditing = false;
     }
 
     void Cancelar()
     {
-        // Si quieres: recargar datos desde la BD
         isEditing = false;
     }
 
-
-    // ⬇️ Componente reutilizable Campo()
+    // Componente reutilizable para mostrar/editar campos
     RenderFragment Campo(string label, string valor, Action<string>? onChange) => __builder =>
     {
-        <div>
-            <label style="color:#777;">@label</label>
+        <RadzenStack Gap="5">
+            <RadzenText Text="@label" Style="color:#777;"/>
 
             @if (!isEditing)
             {
-                <div style="font-size:18px; color:#333;">
-                    @valor
-                    <RadzenIcon Icon="edit" Style="font-size:18px; color:#aaa; margin-left:8px;" />
-
-                </div>
+                <RadzenText Text="@valor"
+                            Style="font-size:18px; color:#333;"/>
+            }
+            else if (onChange != null)
+            {
+                <RadzenTextBox Value="@valor"
+                               Change="@(e => onChange(e.ToString()))"
+                               Style="width:100%; background:white; border-radius:10px;"/>
             }
             else
             {
-                if (onChange != null)
-                {
-                    <RadzenTextBox Value="@valor"
-                                   Change="@(e => onChange(e.ToString()))"
-                                   Style="width:100%; background:white; border-radius:10px;" />
-                }
-                else
-                {
-                    <div style="font-size:18px; color:#333;">@valor</div>
-                }
+                <RadzenText Text="@valor"
+                            Style="font-size:18px; color:#333;"/>
             }
-        </div>;
+        </RadzenStack>
+        ;
     };
+
 }
