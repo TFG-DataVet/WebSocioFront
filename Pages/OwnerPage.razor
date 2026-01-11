@@ -106,7 +106,7 @@
                 </RadzenStack>
 
                 <!-- MASCOTAS -->
-                @if (VisiblePets.Contains(dueno.Id))
+                @if (visiblePets.Contains(dueno.Id))
                 {
                     @foreach (var mascota in dueno.Pet)
                     {
@@ -172,11 +172,11 @@
     string CityFilter = "";
     string PostalCodeFilter = "";
 
-    HashSet<string> VisiblePets = new();
+    HashSet<string> visiblePets = new();
 
     protected override void OnInitialized()
     {
-        var dueno1 = new Domain.Entities.Owner
+        var dueno1 = new Owner
         {
             Id = "1",
             Name = "Juan Pérez",
@@ -206,7 +206,7 @@
             }
         };
 
-        var dueno2 = new Domain.Entities.Owner
+        var dueno2 = new Owner
         {
             Id = "2",
             Name = "María López",
@@ -229,7 +229,7 @@
             }
         };
 
-        Owners = new List<Domain.Entities.Owner> { dueno1, dueno2 };
+        Owners = new List<Owner> { dueno1, dueno2 };
 
         // Orden inicial
         Owners = Owners.OrderBy(d => d.CreatedAt).ToList();
@@ -252,10 +252,10 @@
 
     void TogglePets(string duenoId)
     {
-        if (VisiblePets.Contains(duenoId))
-            VisiblePets.Remove(duenoId);
+        if (visiblePets.Contains(duenoId))
+            visiblePets.Remove(duenoId);
         else
-            VisiblePets.Add(duenoId);
+            visiblePets.Add(duenoId);
     }
 }
 

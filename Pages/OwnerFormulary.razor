@@ -67,7 +67,7 @@
                           ButtonType="ButtonType.Submit"/>
             <RadzenButton Text="Añadir Mascota ➜"
                           Style="width:140px; border-radius:20px; background:#4b3e48; color:white;"
-                          Click="@GoNewPet"/>
+                          Click="@navigateToNewPet"/>
         </RadzenStack>
 
     </EditForm>
@@ -82,7 +82,7 @@
         Nav.NavigateTo("/confirmacion");
     }
 
-    private void GoNewPet()
+    private void navigateToNewPet()
     {
         Nav.NavigateTo("/create-pet");
     }

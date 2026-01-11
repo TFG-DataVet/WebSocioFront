@@ -33,7 +33,7 @@
         @foreach (var mascota in mascotasFiltradas)
         {
             <!-- DIV envolvente para capturar el click -->
-            <div style="cursor:pointer;" @onclick="@(() => goPetProfile(mascota.Id))">
+            <div style="cursor:pointer;" @onclick="@(() => NavigateToPetProfile(mascota.Id))">
 
                 <RadzenCard Style="
                             margin-bottom:30px;
@@ -178,7 +178,7 @@
             Street = "Av. Siempre Viva 742"
         };
 
-        var dueno2 = new Domain.Entities.Owner
+        var dueno2 = new Owner
         {
             Id = "2",
             Name = "María López",
@@ -226,16 +226,16 @@
             .ToList();
     }
 
-    void ToggleOwners(string mascotaId)
+    void ToggleOwners(string petId)
     {
-        if (VisibleOwners.Contains(mascotaId))
-            VisibleOwners.Remove(mascotaId);
+        if (VisibleOwners.Contains(petId))
+            VisibleOwners.Remove(petId);
         else
-            VisibleOwners.Add(mascotaId);
+            VisibleOwners.Add(petId);
     }
 
-    void goPetProfile(string mascotaId)
+    void NavigateToPetProfile(string petId)
     {
-        Nav.NavigateTo($"/PerfilMascota/{mascotaId}");
+        Nav.NavigateTo($"/PerfilMascota/{petId}");
     }
 }

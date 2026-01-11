@@ -12,8 +12,7 @@ public class Owner
     // Relación con Clinica
     [Required(ErrorMessage = "La clínica es obligatoria.")]
     public string IdClinic { get; set; }
-
-    [ForeignKey("IdClinic")]
+    
     public Clinic? Clinic { get; set; }
 
     // Relación con Mascotas

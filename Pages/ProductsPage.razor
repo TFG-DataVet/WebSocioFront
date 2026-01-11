@@ -32,7 +32,7 @@
         <RadzenButton Icon="filter_alt"
                       Text="Filtrar"
                       ButtonStyle="ButtonStyle.Primary"
-                      Click="@AplyFilters"/>
+                      Click="@ApplyFilters"/>
     </RadzenStack>
 
 <!-- ================= TABLA ================= -->
@@ -168,7 +168,7 @@
         productFilter = products;
     }
 
-    void AplyFilters()
+    void ApplyFilters()
     {
         productFilter = products
             .Where(p =>
