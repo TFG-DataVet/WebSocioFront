@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace SocioWeb.Domain.Entities;
 
-public class Clinica
+public class Clinic
 {
     // Identificador único de la clínica (PK)
         
@@ -11,11 +11,11 @@ public class Clinica
         
         [Required(ErrorMessage = "El nombre de la clínica es obligatorio.")]
         [StringLength(100, ErrorMessage = "El nombre no puede exceder 100 caracteres.")]
-        public string Nombre { get; set; } = string.Empty; 
+        public string Name { get; set; } = string.Empty; 
 
         // Razón Social (Importante para facturación)
         [Required(ErrorMessage = "La Razón Social es obligatoria.")]
-        public string Razon_Social { get; set; } = string.Empty; 
+        public string Legal_Name { get; set; } = string.Empty; 
 
         // Identificación fiscal (CIF/NIF)
         [Required(ErrorMessage = "El CIF/NIF es obligatorio.")]
@@ -23,21 +23,21 @@ public class Clinica
         public string Cif_Nif { get; set; } = string.Empty; 
 
         // Dirección y Ubicación
-        public string? Direccion { get; set; } 
-        public string? Ciudad { get; set; } 
-        public string? Codigo_Postal { get; set; } 
+        public string? Address { get; set; } 
+        public string? City { get; set; } 
+        public string? Postal_Code { get; set; } 
 
         // Contacto
-        public string? Telefono { get; set; } 
+        public string? Phone { get; set; } 
         
         [EmailAddress(ErrorMessage = "Formato de email inválido.")]
-        public string? Email_Contacto { get; set; } 
+        public string? Contact_Mail { get; set; } 
 
         // Branding
         public string? Logo_Url { get; set; } 
-        public string? Horario_Atencion { get; set; } 
+        public string? Attention_time { get; set; } 
         
         // Estado del SaaS (Suscripción)
-        public string? Estado_Suscripcion { get; set; } = "Activo"; 
+        public string? Subscription_State { get; set; } = "Activo"; 
         
     }

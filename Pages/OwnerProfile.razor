@@ -23,7 +23,7 @@
         </RadzenCard>
 
         <RadzenStack Gap="5">
-            <RadzenText Text="@($"{dueno.Name} {dueno.LastName}")"
+            <RadzenText Text="@($"{_owner.Name} {_owner.LastName}")"
                         Style="font-size:24px; font-weight:600; color:#333;"/>
             <RadzenText Text="Dueño registrado"
                         Style="color:#777;"/>
@@ -52,17 +52,17 @@
         Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
     
     <RadzenRow Gap="25">
-        <RadzenColumn Size="6">@Campo("Nombre", dueno.Name, v => dueno.Name = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Apellido", dueno.LastName, v => dueno.LastName = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Nombre", _owner.Name, v => _owner.Name = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Apellido", _owner.LastName, v => _owner.LastName = v)</RadzenColumn>
         <RadzenColumn
-            Size="6">@Campo("Número Identificación", dueno.IdentificationNumber, v => dueno.IdentificationNumber = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Email", dueno.Email, v => dueno.Email = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Teléfono", dueno.Phone, v => dueno.Phone = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Calle", dueno.Street, v => dueno.Street = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Código Postal", dueno.PostalCode, v => dueno.PostalCode = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Ciudad", dueno.City, v => dueno.City = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Estado de la app", dueno.StatusApp.ToString(), null)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Comentarios", dueno.Comentarios, v => dueno.Comentarios = v)</RadzenColumn>
+            Size="6">@Campo("Número Identificación", _owner.IdentificationNumber, v => _owner.IdentificationNumber = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Email", _owner.Email, v => _owner.Email = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Teléfono", _owner.Phone, v => _owner.Phone = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Calle", _owner.Street, v => _owner.Street = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Código Postal", _owner.PostalCode, v => _owner.PostalCode = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Ciudad", _owner.City, v => _owner.City = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Estado de la app", _owner.StatusApp.ToString(), null)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Comentarios", _owner.Coments, v => _owner.Coments = v)</RadzenColumn>
     </RadzenRow>
 
     <RadzenDivider Style="margin:30px 0;"/>
@@ -74,10 +74,10 @@
 
     <RadzenRow Gap="25">
         <RadzenColumn Size="6">
-            @Campo("Creado el", dueno.CreatedAt.ToLocalTime().ToString(), null)
+            @Campo("Creado el", _owner.CreatedAt.ToLocalTime().ToString(), null)
         </RadzenColumn>
         <RadzenColumn Size="6">
-            @Campo("Última actualización", dueno.UpdatedAt?.ToLocalTime().ToString(), null)
+            @Campo("Última actualización", _owner.UpdatedAt?.ToLocalTime().ToString(), null)
         </RadzenColumn>
     </RadzenRow>
 
@@ -88,10 +88,10 @@
         Text="Mascotas"
         Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
 
-    @if (dueno.Mascotas != null && dueno.Mascotas.Any())
+    @if (_owner.Pet != null && _owner.Pet.Any())
     {
         <RadzenCarousel Style="height:250px;">
-            @foreach (var mascota in dueno.Mascotas)
+            @foreach (var mascota in _owner.Pet)
             {
                 <RadzenCard Style="width:220px; margin:10px; cursor:pointer;"
                             Click="@(() => Nav.NavigateTo($"/Mascota/{mascota.Id}"))">
@@ -100,12 +100,12 @@
                                   Size="60px"
                                   Style="margin-bottom:10px;"/>
 
-                    <RadzenText Text="@mascota.Nombre" Style="font-weight:600;"/>
-                    <RadzenText Text="@($"Especie: {mascota.Especie}")"
+                    <RadzenText Text="@mascota.Name" Style="font-weight:600;"/>
+                    <RadzenText Text="@($"Especie: {mascota.Specie}")"
                                 Style="font-size:12px; opacity:0.8;"/>
-                    <RadzenText Text="@($"Raza: {mascota.Raza}")"
+                    <RadzenText Text="@($"Raza: {mascota.Breed}")"
                                 Style="font-size:12px; opacity:0.8;"/>
-                    <RadzenText Text="@($"{mascota.Edad} años")"
+                    <RadzenText Text="@($"{mascota.Age} años")"
                                 Style="font-size:12px; opacity:0.8;"/>
                 </RadzenCard>
             }
@@ -125,12 +125,12 @@
         Text="Historial"
         Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
 
-    @if (dueno.Historial != null && dueno.Historial.Any())
+    @if (_owner.Historic != null && _owner.Historic.Any())
     {
-        <RadzenDataList Data="@dueno.Historial" TItem="LogEntry">
+        <RadzenDataList Data="@_owner.Historic" TItem="LogEntry">
             <Template Context="log">
                 <RadzenCard Style="margin-bottom:10px;">
-                    <RadzenText Text="@($"{log.Fecha.ToLocalTime():g} - {log.Descripcion}")"/>
+                    <RadzenText Text="@($"{log.Date.ToLocalTime():g} - {log.Description}")"/>
                 </RadzenCard>
             </Template>
         </RadzenDataList>
@@ -165,7 +165,7 @@
     bool isEditing = false;
 
     // Datos de prueba usando tipos del dominio
-    Dueno dueno = new Dueno
+    Owner _owner = new Owner
     {
         Name = "Juan",
         LastName = "Pérez",
@@ -175,25 +175,25 @@
         Street = "Calle Mayor 22",
         PostalCode = "28001",
         City = "Madrid",
-        Comentarios = "",
-        StatusApp = StatusApp.Activo,
+        Coments = "",
+        StatusApp = StatusApp.Active,
         CreatedAt = DateTime.UtcNow,
         UpdatedAt = DateTime.UtcNow,
-        Mascotas = new List<Mascota>
+        Pet = new List<Pet>
         {
-            new Mascota { Id = "1", Nombre = "Rocky", Especie = "Perro", Raza = "Labrador", Edad = 3 },
-            new Mascota { Id = "2", Nombre = "Luna", Especie = "Gato", Raza = "Siames", Edad = 2 }
+            new Pet { Id = "1", Name = "Rocky", Specie = "Perro", Breed = "Labrador", Age = 3 },
+            new Pet { Id = "2", Name = "Luna", Specie = "Gato", Breed = "Siames", Age = 2 }
         },
-        Historial = new List<LogEntry>
+        Historic = new List<LogEntry>
         {
-            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-3), Descripcion = "Creación de perfil" },
-            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-1), Descripcion = "Actualización de email" }
+            new LogEntry { Date = DateTime.UtcNow.AddDays(-3), Description = "Creación de perfil" },
+            new LogEntry { Date = DateTime.UtcNow.AddDays(-1), Description = "Actualización de email" }
         }
     };
 
     void Guardar()
     {
-        dueno.UpdatedAt = DateTime.UtcNow;
+        _owner.UpdatedAt = DateTime.UtcNow;
         isEditing = false;
     }
 

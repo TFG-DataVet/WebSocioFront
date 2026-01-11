@@ -20,7 +20,7 @@
             </RadzenRow>
 
             @* Formulario *@
-            <RadzenTemplateForm TItem="RegisterPetForm" Data="@FormData" Submit="@GuardarDatos">
+            <RadzenTemplateForm TItem="RegisterPetForm" Data="@FormData" Submit="@OnlySave">
 
                 @* Primera Fila *@
                 <RadzenRow class="rz-mb-3">
@@ -274,7 +274,7 @@
             <RadzenButton
                 ButtonStyle="ButtonStyle.Primary"
                 Text="Añadir mascota"
-                Click="@GuardarYNavegar"
+                Click="@SaveAndNav"
                 Style="margin:auto"/>
 
 
@@ -285,7 +285,7 @@
 
 @code {
 
-    async Task GuardarYNavegar()
+    async Task SaveAndNav()
     {
         // 1️⃣ Guardar datos (lo que tengas en pantalla)
         // await PetService.SavePet(pet);
@@ -294,7 +294,7 @@
         Nav.NavigateTo("/create-pet");
     }
 
-    async Task GuardarDatos()
+    async Task OnlySave()
     {
         // Aquí llamas a tu servicio o API
         // EJEMPLO:

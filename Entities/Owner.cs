@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SocioWeb.Entities;
 
 namespace SocioWeb.Domain.Entities;
 
-public class Dueno
+public class Owner
 {
     
     public string Id { get; set; }
@@ -11,12 +12,11 @@ public class Dueno
     // Relación con Clinica
     [Required(ErrorMessage = "La clínica es obligatoria.")]
     public string IdClinic { get; set; }
-
-    [ForeignKey("IdClinic")]
-    public Clinica? Clinic { get; set; }
+    
+    public Clinic? Clinic { get; set; }
 
     // Relación con Mascotas
-    public List<Mascota>? Mascotas { get; set; } = new List<Mascota>();
+    public List<Pet> Pet { get; set; } = new List<Pet>();
 
     // Datos personales
     [Required(ErrorMessage = "El nombre es obligatorio.")]
@@ -40,11 +40,11 @@ public class Dueno
     public string Street { get; set; }
     public string PostalCode { get; set; }
     public string City { get; set; }
-    public string Comentarios { get; set; }
-    public List<LogEntry> Historial { get; set; } = new();
+    public string Coments { get; set; }
+    public List<LogEntry> Historic { get; set; } = new();
 
     // Estado de la app y notificaciones
-    public StatusApp StatusApp { get; set; } = StatusApp.Activo;
+    public StatusApp StatusApp { get; set; } = StatusApp.Active;
     public AcceptedNotification AcceptedNotification { get; set; } = AcceptedNotification.Ninguna;
 
     // Auditoría

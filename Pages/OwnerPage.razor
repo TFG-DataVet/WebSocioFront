@@ -12,19 +12,19 @@
 
     <RadzenText Text="Dueños" TextStyle="TextStyle.H5"/>
 
-    <RadzenDatePicker @bind-Value="fechaDesde"
+    <RadzenDatePicker @bind-Value="DateSince"
                       Placeholder="Desde"
                       Style="width:160px"/>
 
-    <RadzenDatePicker @bind-Value="fechaHasta"
+    <RadzenDatePicker @bind-Value="DateTo"
                       Placeholder="Hasta"
                       Style="width:160px"/>
 
-    <RadzenTextBox @bind-Value="filtroCiudad"
+    <RadzenTextBox @bind-Value="CityFilter"
                    Placeholder="Ciudad"
                    Style="width:150px"/>
 
-    <RadzenTextBox @bind-Value="filtroCodigoPostal"
+    <RadzenTextBox @bind-Value="PostalCodeFilter"
                    Placeholder="Código Postal"
                    Style="width:120px"/>
 
@@ -39,7 +39,7 @@
 <RadzenRow>
     <RadzenColumn Size="12">
 
-        @foreach (var dueno in duenosFiltrados)
+        @foreach (var dueno in FilterOwner)
         {
             <RadzenCard Style="
                         margin-bottom:30px;
@@ -81,7 +81,7 @@
                     <RadzenButton Icon="more_vert"
                                   ButtonStyle="ButtonStyle.Light"
                                   Style="background:transparent; color:white;"
-                                  Click="@(() => ToggleMascotas(dueno.Id))"/>
+                                  Click="@(() => TogglePets(dueno.Id))"/>
                 </RadzenStack>
 
                 <!-- INFO DUEÑO -->
@@ -100,15 +100,15 @@
                             <RadzenText Text="@dueno.Street"/>
 
                             <RadzenText Text="📝 Notas" Style="font-weight:600; margin-top:10px;"/>
-                            <RadzenText Text="@dueno.Comentarios"/>
+                            <RadzenText Text="@dueno.Coments"/>
                         </RadzenColumn>
                     </RadzenRow>
                 </RadzenStack>
 
                 <!-- MASCOTAS -->
-                @if (mascotasVisibles.Contains(dueno.Id))
+                @if (visiblePets.Contains(dueno.Id))
                 {
-                    @foreach (var mascota in dueno.Mascotas)
+                    @foreach (var mascota in dueno.Pet)
                     {
                         <RadzenCard Style="
                                     margin:20px;
@@ -127,7 +127,7 @@
                                               Size="60px"/>
 
                                 <RadzenStack Gap="2">
-                                    <RadzenText Text="@mascota.Nombre"
+                                    <RadzenText Text="@mascota.Name"
                                                 Style="font-size:20px; font-weight:600;"/>
                                     <RadzenText Text="@($"Mascota de {dueno.Name}")"
                                                 Style="font-size:13px; opacity:0.9;"/>
@@ -138,16 +138,16 @@
                                 <RadzenRow>
                                     <RadzenColumn Size="6">
                                         <RadzenText Text="🐾 Especie" Style="font-weight:600;"/>
-                                        <RadzenText Text="@mascota.Especie"/>
+                                        <RadzenText Text="@mascota.Specie"/>
 
                                         <RadzenText Text="🐶 Raza"
                                                     Style="font-weight:600; margin-top:10px;"/>
-                                        <RadzenText Text="@mascota.Raza"/>
+                                        <RadzenText Text="@mascota.Breed"/>
                                     </RadzenColumn>
 
                                     <RadzenColumn Size="6">
                                         <RadzenText Text="🎂 Edad" Style="font-weight:600;"/>
-                                        <RadzenText Text="@($"{mascota.Edad} años")"/>
+                                        <RadzenText Text="@($"{mascota.Age} años")"/>
                                     </RadzenColumn>
                                 </RadzenRow>
                             </RadzenStack>
@@ -163,20 +163,20 @@
 
 @code {
 
-    List<Dueno> duenos = new();
-    List<Dueno> duenosFiltrados = new();
+    List<Owner> Owners = new();
+    List<Owner> FilterOwner = new();
 
-    DateTime? fechaDesde;
-    DateTime? fechaHasta;
+    DateTime? DateSince;
+    DateTime? DateTo;
 
-    string filtroCiudad = "";
-    string filtroCodigoPostal = "";
+    string CityFilter = "";
+    string PostalCodeFilter = "";
 
-    HashSet<string> mascotasVisibles = new();
+    HashSet<string> visiblePets = new();
 
     protected override void OnInitialized()
     {
-        var dueno1 = new Dueno
+        var dueno1 = new Owner
         {
             Id = "1",
             Name = "Juan Pérez",
@@ -185,28 +185,28 @@
             Street = "Av. Siempre Viva 742",
             City = "Madrid",
             PostalCode = "28001",
-            Comentarios = "Cliente frecuente",
+            Coments = "Cliente frecuente",
             CreatedAt = new DateTime(2020, 5, 10),
-            Mascotas = new List<Mascota>
+            Pet = new List<Pet>()
             {
-                new Mascota
+                new Pet
                 {
-                    Nombre = "Rocky",
-                    Especie = "Perro",
-                    Raza = "Labrador",
-                    Edad = 5
+                    Name = "Rocky",
+                    Specie = "Perro",
+                    Breed = "Labrador",
+                    Age = 5
                 },
-                new Mascota
+                new Pet
                 {
-                    Nombre = "Luna",
-                    Especie = "Gato",
-                    Raza = "Siames",
-                    Edad = 3
+                    Name = "Luna",
+                    Specie = "Gato",
+                    Breed = "Siames",
+                    Age = 3
                 }
             }
         };
 
-        var dueno2 = new Dueno
+        var dueno2 = new Owner
         {
             Id = "2",
             Name = "María López",
@@ -215,47 +215,47 @@
             Street = "Calle Falsa 123",
             City = "Barcelona",
             PostalCode = "08001",
-            Comentarios = "Nueva cliente",
+            Coments = "Nueva cliente",
             CreatedAt = new DateTime(2022, 3, 15),
-            Mascotas = new List<Mascota>
+            Pet = new List<Pet>
             {
-                new Mascota
+                new Pet
                 {
-                    Nombre = "Michi",
-                    Especie = "Gato",
-                    Raza = "Criollo",
-                    Edad = 2
+                    Name = "Michi",
+                    Specie = "Gato",
+                    Breed = "Criollo",
+                    Age = 2
                 }
             }
         };
 
-        duenos = new List<Dueno> { dueno1, dueno2 };
+        Owners = new List<Owner> { dueno1, dueno2 };
 
         // Orden inicial
-        duenos = duenos.OrderBy(d => d.CreatedAt).ToList();
-        duenosFiltrados = duenos;
+        Owners = Owners.OrderBy(d => d.CreatedAt).ToList();
+        FilterOwner = Owners;
     }
 
     void AplicarFiltros()
     {
-        duenosFiltrados = duenos
+        FilterOwner = Owners
             .Where(d =>
-                (!fechaDesde.HasValue || d.CreatedAt >= fechaDesde) &&
-                (!fechaHasta.HasValue || d.CreatedAt <= fechaHasta) &&
-                (string.IsNullOrEmpty(filtroCiudad) ||
-                 d.City.Contains(filtroCiudad, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filtroCodigoPostal) ||
-                 d.PostalCode.Contains(filtroCodigoPostal, StringComparison.OrdinalIgnoreCase))
+                (!DateSince.HasValue || d.CreatedAt >= DateSince) &&
+                (!DateTo.HasValue || d.CreatedAt <= DateTo) &&
+                (string.IsNullOrEmpty(CityFilter) ||
+                 d.City.Contains(CityFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(PostalCodeFilter) ||
+                 d.PostalCode.Contains(PostalCodeFilter, StringComparison.OrdinalIgnoreCase))
             )
             .ToList();
     }
 
-    void ToggleMascotas(string duenoId)
+    void TogglePets(string duenoId)
     {
-        if (mascotasVisibles.Contains(duenoId))
-            mascotasVisibles.Remove(duenoId);
+        if (visiblePets.Contains(duenoId))
+            visiblePets.Remove(duenoId);
         else
-            mascotasVisibles.Add(duenoId);
+            visiblePets.Add(duenoId);
     }
 }
 

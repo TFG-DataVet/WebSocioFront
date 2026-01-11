@@ -9,30 +9,30 @@
 
         <RadzenText Text="Productos" TextStyle="TextStyle.H5"/>
 
-        <RadzenDatePicker @bind-Value="fechaDesde"
+        <RadzenDatePicker @bind-Value="dateSince"
                           Placeholder="Desde"
                           Style="width:160px"/>
 
-        <RadzenDatePicker @bind-Value="fechaHasta"
+        <RadzenDatePicker @bind-Value="dateTo"
                           Placeholder="Hasta"
                           Style="width:160px"/>
 
-        <RadzenTextBox @bind-Value="filtroCategoria"
+        <RadzenTextBox @bind-Value="CategoryFilter"
                        Placeholder="Categoría"
                        Style="width:150px"/>
 
-        <RadzenTextBox @bind-Value="filtroMarca"
+        <RadzenTextBox @bind-Value="BrandFilter"
                        Placeholder="Marca"
                        Style="width:150px"/>
 
-        <RadzenNumeric @bind-Value="stockMinimo"
+        <RadzenNumeric @bind-Value="minimunStock"
                        Placeholder="Stock mín."
                        Style="width:120px"/>
 
         <RadzenButton Icon="filter_alt"
                       Text="Filtrar"
                       ButtonStyle="ButtonStyle.Primary"
-                      Click="@AplicarFiltros"/>
+                      Click="@ApplyFilters"/>
     </RadzenStack>
 
 <!-- ================= TABLA ================= -->
@@ -40,7 +40,7 @@
     <RadzenRow>
         <RadzenColumn Size="12">
 
-            @foreach (var producto in productosFiltrados)
+            @foreach (var producto in productFilter)
             {
                 <RadzenCard Style="margin-bottom:30px;
                                        border-radius:16px;
@@ -68,7 +68,7 @@
                             <RadzenStack Gap="2">
                                 <RadzenLink Path="@($"/PerfilProducto/{producto.Id}")"
                                             Style="text-decoration:none;">
-                                    <RadzenText Text="@producto.Nombre"
+                                    <RadzenText Text="@producto.Name"
                                                 Style="font-size:22px;
                                        font-weight:600;
                                        color:white;
@@ -77,7 +77,7 @@
                                        box-shadow:none;"/>
                                 </RadzenLink>
 
-                                <RadzenText Text="@producto.Categoria"
+                                <RadzenText Text="@producto.Category"
                                             Style="opacity:0.9;
                                    font-size:13px;
                                    color:white;
@@ -88,7 +88,7 @@
 
                         </RadzenStack>
 
-                        <RadzenText Text="@($"{producto.Precio:C}")"
+                        <RadzenText Text="@($"{producto.Price:C}")"
                                     Style="font-size:20px; font-weight:600;"/>
                     </RadzenStack>
 
@@ -99,7 +99,7 @@
                             <RadzenColumn Size="6">
                                 <RadzenStack Gap="6">
                                     <RadzenLabel Text="🏷 Marca:" Style="font-weight:600;"/>
-                                    <RadzenText Text="@producto.Marca"/>
+                                    <RadzenText Text="@producto.Brand"/>
 
                                     <RadzenLabel Text="📦 Stock:" Style="font-weight:600;"/>
                                     <RadzenText Text="@producto.Stock.ToString()"/>
@@ -112,7 +112,7 @@
                                     <RadzenText Text="@producto.CreatedAt.ToShortDateString()"/>
 
                                     <RadzenLabel Text="📝 Descripción:" Style="font-weight:600;"/>
-                                    <RadzenText Text="@producto.Descripcion"/>
+                                    <RadzenText Text="@producto.Description"/>
                                 </RadzenStack>
                             </RadzenColumn>
 
@@ -126,59 +126,59 @@
 
 @code {
 
-    List<Producto> productos = new();
-    List<Producto> productosFiltrados = new();
+    List<Product> products = new();
+    List<Product> productFilter = new();
 
-    DateTime? fechaDesde;
-    DateTime? fechaHasta;
+    DateTime? dateSince;
+    DateTime? dateTo;
 
-    string filtroCategoria = "";
-    string filtroMarca = "";
-    int? stockMinimo;
+    string CategoryFilter = "";
+    string BrandFilter = "";
+    int? minimunStock;
 
     protected override void OnInitialized()
     {
-        productos = new List<Producto>
+        products = new List<Product>
         {
-            new Producto
+            new Product
             {
                 Id = "1",
-                Nombre = "Alimento Premium Perro",
-                Categoria = "Alimentos",
-                Marca = "DogPlus",
-                Precio = 29.99m,
+                Name = "Alimento Premium Perro",
+                Category = "Alimentos",
+                Brand = "DogPlus",
+                Price = 29.99m,
                 Stock = 15,
-                Descripcion = "Bolsa 10kg alimento balanceado",
+                Description = "Bolsa 10kg alimento balanceado",
                 CreatedAt = new DateTime(2023, 1, 10)
             },
-            new Producto
+            new Product
             {
                 Id = "2",
-                Nombre = "Arena para Gato",
-                Categoria = "Higiene",
-                Marca = "CatClean",
-                Precio = 12.50m,
+                Name = "Arena para Gato",
+                Category = "Higiene",
+                Brand = "CatClean",
+                Price = 12.50m,
                 Stock = 5,
-                Descripcion = "Arena aglomerante",
+                Description = "Arena aglomerante",
                 CreatedAt = new DateTime(2024, 2, 5)
             }
         };
 
-        productos = productos.OrderBy(p => p.CreatedAt).ToList();
-        productosFiltrados = productos;
+        products = products.OrderBy(p => p.CreatedAt).ToList();
+        productFilter = products;
     }
 
-    void AplicarFiltros()
+    void ApplyFilters()
     {
-        productosFiltrados = productos
+        productFilter = products
             .Where(p =>
-                (!fechaDesde.HasValue || p.CreatedAt >= fechaDesde) &&
-                (!fechaHasta.HasValue || p.CreatedAt <= fechaHasta) &&
-                (string.IsNullOrEmpty(filtroCategoria) ||
-                 p.Categoria.Contains(filtroCategoria, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filtroMarca) ||
-                 p.Marca.Contains(filtroMarca, StringComparison.OrdinalIgnoreCase)) &&
-                (!stockMinimo.HasValue || p.Stock >= stockMinimo)
+                (!dateSince.HasValue || p.CreatedAt >= dateSince) &&
+                (!dateTo.HasValue || p.CreatedAt <= dateTo) &&
+                (string.IsNullOrEmpty(CategoryFilter) ||
+                 p.Category.Contains(CategoryFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(BrandFilter) ||
+                 p.Brand.Contains(BrandFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (!minimunStock.HasValue || p.Stock >= minimunStock)
             )
             .ToList();
     }

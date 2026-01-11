@@ -23,7 +23,7 @@
         </RadzenCard>
 
         <RadzenStack Gap="5">
-            <RadzenText Text="@producto.Nombre"
+            <RadzenText Text="@_product.Name"
                         Style="font-size:24px; font-weight:600; color:#333;"/>
             <RadzenText Text="Producto registrado"
                         Style="color:#777;"/>
@@ -41,7 +41,7 @@
                               Icon="close"
                               ButtonStyle="ButtonStyle.Danger"
                               Style="border-radius:10px;"
-                              Click="@Cancelar"/>
+                              Click="@Cancel"/>
             }
         </RadzenStack>
     </RadzenStack>
@@ -51,16 +51,16 @@
                 Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
 
     <RadzenRow Gap="25">
-        <RadzenColumn Size="6">@Campo("Nombre", producto.Nombre, v => producto.Nombre = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Categoría", producto.Categoria, v => producto.Categoria = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Marca", producto.Marca, v => producto.Marca = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Nombre", _product.Name, v => _product.Name = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Categoría", _product.Category, v => _product.Category = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Marca", _product.Brand, v => _product.Brand = v)</RadzenColumn>
         <RadzenColumn
-            Size="6">@Campo("Precio", producto.Precio.ToString(), v => producto.Precio = decimal.Parse(v))</RadzenColumn>
+            Size="6">@Campo("Precio", _product.Price.ToString(), v => _product.Price = decimal.Parse(v))</RadzenColumn>
         <RadzenColumn
-            Size="6">@Campo("Stock", producto.Stock.ToString(), v => producto.Stock = int.Parse(v))</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Estado", producto.Activo ? "Activo" : "Inactivo", null)</RadzenColumn>
+            Size="6">@Campo("Stock", _product.Stock.ToString(), v => _product.Stock = int.Parse(v))</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Estado", _product.Active ? "Activo" : "Inactivo", null)</RadzenColumn>
         <RadzenColumn
-            Size="12">@Campo("Descripción", producto.Descripcion, v => producto.Descripcion = v)</RadzenColumn>
+            Size="12">@Campo("Descripción", _product.Description, v => _product.Description = v)</RadzenColumn>
     </RadzenRow>
 
     <RadzenDivider Style="margin:30px 0;"/>
@@ -71,10 +71,10 @@
 
     <RadzenRow Gap="25">
         <RadzenColumn Size="6">
-            @Campo("Creado el", producto.CreatedAt.ToLocalTime().ToString(), null)
+            @Campo("Creado el", _product.CreatedAt.ToLocalTime().ToString(), null)
         </RadzenColumn>
         <RadzenColumn Size="6">
-            @Campo("Última actualización", producto.UpdatedAt?.ToLocalTime().ToString(), null)
+            @Campo("Última actualización", _product.UpdatedAt?.ToLocalTime().ToString(), null)
         </RadzenColumn>
     </RadzenRow>
 
@@ -84,12 +84,12 @@
     <RadzenText Text="Historial"
                 Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
 
-    @if (producto.Historial != null && producto.Historial.Any())
+    @if (_product.Historical != null && _product.Historical.Any())
     {
-        <RadzenDataList Data="@producto.Historial" TItem="LogEntry">
+        <RadzenDataList Data="@_product.Historical" TItem="LogEntry">
             <Template Context="log">
                 <RadzenCard Style="margin-bottom:10px;">
-                    <RadzenText Text="@($"{log.Fecha.ToLocalTime():g} - {log.Descripcion}")"/>
+                    <RadzenText Text="@($"{log.Date.ToLocalTime():g} - {log.Description}")"/>
                 </RadzenCard>
             </Template>
         </RadzenDataList>
@@ -107,7 +107,7 @@
                           Icon="save"
                           ButtonStyle="ButtonStyle.Primary"
                           Style="background:#4b3e48; color:white; border-radius:10px;"
-                          Click="@Guardar"/>
+                          Click="@Save"/>
         </RadzenStack>
     }
 
@@ -119,32 +119,32 @@
 
     bool isEditing = false;
 
-    Producto producto = new Producto
+    Product _product = new Product
     {
         Id = "1",
-        Nombre = "Alimento Premium Perro",
-        Categoria = "Alimentos",
-        Marca = "DogPlus",
-        Precio = 29.99m,
+        Name = "Alimento Premium Perro",
+        Category = "Alimentos",
+        Brand = "DogPlus",
+        Price = 29.99m,
         Stock = 15,
-        Activo = true,
-        Descripcion = "Bolsa 10kg alimento balanceado",
+        Active = true,
+        Description = "Bolsa 10kg alimento balanceado",
         CreatedAt = DateTime.UtcNow.AddMonths(-3),
         UpdatedAt = DateTime.UtcNow,
-        Historial = new List<LogEntry>
+        Historical = new List<LogEntry>
         {
-            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-10), Descripcion = "Producto creado" },
-            new LogEntry { Fecha = DateTime.UtcNow.AddDays(-2), Descripcion = "Actualización de stock" }
+            new LogEntry { Date = DateTime.UtcNow.AddDays(-10), Description = "Producto creado" },
+            new LogEntry { Date = DateTime.UtcNow.AddDays(-2), Description = "Actualización de stock" }
         }
     };
 
-    void Guardar()
+    void Save()
     {
-        producto.UpdatedAt = DateTime.UtcNow;
+        _product.UpdatedAt = DateTime.UtcNow;
         isEditing = false;
     }
 
-    void Cancelar()
+    void Cancel()
     {
         isEditing = false;
     }
