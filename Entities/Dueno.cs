@@ -10,7 +10,7 @@ public class Dueno
 
     // Relación con Clinica
     [Required(ErrorMessage = "La clínica es obligatoria.")]
-    public long IdClinic { get; set; }
+    public string IdClinic { get; set; }
 
     [ForeignKey("IdClinic")]
     public Clinica? Clinic { get; set; }
