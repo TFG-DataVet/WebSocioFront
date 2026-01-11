@@ -3,72 +3,77 @@
 
 
 
-        <RadzenStack Gap="20px" Style="max-width:900px; margin:auto;">
-            <RadzenText Text="¡Queremos conocerte!" 
-                        Style="color:#4b3e48; font-weight:bold;" 
-                        TextStyle="TextStyle.H3" />
-            <RadzenText Text="Cuéntanos un poco sobre ti."
-                        Style="color:#6d5d66;" 
-                        TextStyle="TextStyle.H5" />
+<RadzenStack Gap="20px" Style="max-width:900px; margin:auto;">
+    <RadzenText Text="¡Queremos conocerte!"
+                Style="color:#4b3e48; font-weight:bold;"
+                TextStyle="TextStyle.H3"/>
+    <RadzenText Text="Cuéntanos un poco sobre ti."
+                Style="color:#6d5d66;"
+                TextStyle="TextStyle.H5"/>
 
-            <EditForm Model="@dueno" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator />
+    <EditForm Model="@dueno" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator/>
 
-                <RadzenStack Gap="25px" Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
-                    
-                    <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                        <RadzenLabel Text="Nombre" />
-                        <RadzenTextBox @bind-Value="dueno.Name" Placeholder="Tu nombre" Style="width:100%;" />
-                        <RadzenRequiredValidator Component="Name" Text="Obligatorio" />
-                    </RadzenStack>
+        <RadzenStack Gap="25px" Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
 
-                    <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                        <RadzenLabel Text="Apellido" />
-                        <RadzenTextBox @bind-Value="dueno.LastName" Placeholder="Tu apellido" Style="width:100%;" />
-                        <RadzenRequiredValidator Component="LastName" Text="Obligatorio" />
-                    </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
+                <RadzenLabel Text="Nombre"/>
+                <RadzenTextBox @bind-Value="dueno.Name" Placeholder="Tu nombre" Style="width:100%;"/>
+                <RadzenRequiredValidator Component="Name" Text="Obligatorio"/>
+            </RadzenStack>
 
-                    <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                        <RadzenLabel Text="Número Identificación" />
-                        <RadzenTextBox @bind-Value="dueno.IdentificationNumber" Placeholder="Tu número de identificación" Style="width:100%;" />
-                        <RadzenRequiredValidator Component="IdentificationNumber" Text="Obligatorio" />
-                    </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
+                <RadzenLabel Text="Apellido"/>
+                <RadzenTextBox @bind-Value="dueno.LastName" Placeholder="Tu apellido" Style="width:100%;"/>
+                <RadzenRequiredValidator Component="LastName" Text="Obligatorio"/>
+            </RadzenStack>
 
-                    <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                        <RadzenLabel Text="Teléfono" />
-                        <RadzenTextBox @bind-Value="dueno.Phone" Placeholder="Tu teléfono" Style="width:100%;" />
-                    </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
+                <RadzenLabel Text="Número Identificación"/>
+                <RadzenTextBox @bind-Value="dueno.IdentificationNumber" Placeholder="Tu número de identificación"
+                               Style="width:100%;"/>
+                <RadzenRequiredValidator Component="IdentificationNumber" Text="Obligatorio"/>
+            </RadzenStack>
 
-                    <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                        <RadzenLabel Text="Email" />
-                        <RadzenTextBox @bind-Value="dueno.Email" Placeholder="email@ejemplo.com" Style="width:100%;" />
-                        <RadzenEmailValidator Component="Email" Text="Email inválido" />
-                    </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
+                <RadzenLabel Text="Teléfono"/>
+                <RadzenTextBox @bind-Value="dueno.Phone" Placeholder="Tu teléfono" Style="width:100%;"/>
+            </RadzenStack>
 
-                    <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                        <RadzenLabel Text="Calle" />
-                        <RadzenTextBox @bind-Value="dueno.Street" Placeholder="Calle/Número..." Style="width:100%;" />
-                    </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
+                <RadzenLabel Text="Email"/>
+                <RadzenTextBox @bind-Value="dueno.Email" Placeholder="email@ejemplo.com" Style="width:100%;"/>
+                <RadzenEmailValidator Component="Email" Text="Email inválido"/>
+            </RadzenStack>
 
-                    <RadzenStack Gap="10px" Style="flex:1 1 30%;">
-                        <RadzenLabel Text="Código Postal" />
-                        <RadzenTextBox @bind-Value="dueno.PostalCode" Placeholder="Código postal" Style="width:100%;" />
-                    </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
+                <RadzenLabel Text="Calle"/>
+                <RadzenTextBox @bind-Value="dueno.Street" Placeholder="Calle/Número..." Style="width:100%;"/>
+            </RadzenStack>
 
-                    <RadzenStack Gap="10px" Style="flex:1 1 30%;">
-                        <RadzenLabel Text="Ciudad" />
-                        <RadzenTextBox @bind-Value="dueno.City" Placeholder="Ciudad" Style="width:100%;" />
-                    </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 30%;">
+                <RadzenLabel Text="Código Postal"/>
+                <RadzenTextBox @bind-Value="dueno.PostalCode" Placeholder="Código postal" Style="width:100%;"/>
+            </RadzenStack>
 
-                </RadzenStack>
+            <RadzenStack Gap="10px" Style="flex:1 1 30%;">
+                <RadzenLabel Text="Ciudad"/>
+                <RadzenTextBox @bind-Value="dueno.City" Placeholder="Ciudad" Style="width:100%;"/>
+            </RadzenStack>
 
-                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Style="margin-top:40px;">
-                    <RadzenButton Text="Guardar" Style="width:120px; border-radius:20px; background:white; color:#4b3e48;" ButtonType="ButtonType.Submit"/>
-                    <RadzenButton Text="Añadir Mascota ➜" Style="width:140px; border-radius:20px; background:#4b3e48; color:white;" Click="@IrANuevaMascota" />
-                </RadzenStack>
-
-            </EditForm>
         </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
+                     Style="margin-top:40px;">
+            <RadzenButton Text="Guardar" Style="width:120px; border-radius:20px; background:white; color:#4b3e48;"
+                          ButtonType="ButtonType.Submit"/>
+            <RadzenButton Text="Añadir Mascota ➜"
+                          Style="width:140px; border-radius:20px; background:#4b3e48; color:white;"
+                          Click="@IrANuevaMascota"/>
+        </RadzenStack>
+
+    </EditForm>
+</RadzenStack>
 
 
 
@@ -85,4 +90,5 @@
     {
         Nav.NavigateTo("/create-pet");
     }
+
 }

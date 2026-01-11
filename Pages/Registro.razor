@@ -1,20 +1,17 @@
 ﻿@page "/registro"
 <h3>registro</h3>
 
-<input placeholder="Usuario" @bind="username" />
-<input type="password" placeholder="Contraseña" @bind="password" />
-<RadzenButton 
-    ButtonStyle="ButtonStyle.Primary" 
-    Text="Entrar" 
-    Style="width:150px; margin-top:1rem;" 
+<input placeholder="Usuario" @bind="username"/>
+<input type="password" placeholder="Contraseña" @bind="password"/>
+<RadzenButton
+    ButtonStyle="ButtonStyle.Primary"
+    Text="Entrar"
+    Style="width:150px; margin-top:1rem;"
     class="login-button"
     Click="RegistrarUser"
 />
-
-
-
 @code {
-    
+
     string username;
     string password;
 
@@ -22,11 +19,9 @@
 
     void RegistrarUser()
     {
-        if(username?.Trim().ToLower() == "admin" && password?.Trim() == "1234")
+        if (username?.Trim().ToLower() == "admin" && password?.Trim() == "1234")
         {
             Navigation.NavigateTo("/home");
         }
     }
-
-    
 }

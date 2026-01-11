@@ -1,136 +1,130 @@
-﻿@page "/productos"
+﻿@page "/Productos"
 @inject NavigationManager Nav
 
+<!-- ================= FILTROS ================= -->
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 Gap="10"
+                 Style="padding:10px 20px">
+
+        <RadzenText Text="Productos" TextStyle="TextStyle.H5"/>
+
+        <RadzenDatePicker @bind-Value="fechaDesde"
+                          Placeholder="Desde"
+                          Style="width:160px"/>
+
+        <RadzenDatePicker @bind-Value="fechaHasta"
+                          Placeholder="Hasta"
+                          Style="width:160px"/>
+
+        <RadzenTextBox @bind-Value="filtroCategoria"
+                       Placeholder="Categoría"
+                       Style="width:150px"/>
+
+        <RadzenTextBox @bind-Value="filtroMarca"
+                       Placeholder="Marca"
+                       Style="width:150px"/>
+
+        <RadzenNumeric @bind-Value="stockMinimo"
+                       Placeholder="Stock mín."
+                       Style="width:120px"/>
+
+        <RadzenButton Icon="filter_alt"
+                      Text="Filtrar"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Click="@AplicarFiltros"/>
+    </RadzenStack>
 
 
-    <!-- ================= HEADER CON FILTROS ================= -->
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal"
-                     AlignItems="AlignItems.Center"
-                     Gap="10"
-                     Style="padding:10px 20px">
+<!-- ================= TABLA ================= -->
 
-            <RadzenText Text="Productos" TextStyle="TextStyle.H5" />
+    <RadzenRow>
+        <RadzenColumn Size="12">
 
-            <RadzenDatePicker @bind-Value="fechaDesde"
-                              Placeholder="Desde"
-                              Style="width:160px" />
-
-            <RadzenDatePicker @bind-Value="fechaHasta"
-                              Placeholder="Hasta"
-                              Style="width:160px" />
-
-            <RadzenTextBox @bind-Value="filtroCategoria"
-                           Placeholder="Categoría"
-                           Style="width:150px" />
-
-            <RadzenTextBox @bind-Value="filtroMarca"
-                           Placeholder="Marca"
-                           Style="width:150px" />
-
-            <RadzenNumeric @bind-Value="stockMinimo"
-                           Placeholder="Stock mín."
-                           Style="width:120px" />
-
-            <RadzenButton Icon="filter_alt"
-                          Text="Filtrar"
-                          ButtonStyle="ButtonStyle.Primary"
-                          Click="@AplicarFiltros" />
-        </RadzenStack>
-    </RadzenHeader>
-
-    <!-- ================= BODY ================= -->
-    <RadzenBody>
-        <RadzenRow>
-            <RadzenColumn Size="12">
-
-                @foreach (var producto in productosFiltrados)
-                {
-                    <RadzenCard Style="margin-bottom:30px;
+            @foreach (var producto in productosFiltrados)
+            {
+                <RadzenCard Style="margin-bottom:30px;
                                        border-radius:16px;
                                        box-shadow:0 4px 20px rgba(0,0,0,0.1);
                                        overflow:hidden;
                                        cursor:pointer;"
-                                Click="@(() => Nav.NavigateTo($"/PerfilProducto/{producto.Id}"))">
+                            Click="@(() => Nav.NavigateTo($"/PerfilProducto/{producto.Id}"))">
 
-                        <!-- HEADER PRODUCTO -->
-                        <RadzenStack Orientation="Orientation.Horizontal"
-                                     AlignItems="AlignItems.Center"
-                                     JustifyContent="JustifyContent.SpaceBetween"
-                                     Style="padding:20px;
+                    <!-- HEADER PRODUCTO -->
+                    <RadzenStack Orientation="Orientation.Horizontal"
+                                 AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.SpaceBetween"
+                                 Style="padding:20px;
                                             background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
                                             color:white;">
 
-                            <RadzenStack Orientation="Orientation.Horizontal"
-                                         AlignItems="AlignItems.Center"
-                                         Gap="15">
+                        <RadzenStack Orientation="Orientation.Horizontal"
+                                     AlignItems="AlignItems.Center"
+                                     Gap="15">
 
-                                <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/679/679720.png"
-                                              Size="70px"
-                                              Style="border:3px solid white;" />
+                            <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/679/679720.png"
+                                          Size="70px"
+                                          Style="border:3px solid white;"/>
 
-                                <RadzenStack Gap="2">
-                                    <RadzenLink Path="@($"/PerfilProducto/{producto.Id}")"
-                                                Style="text-decoration:none;">
-                                        <RadzenText Text="@producto.Nombre"
-                                                    Style="font-size:22px;
+                            <RadzenStack Gap="2">
+                                <RadzenLink Path="@($"/PerfilProducto/{producto.Id}")"
+                                            Style="text-decoration:none;">
+                                    <RadzenText Text="@producto.Nombre"
+                                                Style="font-size:22px;
                                        font-weight:600;
                                        color:white;
                                        background:transparent;
                                        padding:0;
-                                       box-shadow:none;" />
-                                    </RadzenLink>
+                                       box-shadow:none;"/>
+                                </RadzenLink>
 
-                                    <RadzenText Text="@producto.Categoria"
-                                                                Style="opacity:0.9;
+                                <RadzenText Text="@producto.Categoria"
+                                            Style="opacity:0.9;
                                    font-size:13px;
                                    color:white;
                                    background:transparent;
-                                   padding:0;" />
-
-                                </RadzenStack>
+                                   padding:0;"/>
 
                             </RadzenStack>
 
-                            <RadzenText Text="@($"{producto.Precio:C}")"
-                                        Style="font-size:20px; font-weight:600;" />
                         </RadzenStack>
 
-                        <!-- INFO PRODUCTO -->
-                        <RadzenStack Style="padding:20px;">
-                            <RadzenRow>
+                        <RadzenText Text="@($"{producto.Precio:C}")"
+                                    Style="font-size:20px; font-weight:600;"/>
+                    </RadzenStack>
 
-                                <RadzenColumn Size="6">
-                                    <RadzenStack Gap="6">
-                                        <RadzenLabel Text="🏷 Marca:" Style="font-weight:600;" />
-                                        <RadzenText Text="@producto.Marca" />
+                    <!-- INFO PRODUCTO -->
+                    <RadzenStack Style="padding:20px;">
+                        <RadzenRow>
 
-                                        <RadzenLabel Text="📦 Stock:" Style="font-weight:600;" />
-                                        <RadzenText Text="@producto.Stock.ToString()" />
-                                    </RadzenStack>
-                                </RadzenColumn>
+                            <RadzenColumn Size="6">
+                                <RadzenStack Gap="6">
+                                    <RadzenLabel Text="🏷 Marca:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.Marca"/>
 
-                                <RadzenColumn Size="6">
-                                    <RadzenStack Gap="6">
-                                        <RadzenLabel Text="📅 Alta:" Style="font-weight:600;" />
-                                        <RadzenText Text="@producto.CreatedAt.ToShortDateString()" />
+                                    <RadzenLabel Text="📦 Stock:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.Stock.ToString()"/>
+                                </RadzenStack>
+                            </RadzenColumn>
 
-                                        <RadzenLabel Text="📝 Descripción:" Style="font-weight:600;" />
-                                        <RadzenText Text="@producto.Descripcion" />
-                                    </RadzenStack>
-                                </RadzenColumn>
+                            <RadzenColumn Size="6">
+                                <RadzenStack Gap="6">
+                                    <RadzenLabel Text="📅 Alta:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.CreatedAt.ToShortDateString()"/>
 
-                            </RadzenRow>
-                        </RadzenStack>
+                                    <RadzenLabel Text="📝 Descripción:" Style="font-weight:600;"/>
+                                    <RadzenText Text="@producto.Descripcion"/>
+                                </RadzenStack>
+                            </RadzenColumn>
 
-                    </RadzenCard>
-                }
+                        </RadzenRow>
+                    </RadzenStack>
 
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenBody>
+                </RadzenCard>
+            }
 
-
+        </RadzenColumn>
+    </RadzenRow>
 
 @code {
 

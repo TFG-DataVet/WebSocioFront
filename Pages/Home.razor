@@ -12,9 +12,9 @@
 
     <RadzenStack Gap="5">
         <RadzenText Text="@($"Bienvenido {VeterinarioNombre}")"
-                    Style="font-size:18px; opacity:0.9;" />
+                    Style="font-size:18px; opacity:0.9;"/>
         <RadzenText Text="@ClinicaNombre"
-                    Style="font-size:28px; font-weight:700;" />
+                    Style="font-size:28px; font-weight:700;"/>
     </RadzenStack>
 
 </RadzenCard>
@@ -26,9 +26,9 @@
         <RadzenLink Path="/create-pet" Style="text-decoration:none;">
             <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
                 <RadzenStack AlignItems="AlignItems.Center" Gap="5">
-                    <RadzenText Text="👨‍👩‍🐾‍👦" Style="font-size:26px;" />
-                    <RadzenText Text="Nueva mascota" Style="font-weight:600;" />
-                    <RadzenText Text="+" Style="font-size:32px; font-weight:700;" />
+                    <RadzenText Text="👨‍👩‍🐾‍👦" Style="font-size:26px;"/>
+                    <RadzenText Text="Nueva mascota" Style="font-weight:600;"/>
+                    <RadzenText Text="+" Style="font-size:32px; font-weight:700;"/>
                 </RadzenStack>
             </RadzenCard>
         </RadzenLink>
@@ -38,9 +38,9 @@
         <RadzenLink Path="/DuenoFormulario" Style="text-decoration:none;">
             <RadzenCard Style="text-align:center; background:#36b9cc; color:white; cursor:pointer;">
                 <RadzenStack AlignItems="AlignItems.Center" Gap="5">
-                    <RadzenText Text="👨‍👩‍👧‍👦" Style="font-size:26px;" />
-                    <RadzenText Text="Nuevo dueño" Style="font-weight:600;" />
-                    <RadzenText Text="+" Style="font-size:32px; font-weight:700;" />
+                    <RadzenText Text="👨‍👩‍👧‍👦" Style="font-size:26px;"/>
+                    <RadzenText Text="Nuevo dueño" Style="font-weight:600;"/>
+                    <RadzenText Text="+" Style="font-size:32px; font-weight:700;"/>
                 </RadzenStack>
             </RadzenCard>
         </RadzenLink>
@@ -49,10 +49,10 @@
     <RadzenColumn Size="3">
         <RadzenCard Style="text-align:center; background:#f6c23e; color:white;">
             <RadzenStack AlignItems="AlignItems.Center" Gap="5">
-                <RadzenText Text="📅" Style="font-size:26px;" />
-                <RadzenText Text="Citas para hoy" Style="font-weight:600;" />
+                <RadzenText Text="📅" Style="font-size:26px;"/>
+                <RadzenText Text="Citas para hoy" Style="font-weight:600;"/>
                 <RadzenText Text=@CitasHoy.ToString()
-                            Style="font-size:32px; font-weight:700;" />
+                            Style="font-size:32px; font-weight:700;"/>
             </RadzenStack>
         </RadzenCard>
     </RadzenColumn>
@@ -60,10 +60,10 @@
     <RadzenColumn Size="3">
         <RadzenCard Style="text-align:center; background:#e74a3b; color:white;">
             <RadzenStack AlignItems="AlignItems.Center" Gap="5">
-                <RadzenText Text="💊" Style="font-size:26px;" />
-                <RadzenText Text="Productos en stock" Style="font-weight:600;" />
+                <RadzenText Text="💊" Style="font-size:26px;"/>
+                <RadzenText Text="Productos en stock" Style="font-weight:600;"/>
                 <RadzenText Text=@ProductosStock.ToString()
-                            Style="font-size:32px; font-weight:700;" />
+                            Style="font-size:32px; font-weight:700;"/>
             </RadzenStack>
         </RadzenCard>
     </RadzenColumn>
@@ -77,7 +77,7 @@
     margin-bottom:1rem;">
 
     <RadzenText Text="@($"Calendario de hoy ({DateTime.Now:dd/MM/yyyy})")"
-                Style="font-size:20px; font-weight:600; margin-bottom:10px;" />
+                Style="font-size:20px; font-weight:600; margin-bottom:10px;"/>
 
     <RadzenDataGrid Data="@HorasDelDia"
                     TItem="HoraDelDia"
@@ -89,10 +89,10 @@
             <RadzenDataGridColumn TItem="HoraDelDia"
                                   Property="Hora"
                                   Title="Hora"
-                                  Width="100px" />
+                                  Width="100px"/>
             <RadzenDataGridColumn TItem="HoraDelDia"
                                   Property="Evento"
-                                  Title="Evento" />
+                                  Title="Evento"/>
         </Columns>
     </RadzenDataGrid>
 
@@ -104,20 +104,19 @@
     box-shadow:0 2px 6px rgba(0,0,0,0.1);">
 
     <RadzenText Text="Avisos recientes"
-                Style="font-size:20px; font-weight:600; margin-bottom:10px;" />
+                Style="font-size:20px; font-weight:600; margin-bottom:10px;"/>
 
     <RadzenListView Data="@AvisosRecientes" TItem="string">
         <Template Context="aviso">
-            <RadzenText Text="@($"• {AvisosRecientes}")" />
+            <RadzenText Text="@($"• {AvisosRecientes}")"/>
         </Template>
     </RadzenListView>
 
 </RadzenCard>
 
-    
-@code {
-    bool sidebar1Expanded = true;
 
+@code {
+    
     string VeterinarioNombre = "Dr. Pérez";
     string ClinicaNombre = "Clínica PetCare";
 
@@ -152,6 +151,7 @@
             });
         }
     }
+
 }
 
 

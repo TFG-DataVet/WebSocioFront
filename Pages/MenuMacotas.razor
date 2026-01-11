@@ -1,158 +1,152 @@
 ﻿@page "/Mascotas"
 @inject NavigationManager Nav
-@using global::SocioWeb.Domain.Entities
 
-<RadzenLayout>
+<!-- ================= FILTROS ================= -->
 
-    <!-- ================= HEADER CON FILTROS ================= -->
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal"
-                     AlignItems="AlignItems.Center"
-                     Gap="10"
-                     Style="padding:10px 20px">
+<RadzenStack Orientation="Orientation.Horizontal"
+             AlignItems="AlignItems.Center"
+             Gap="10"
+             Style="padding:10px 20px">
 
-            <RadzenText Text="Mascotas" TextStyle="TextStyle.H5" />
+    <RadzenText Text="Mascotas" TextStyle="TextStyle.H5"/>
 
-            <RadzenTextBox @bind-Value="filtroNombre"
-                           Placeholder="Nombre mascota"
-                           Style="width:180px" />
+    <RadzenTextBox @bind-Value="filtroNombre"
+                   Placeholder="Nombre mascota"
+                   Style="width:180px"/>
 
-            <RadzenTextBox @bind-Value="filtroEspecie"
-                           Placeholder="Especie"
-                           Style="width:150px" />
+    <RadzenTextBox @bind-Value="filtroEspecie"
+                   Placeholder="Especie"
+                   Style="width:150px"/>
 
-            <RadzenButton Icon="filter_alt"
-                          Text="Filtrar"
-                          ButtonStyle="ButtonStyle.Primary"
-                          Click="@AplicarFiltros" />
-        </RadzenStack>
-    </RadzenHeader>
+    <RadzenButton Icon="filter_alt"
+                  Text="Filtrar"
+                  ButtonStyle="ButtonStyle.Primary"
+                  Click="@AplicarFiltros"/>
+</RadzenStack>
 
-    <!-- ================= BODY ================= -->
-    <RadzenBody>
-        <RadzenRow>
-            <RadzenColumn Size="12">
 
-                @foreach (var mascota in mascotasFiltradas)
-                {
-                    <!-- DIV envolvente para capturar el click -->
-                    <div style="cursor:pointer;" @onclick="@(() => IrAPerfilMascota(mascota.Id))">
+<!-- ================= TABLA ================= -->
+<RadzenRow>
+    <RadzenColumn Size="12">
 
-                        <RadzenCard Style="
+        @foreach (var mascota in mascotasFiltradas)
+        {
+            <!-- DIV envolvente para capturar el click -->
+            <div style="cursor:pointer;" @onclick="@(() => IrAPerfilMascota(mascota.Id))">
+
+                <RadzenCard Style="
                             margin-bottom:30px;
                             border-radius:16px;
                             box-shadow:0 4px 20px rgba(0,0,0,0.1);
                             overflow:hidden;">
 
-                            <!-- HEADER MASCOTA -->
-                            <RadzenStack Orientation="Orientation.Horizontal"
-                                         AlignItems="AlignItems.Center"
-                                         JustifyContent="JustifyContent.SpaceBetween"
-                                         Style="
+                    <!-- HEADER MASCOTA -->
+                    <RadzenStack Orientation="Orientation.Horizontal"
+                                 AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.SpaceBetween"
+                                 Style="
                                             padding:20px;
                                             background:linear-gradient(135deg,#ff9a9e 0%,#fad0c4 100%);
                                             color:white;">
 
-                                <RadzenStack Orientation="Orientation.Horizontal"
-                                             AlignItems="AlignItems.Center"
-                                             Gap="15">
+                        <RadzenStack Orientation="Orientation.Horizontal"
+                                     AlignItems="AlignItems.Center"
+                                     Gap="15">
 
-                                    <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png"
-                                                  Size="70px"
-                                                  Style="border:3px solid white;" />
+                            <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png"
+                                          Size="70px"
+                                          Style="border:3px solid white;"/>
 
-                                    <RadzenStack Gap="2">
-                                        <RadzenText Text="@mascota.Nombre"
-                                                    Style="font-size:22px; font-weight:600;" />
-                                        <RadzenText Text="@mascota.Especie"
-                                                    Style="opacity:0.9; font-size:13px;" />
-                                    </RadzenStack>
-                                </RadzenStack>
-
-                                <!-- BOTÓN DUEÑO -->
-                                <RadzenButton Icon="person"
-                                              Text="Dueño"
-                                              ButtonStyle="ButtonStyle.Light"
-                                              Style="background:transparent; color:white;"
-                                              Click="@(() => ToggleDueno(mascota.Id))"
-                                              @onclick:stopPropagation="true" />
+                            <RadzenStack Gap="2">
+                                <RadzenText Text="@mascota.Nombre"
+                                            Style="font-size:22px; font-weight:600;"/>
+                                <RadzenText Text="@mascota.Especie"
+                                            Style="opacity:0.9; font-size:13px;"/>
                             </RadzenStack>
+                        </RadzenStack>
 
-                            <!-- INFO MASCOTA -->
-                            <RadzenStack Style="padding:20px;">
-                                <RadzenRow>
-                                    <RadzenColumn Size="6">
-                                        <RadzenText Text="🐾 Raza"
-                                                    Style="font-weight:600;" />
-                                        <RadzenText Text="@mascota.Raza" />
+                        <!-- BOTÓN DUEÑO -->
+                        <RadzenButton Icon="person"
+                                      Text="Dueño"
+                                      ButtonStyle="ButtonStyle.Light"
+                                      Style="background:transparent; color:white;"
+                                      Click="@(() => ToggleDueno(mascota.Id))"
+                                      @onclick:stopPropagation="true"/>
+                    </RadzenStack>
 
-                                        <RadzenText Text="🎂 Edad"
-                                                    Style="font-weight:600; margin-top:10px;" />
-                                        <RadzenText Text="@($"{mascota.Edad} años")" />
-                                    </RadzenColumn>
+                    <!-- INFO MASCOTA -->
+                    <RadzenStack Style="padding:20px;">
+                        <RadzenRow>
+                            <RadzenColumn Size="6">
+                                <RadzenText Text="🐾 Raza"
+                                            Style="font-weight:600;"/>
+                                <RadzenText Text="@mascota.Raza"/>
 
-                                    <RadzenColumn Size="6">
-                                        <RadzenText Text="⚖️ Peso"
-                                                    Style="font-weight:600;" />
-                                        <RadzenText Text="@($"{mascota.Peso} kg")" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                            </RadzenStack>
+                                <RadzenText Text="🎂 Edad"
+                                            Style="font-weight:600; margin-top:10px;"/>
+                                <RadzenText Text="@($"{mascota.Edad} años")"/>
+                            </RadzenColumn>
 
-                            <!-- DUEÑO DESPLEGABLE -->
-                            @if (duenosVisibles.Contains(mascota.Id))
-                            {
-                                <RadzenCard Style="
+                            <RadzenColumn Size="6">
+                                <RadzenText Text="⚖️ Peso"
+                                            Style="font-weight:600;"/>
+                                <RadzenText Text="@($"{mascota.Peso} kg")"/>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenStack>
+
+                    <!-- DUEÑO DESPLEGABLE -->
+                    @if (duenosVisibles.Contains(mascota.Id))
+                    {
+                        <RadzenCard Style="
                                     margin:20px;
                                     border-radius:16px;
                                     overflow:hidden;">
 
-                                    <RadzenStack Orientation="Orientation.Horizontal"
-                                                 AlignItems="AlignItems.Center"
-                                                 Gap="15"
-                                                 Style="
+                            <RadzenStack Orientation="Orientation.Horizontal"
+                                         AlignItems="AlignItems.Center"
+                                         Gap="15"
+                                         Style="
                                                     padding:20px;
                                                     background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
                                                     color:white;">
 
-                                        <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png"
-                                                      Size="60px" />
+                                <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png"
+                                              Size="60px"/>
 
-                                        <RadzenStack Gap="2">
-                                            <RadzenLink Path="@($"/PerfilDueno/{mascota.Dueno.Id}")"
-                                                        Style="text-decoration:none; color:white;">
-                                                <RadzenText Text="@mascota.Dueno.Name"
-                                                            Style="font-size:18px; font-weight:600;" />
-                                            </RadzenLink>
+                                <RadzenStack Gap="2">
+                                    <RadzenLink Path="@($"/PerfilDueno/{mascota.Dueno.Id}")"
+                                                Style="text-decoration:none; color:white;">
+                                        <RadzenText Text="@mascota.Dueno.Name"
+                                                    Style="font-size:18px; font-weight:600;"/>
+                                    </RadzenLink>
 
-                                            <RadzenText Text="@mascota.Dueno.Email"
-                                                        Style="font-size:13px; opacity:0.9;" />
-                                        </RadzenStack>
-                                    </RadzenStack>
+                                    <RadzenText Text="@mascota.Dueno.Email"
+                                                Style="font-size:13px; opacity:0.9;"/>
+                                </RadzenStack>
+                            </RadzenStack>
 
-                                    <RadzenStack Style="padding:20px;">
-                                        <RadzenText Text="📞 Teléfono"
-                                                    Style="font-weight:600;" />
-                                        <RadzenText Text="@mascota.Dueno.Phone" />
+                            <RadzenStack Style="padding:20px;">
+                                <RadzenText Text="📞 Teléfono"
+                                            Style="font-weight:600;"/>
+                                <RadzenText Text="@mascota.Dueno.Phone"/>
 
-                                        <RadzenText Text="🏠 Dirección"
-                                                    Style="font-weight:600; margin-top:10px;" />
-                                        <RadzenText Text="@mascota.Dueno.Street" />
-                                    </RadzenStack>
-
-                                </RadzenCard>
-                            }
+                                <RadzenText Text="🏠 Dirección"
+                                            Style="font-weight:600; margin-top:10px;"/>
+                                <RadzenText Text="@mascota.Dueno.Street"/>
+                            </RadzenStack>
 
                         </RadzenCard>
-                    </div> <!-- fin div clickeable -->
-                }
+                    }
 
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenBody>
+                </RadzenCard>
+            </div>
+            <!-- fin div clickeable -->
+        }
 
-</RadzenLayout>
-
+    </RadzenColumn>
+</RadzenRow>
+    
 @code {
 
     List<Mascota> mascotas = new();

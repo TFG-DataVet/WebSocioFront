@@ -7,7 +7,7 @@
 <RadzenRow class="dt-page-register">
     <RadzenColumn Size="10" Offset="1">
         <RadzenCard class="rz-p-8">
-            
+
             @* Image *@
             <RadzenRow class="rz-mb-10">
                 <RadzenColumn Size="12">
@@ -20,7 +20,7 @@
             </RadzenRow>
 
             @* Formulario *@
-            <RadzenTemplateForm TItem="RegisterPetForm" Data="@FormData" Submit="@GuardarDatos" >
+            <RadzenTemplateForm TItem="RegisterPetForm" Data="@FormData" Submit="@GuardarDatos">
 
                 @* Primera Fila *@
                 <RadzenRow class="rz-mb-3">
@@ -45,7 +45,7 @@
                         </RadzenFormField>
 
                     </RadzenColumn>
-                    
+
                     <!-- Fecha nacimiento -->
                     <RadzenColumn Size="12" SizeMD="4">
                         <RadzenFormField Text="Fecha de nacimiento" class="rz-w-100">
@@ -76,7 +76,7 @@
                                 <RadzenTextBox
                                     Style="width: 100%;"
                                     Name="Weight"
-                                    
+
                                     @bind-Value="FormData.Weight"/>
                                 <RadzenRequiredValidator
                                     Component="Weight"
@@ -91,8 +91,8 @@
                         </RadzenFormField>
                     </RadzenColumn>
                 </RadzenRow>
-                
-                
+
+
                 <RadzenRow class="rz-mb-3">
                     <!-- Especie -->
                     <RadzenColumn Size="12" SizeMD="4">
@@ -148,7 +148,7 @@
                             </RadzenStack>
                         </RadzenFormField>
                     </RadzenColumn>
-                    
+
                 </RadzenRow>
 
                 @* Segunda fila *@
@@ -220,7 +220,7 @@
 
                 @* Cuarto fila *@
                 <RadzenRow class="rz-mb-6">
-                    
+
                     <!-- Fecha nacimiento -->
                     <RadzenColumn Size="12" SizeMD="6">
                         <RadzenFormField Text="Fecha de nacimiento" class="rz-w-100">
@@ -255,8 +255,9 @@
                 @* Button de envio *@
                 <RadzenRow>
                     <RadzenColumn Size="12">
-                        <RadzenStack AlignItems="AlignItems.Center" Style="background-color: transparent" class="dt-background-none"> 
-                            <RadzenButton   
+                        <RadzenStack AlignItems="AlignItems.Center" Style="background-color: transparent"
+                                     class="dt-background-none">
+                            <RadzenButton
                                 ButtonStyle="ButtonStyle.Primary"
                                 Icon="save"
                                 Text="Registrar y salir"
@@ -266,24 +267,24 @@
                         </RadzenStack>
                     </RadzenColumn>
                 </RadzenRow>
-                
+
 
             </RadzenTemplateForm>
-            
+
             <RadzenButton
                 ButtonStyle="ButtonStyle.Primary"
                 Text="Añadir mascota"
                 Click="@GuardarYNavegar"
-                Style="margin:auto" />
+                Style="margin:auto"/>
 
-         
 
-        </RadzenCard>    
+        </RadzenCard>
     </RadzenColumn>
-    
+
 </RadzenRow>
+
 @code {
-    
+
     async Task GuardarYNavegar()
     {
         // 1️⃣ Guardar datos (lo que tengas en pantalla)
@@ -329,7 +330,7 @@
     {
         "yes", "no"
     };
-    
+
 
     // ---- Lógica de cálculo automático ----
     private string AgeCalculated =>
@@ -355,19 +356,20 @@
     // ---- Modelo separado y tipado ----
     public class RegisterPetForm
     {
-        public string?      NamePet     { get; set; }
-        public string?      Species     { get; set; }
-        public DateTime?    Birthday    { get; set; }
-        public string?      Breed       { get; set; }
-        public string?      Sex         { get; set; }
-        public string?      Weight      { get; set; }
+        public string? NamePet { get; set; }
+        public string? Species { get; set; }
+        public DateTime? Birthday { get; set; }
+        public string? Breed { get; set; }
+        public string? Sex { get; set; }
+        public string? Weight { get; set; }
     }
+
 }
 
 <style>
-        
-    .dt-page-register .rz-stack{
-        
+
+    .dt-page-register .rz-stack {
+
         background-color: transparent !important;
     }
 </style>
