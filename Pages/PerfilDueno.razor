@@ -90,7 +90,7 @@
             @foreach (var mascota in dueno.Mascotas)
             {
                 <RadzenCard Style="width:220px; margin:10px; cursor:pointer;"
-                            Click="@(() => Nav.NavigateTo($"/Mascota/{mascota.IdMascota}"))">
+                            Click="@(() => Nav.NavigateTo($"/Mascota/{mascota.Id}"))">
 
                     <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png"
                                   Size="60px"
@@ -158,8 +158,8 @@
     // Datos de prueba usando tipos del dominio
     Dueno dueno = new Dueno
     {
-        Name = "Manolo",
-        LastName = "Jiménez",
+        Name = "Juan",
+        LastName = "Pérez",
         IdentificationNumber = "12345678X",
         Email = "carlos@email.com",
         Phone = "555-123456",
@@ -172,8 +172,8 @@
         UpdatedAt = DateTime.UtcNow,
         Mascotas = new List<Mascota>
         {
-            new Mascota { IdMascota = "1", Nombre = "Rocky", Especie = "Perro", Raza = "Labrador", Edad = 3 },
-            new Mascota { IdMascota = "2", Nombre = "Luna", Especie = "Gato", Raza = "Siames", Edad = 2 }
+            new Mascota { Id = "1", Nombre = "Rocky", Especie = "Perro", Raza = "Labrador", Edad = 3 },
+            new Mascota { Id = "2", Nombre = "Luna", Especie = "Gato", Raza = "Siames", Edad = 2 }
         },
         Historial = new List<LogEntry>
         {

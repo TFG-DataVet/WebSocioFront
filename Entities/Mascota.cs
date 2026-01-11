@@ -6,7 +6,7 @@ namespace SocioWeb.Domain.Entities;
 public class Mascota
 {
     
-    public String IdMascota { get; set; }
+    public string Id { get; set; }
 
     // Relaciones
     [Required]

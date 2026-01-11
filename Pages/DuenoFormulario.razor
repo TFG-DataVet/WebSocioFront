@@ -1,9 +1,7 @@
 ﻿@page "/DuenoFormulario"
-@using global::SocioWeb.Domain.Entities
 @inject NavigationManager Nav
 
-<RadzenLayout>
-    <RadzenBody Style="padding:60px; background:#f3e5e8; box-sizing:border-box;">
+
 
         <RadzenStack Gap="20px" Style="max-width:900px; margin:auto;">
             <RadzenText Text="¡Queremos conocerte!" 
@@ -72,8 +70,7 @@
             </EditForm>
         </RadzenStack>
 
-    </RadzenBody>
-</RadzenLayout>
+
 
 @code {
     private Dueno dueno = new();

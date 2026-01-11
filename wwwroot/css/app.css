@@ -160,10 +160,6 @@ body {
     border-radius: 7px;
 }
 
-.rz-stack{
-    background-color: var(--color-background) !important;
-    
-}
 .rz-sidebarToggle{
     background-color: var(--color-primary-hover) !important;
 }

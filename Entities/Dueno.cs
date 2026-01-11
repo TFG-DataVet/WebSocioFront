@@ -6,7 +6,7 @@ namespace SocioWeb.Domain.Entities;
 public class Dueno
 {
     
-    public String Id { get; set; }
+    public string Id { get; set; }
 
     // Relación con Clinica
     [Required(ErrorMessage = "La clínica es obligatoria.")]

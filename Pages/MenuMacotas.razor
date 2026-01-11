@@ -36,7 +36,7 @@
                 @foreach (var mascota in mascotasFiltradas)
                 {
                     <!-- DIV envolvente para capturar el click -->
-                    <div style="cursor:pointer;" @onclick="@(() => IrAPerfilMascota(mascota.IdMascota))">
+                    <div style="cursor:pointer;" @onclick="@(() => IrAPerfilMascota(mascota.Id))">
 
                         <RadzenCard Style="
                             margin-bottom:30px;
@@ -74,7 +74,7 @@
                                               Text="Dueño"
                                               ButtonStyle="ButtonStyle.Light"
                                               Style="background:transparent; color:white;"
-                                              Click="@(() => ToggleDueno(mascota.IdMascota))"
+                                              Click="@(() => ToggleDueno(mascota.Id))"
                                               @onclick:stopPropagation="true" />
                             </RadzenStack>
 
@@ -100,7 +100,7 @@
                             </RadzenStack>
 
                             <!-- DUEÑO DESPLEGABLE -->
-                            @if (duenosVisibles.Contains(mascota.IdMascota))
+                            @if (duenosVisibles.Contains(mascota.Id))
                             {
                                 <RadzenCard Style="
                                     margin:20px;
@@ -187,7 +187,7 @@
         {
             new Mascota
             {
-                IdMascota = "M1",
+                Id = "M1",
                 Nombre = "Rocky",
                 Especie = "Perro",
                 Raza = "Labrador",
@@ -197,7 +197,7 @@
             },
             new Mascota
             {
-                IdMascota = "M2",
+                Id = "M2",
                 Nombre = "Michi",
                 Especie = "Gato",
                 Raza = "Siames",

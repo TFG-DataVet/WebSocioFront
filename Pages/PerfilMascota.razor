@@ -1,8 +1,7 @@
 ﻿@page "/PerfilMascota/{Id}"
 @inject NavigationManager Nav
 
-<RadzenLayout>
-    <RadzenBody>
+
         <RadzenCard>
 
             <!-- CABECERA -->
@@ -161,8 +160,7 @@
             }
 
         </RadzenCard>
-    </RadzenBody>
-</RadzenLayout>
+
 
 @code {
     [Parameter] public string Id { get; set; } = "";
