@@ -9,30 +9,30 @@
 
         <RadzenText Text="Productos" TextStyle="TextStyle.H5"/>
 
-        <RadzenDatePicker @bind-Value="fechaDesde"
+        <RadzenDatePicker @bind-Value="dateSince"
                           Placeholder="Desde"
                           Style="width:160px"/>
 
-        <RadzenDatePicker @bind-Value="fechaHasta"
+        <RadzenDatePicker @bind-Value="dateTo"
                           Placeholder="Hasta"
                           Style="width:160px"/>
 
-        <RadzenTextBox @bind-Value="filtroCategoria"
+        <RadzenTextBox @bind-Value="CategoryFilter"
                        Placeholder="Categoría"
                        Style="width:150px"/>
 
-        <RadzenTextBox @bind-Value="filtroMarca"
+        <RadzenTextBox @bind-Value="BrandFilter"
                        Placeholder="Marca"
                        Style="width:150px"/>
 
-        <RadzenNumeric @bind-Value="stockMinimo"
+        <RadzenNumeric @bind-Value="minimunStock"
                        Placeholder="Stock mín."
                        Style="width:120px"/>
 
         <RadzenButton Icon="filter_alt"
                       Text="Filtrar"
                       ButtonStyle="ButtonStyle.Primary"
-                      Click="@AplicarFiltros"/>
+                      Click="@AplyFilters"/>
     </RadzenStack>
 
 <!-- ================= TABLA ================= -->
@@ -40,7 +40,7 @@
     <RadzenRow>
         <RadzenColumn Size="12">
 
-            @foreach (var producto in productosFiltrados)
+            @foreach (var producto in productFilter)
             {
                 <RadzenCard Style="margin-bottom:30px;
                                        border-radius:16px;
@@ -126,21 +126,21 @@
 
 @code {
 
-    List<Producto> productos = new();
-    List<Producto> productosFiltrados = new();
+    List<Product> products = new();
+    List<Product> productFilter = new();
 
-    DateTime? fechaDesde;
-    DateTime? fechaHasta;
+    DateTime? dateSince;
+    DateTime? dateTo;
 
-    string filtroCategoria = "";
-    string filtroMarca = "";
-    int? stockMinimo;
+    string CategoryFilter = "";
+    string BrandFilter = "";
+    int? minimunStock;
 
     protected override void OnInitialized()
     {
-        productos = new List<Producto>
+        products = new List<Product>
         {
-            new Producto
+            new Product
             {
                 Id = "1",
                 Name = "Alimento Premium Perro",
@@ -151,7 +151,7 @@
                 Description = "Bolsa 10kg alimento balanceado",
                 CreatedAt = new DateTime(2023, 1, 10)
             },
-            new Producto
+            new Product
             {
                 Id = "2",
                 Name = "Arena para Gato",
@@ -164,21 +164,21 @@
             }
         };
 
-        productos = productos.OrderBy(p => p.CreatedAt).ToList();
-        productosFiltrados = productos;
+        products = products.OrderBy(p => p.CreatedAt).ToList();
+        productFilter = products;
     }
 
-    void AplicarFiltros()
+    void AplyFilters()
     {
-        productosFiltrados = productos
+        productFilter = products
             .Where(p =>
-                (!fechaDesde.HasValue || p.CreatedAt >= fechaDesde) &&
-                (!fechaHasta.HasValue || p.CreatedAt <= fechaHasta) &&
-                (string.IsNullOrEmpty(filtroCategoria) ||
-                 p.Category.Contains(filtroCategoria, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filtroMarca) ||
-                 p.Brand.Contains(filtroMarca, StringComparison.OrdinalIgnoreCase)) &&
-                (!stockMinimo.HasValue || p.Stock >= stockMinimo)
+                (!dateSince.HasValue || p.CreatedAt >= dateSince) &&
+                (!dateTo.HasValue || p.CreatedAt <= dateTo) &&
+                (string.IsNullOrEmpty(CategoryFilter) ||
+                 p.Category.Contains(CategoryFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(BrandFilter) ||
+                 p.Brand.Contains(BrandFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (!minimunStock.HasValue || p.Stock >= minimunStock)
             )
             .ToList();
     }

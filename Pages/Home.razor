@@ -11,9 +11,9 @@
     margin-bottom:1rem;">
 
     <RadzenStack Gap="5">
-        <RadzenText Text="@($"Bienvenido {VeterinarioNombre}")"
+        <RadzenText Text="@($"Bienvenido {VeterinaryName}")"
                     Style="font-size:18px; opacity:0.9;"/>
-        <RadzenText Text="@ClinicaNombre"
+        <RadzenText Text="@ClinicName"
                     Style="font-size:28px; font-weight:700;"/>
     </RadzenStack>
 
@@ -51,7 +51,7 @@
             <RadzenStack AlignItems="AlignItems.Center" Gap="5">
                 <RadzenText Text="📅" Style="font-size:26px;"/>
                 <RadzenText Text="Citas para hoy" Style="font-weight:600;"/>
-                <RadzenText Text=@CitasHoy.ToString()
+                <RadzenText Text=@DatesToday.ToString()
                             Style="font-size:32px; font-weight:700;"/>
             </RadzenStack>
         </RadzenCard>
@@ -62,7 +62,7 @@
             <RadzenStack AlignItems="AlignItems.Center" Gap="5">
                 <RadzenText Text="💊" Style="font-size:26px;"/>
                 <RadzenText Text="Productos en stock" Style="font-weight:600;"/>
-                <RadzenText Text=@ProductosStock.ToString()
+                <RadzenText Text=@ProductStock.ToString()
                             Style="font-size:32px; font-weight:700;"/>
             </RadzenStack>
         </RadzenCard>
@@ -78,18 +78,18 @@
     <RadzenText Text="@($"Calendario de hoy ({DateTime.Now:dd/MM/yyyy})")"
                 Style="font-size:20px; font-weight:600; margin-bottom:10px;"/>
 
-    <RadzenDataGrid Data="@HorasDelDia"
-                    TItem="HoraDelDia"
+    <RadzenDataGrid Data="@DayHours"
+                    TItem="DayTimeHour"
                     ShowPaging="false"
                     ShowPagingSummary="false"
                     ShowFilterRow="false"
                     Style="width:100%;">
         <Columns>
-            <RadzenDataGridColumn TItem="HoraDelDia"
+            <RadzenDataGridColumn TItem="DayTimeHour"
                                   Property="Hora"
                                   Title="Hora"
                                   Width="100px"/>
-            <RadzenDataGridColumn TItem="HoraDelDia"
+            <RadzenDataGridColumn TItem="DayTimeHour"
                                   Property="Evento"
                                   Title="Evento"/>
         </Columns>
@@ -105,9 +105,9 @@
     <RadzenText Text="Avisos recientes"
                 Style="font-size:20px; font-weight:600; margin-bottom:10px;"/>
 
-    <RadzenListView Data="@AvisosRecientes" TItem="string">
+    <RadzenListView Data="@RecentAdvices" TItem="string">
         <Template Context="aviso">
-            <RadzenText Text="@($"• {AvisosRecientes}")"/>
+            <RadzenText Text="@($"• {RecentAdvices}")"/>
         </Template>
     </RadzenListView>
 
@@ -115,23 +115,23 @@
 
 @code {
     
-    string VeterinarioNombre = "Dr. Pérez";
-    string ClinicaNombre = "Clínica PetCare";
+    string VeterinaryName = "Dr. Pérez";
+    string ClinicName = "Clínica PetCare";
 
-    int TotalMascotas = 128;
-    int TotalDuenos = 87;
-    int CitasHoy = 12;
-    int ProductosStock = 54;
+    int TotalPets = 128;
+    int TotalOwners = 87;
+    int DatesToday = 12;
+    int ProductStock = 54;
 
-    public class HoraDelDia
+    public class DayTimeHour
     {
-        public string Hora { get; set; }
-        public string Evento { get; set; }
+        public string Hour { get; set; }
+        public string Event { get; set; }
     }
 
-    List<HoraDelDia> HorasDelDia = new();
+    List<DayTimeHour> DayHours = new();
 
-    List<string> AvisosRecientes = new()
+    List<string> RecentAdvices = new()
     {
         "💉 Nueva vacuna disponible contra la rabia.",
         "🕐 Horario extendido los sábados hasta las 6 p.m.",
@@ -142,10 +142,10 @@
     {
         for (int h = 8; h <= 20; h++)
         {
-            HorasDelDia.Add(new HoraDelDia
+            DayHours.Add(new DayTimeHour
             {
-                Hora = $"{h}:00",
-                Evento = ""
+                Hour = $"{h}:00",
+                Event = ""
             });
         }
     }

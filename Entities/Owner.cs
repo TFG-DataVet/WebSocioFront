@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SocioWeb.Entities;
 
 namespace SocioWeb.Domain.Entities;
 
-public class Dueno
+public class Owner
 {
     
     public string Id { get; set; }
@@ -16,7 +17,7 @@ public class Dueno
     public Clinic? Clinic { get; set; }
 
     // Relación con Mascotas
-    public List<Pet>? Pet { get; set; } = new List<Pet>();
+    public List<Pet> Pet { get; set; } = new List<Pet>();
 
     // Datos personales
     [Required(ErrorMessage = "El nombre es obligatorio.")]

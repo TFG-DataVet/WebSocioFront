@@ -12,19 +12,19 @@
 
     <RadzenText Text="Dueños" TextStyle="TextStyle.H5"/>
 
-    <RadzenDatePicker @bind-Value="fechaDesde"
+    <RadzenDatePicker @bind-Value="DateSince"
                       Placeholder="Desde"
                       Style="width:160px"/>
 
-    <RadzenDatePicker @bind-Value="fechaHasta"
+    <RadzenDatePicker @bind-Value="DateTo"
                       Placeholder="Hasta"
                       Style="width:160px"/>
 
-    <RadzenTextBox @bind-Value="filtroCiudad"
+    <RadzenTextBox @bind-Value="CityFilter"
                    Placeholder="Ciudad"
                    Style="width:150px"/>
 
-    <RadzenTextBox @bind-Value="filtroCodigoPostal"
+    <RadzenTextBox @bind-Value="PostalCodeFilter"
                    Placeholder="Código Postal"
                    Style="width:120px"/>
 
@@ -39,7 +39,7 @@
 <RadzenRow>
     <RadzenColumn Size="12">
 
-        @foreach (var dueno in duenosFiltrados)
+        @foreach (var dueno in FilterOwner)
         {
             <RadzenCard Style="
                         margin-bottom:30px;
@@ -81,7 +81,7 @@
                     <RadzenButton Icon="more_vert"
                                   ButtonStyle="ButtonStyle.Light"
                                   Style="background:transparent; color:white;"
-                                  Click="@(() => ToggleMascotas(dueno.Id))"/>
+                                  Click="@(() => TogglePets(dueno.Id))"/>
                 </RadzenStack>
 
                 <!-- INFO DUEÑO -->
@@ -106,7 +106,7 @@
                 </RadzenStack>
 
                 <!-- MASCOTAS -->
-                @if (mascotasVisibles.Contains(dueno.Id))
+                @if (VisiblePets.Contains(dueno.Id))
                 {
                     @foreach (var mascota in dueno.Pet)
                     {
@@ -163,20 +163,20 @@
 
 @code {
 
-    List<Dueno> duenos = new();
-    List<Dueno> duenosFiltrados = new();
+    List<Owner> Owners = new();
+    List<Owner> FilterOwner = new();
 
-    DateTime? fechaDesde;
-    DateTime? fechaHasta;
+    DateTime? DateSince;
+    DateTime? DateTo;
 
-    string filtroCiudad = "";
-    string filtroCodigoPostal = "";
+    string CityFilter = "";
+    string PostalCodeFilter = "";
 
-    HashSet<string> mascotasVisibles = new();
+    HashSet<string> VisiblePets = new();
 
     protected override void OnInitialized()
     {
-        var dueno1 = new Dueno
+        var dueno1 = new Domain.Entities.Owner
         {
             Id = "1",
             Name = "Juan Pérez",
@@ -187,16 +187,16 @@
             PostalCode = "28001",
             Coments = "Cliente frecuente",
             CreatedAt = new DateTime(2020, 5, 10),
-            Pet = new List<Domain.Entities.Pet>
+            Pet = new List<Pet>()
             {
-                new Domain.Entities.Pet
+                new Pet
                 {
                     Name = "Rocky",
                     Specie = "Perro",
                     Breed = "Labrador",
                     Age = 5
                 },
-                new Domain.Entities.Pet
+                new Pet
                 {
                     Name = "Luna",
                     Specie = "Gato",
@@ -206,7 +206,7 @@
             }
         };
 
-        var dueno2 = new Dueno
+        var dueno2 = new Domain.Entities.Owner
         {
             Id = "2",
             Name = "María López",
@@ -217,9 +217,9 @@
             PostalCode = "08001",
             Coments = "Nueva cliente",
             CreatedAt = new DateTime(2022, 3, 15),
-            Pet = new List<Domain.Entities.Pet>
+            Pet = new List<Pet>
             {
-                new Domain.Entities.Pet
+                new Pet
                 {
                     Name = "Michi",
                     Specie = "Gato",
@@ -229,33 +229,33 @@
             }
         };
 
-        duenos = new List<Dueno> { dueno1, dueno2 };
+        Owners = new List<Domain.Entities.Owner> { dueno1, dueno2 };
 
         // Orden inicial
-        duenos = duenos.OrderBy(d => d.CreatedAt).ToList();
-        duenosFiltrados = duenos;
+        Owners = Owners.OrderBy(d => d.CreatedAt).ToList();
+        FilterOwner = Owners;
     }
 
     void AplicarFiltros()
     {
-        duenosFiltrados = duenos
+        FilterOwner = Owners
             .Where(d =>
-                (!fechaDesde.HasValue || d.CreatedAt >= fechaDesde) &&
-                (!fechaHasta.HasValue || d.CreatedAt <= fechaHasta) &&
-                (string.IsNullOrEmpty(filtroCiudad) ||
-                 d.City.Contains(filtroCiudad, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filtroCodigoPostal) ||
-                 d.PostalCode.Contains(filtroCodigoPostal, StringComparison.OrdinalIgnoreCase))
+                (!DateSince.HasValue || d.CreatedAt >= DateSince) &&
+                (!DateTo.HasValue || d.CreatedAt <= DateTo) &&
+                (string.IsNullOrEmpty(CityFilter) ||
+                 d.City.Contains(CityFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(PostalCodeFilter) ||
+                 d.PostalCode.Contains(PostalCodeFilter, StringComparison.OrdinalIgnoreCase))
             )
             .ToList();
     }
 
-    void ToggleMascotas(string duenoId)
+    void TogglePets(string duenoId)
     {
-        if (mascotasVisibles.Contains(duenoId))
-            mascotasVisibles.Remove(duenoId);
+        if (VisiblePets.Contains(duenoId))
+            VisiblePets.Remove(duenoId);
         else
-            mascotasVisibles.Add(duenoId);
+            VisiblePets.Add(duenoId);
     }
 }
 

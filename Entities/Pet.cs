@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SocioWeb.Domain.Entities;
 
-namespace SocioWeb.Domain.Entities;
+namespace SocioWeb.Entities;
 
 public class Pet
 {
@@ -10,13 +11,13 @@ public class Pet
 
     // Relaciones
     [Required]
-    public string IdDueno { get; set; }
-    [ForeignKey("IdDueno")]
-    public Dueno? Dueno { get; set; }
+    public string IdOwner { get; set; }
+    
+    public Owner? Owner { get; set; }
 
-    [Required]
-    public long IdClinic { get; set; }
-    [ForeignKey("IdClinic")]
+    [Required] 
+    public string IdClinic { get; set; }
+    
     public Clinic? Clinic { get; set; }
 
     // Información básica
@@ -49,7 +50,7 @@ public class Pet
 
     public double? Weight { get; set; } // Peso en kg
 
-    public string? DatosClinicos { get; set; } // Información libre: sangre, etc.
+    public string? ClinicalInfo { get; set; } // Información libre: sangre, etc.
 
     public bool Allergies { get; set; } = false;
     public string? WhichAllergies { get; set; }

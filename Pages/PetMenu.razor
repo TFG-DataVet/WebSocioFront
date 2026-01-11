@@ -1,4 +1,5 @@
 ﻿@page "/Mascotas"
+@using SocioWeb.Domain.Entities
 @inject NavigationManager Nav
 
 <!-- ================= FILTROS ================= -->
@@ -21,7 +22,7 @@
     <RadzenButton Icon="filter_alt"
                   Text="Filtrar"
                   ButtonStyle="ButtonStyle.Primary"
-                  Click="@AplicarFiltros"/>
+                  Click="@AplyFilters"/>
 </RadzenStack>
 
 
@@ -32,7 +33,7 @@
         @foreach (var mascota in mascotasFiltradas)
         {
             <!-- DIV envolvente para capturar el click -->
-            <div style="cursor:pointer;" @onclick="@(() => IrAPerfilMascota(mascota.Id))">
+            <div style="cursor:pointer;" @onclick="@(() => goPetProfile(mascota.Id))">
 
                 <RadzenCard Style="
                             margin-bottom:30px;
@@ -73,7 +74,7 @@
                             Text="Dueño"
                             ButtonStyle="ButtonStyle.Light"
                             Style="background:transparent; color:white;"
-                            Click="@(() => ToggleDueno(mascota.Id))"
+                            Click="@(() => ToggleOwners(mascota.Id))"
                             @onclick:stopPropagation="true"/>
                     </RadzenStack>
 
@@ -105,7 +106,7 @@
                     </RadzenStack>
 
                     <!-- DUEÑO DESPLEGABLE -->
-                    @if (duenosVisibles.Contains(mascota.Id))
+                    @if (VisibleOwners.Contains(mascota.Id))
                     {
                         <RadzenCard Style="
                                     margin:20px;
@@ -124,13 +125,13 @@
                                               Size="60px"/>
 
                                 <RadzenStack Gap="2">
-                                    <RadzenLink Path="@($"/PerfilDueno/{mascota.Dueno.Id}")"
+                                    <RadzenLink Path="@($"/PerfilDueno/{mascota.Owner.Id}")"
                                                 Style="text-decoration:none; color:white;">
-                                        <RadzenText Text="@mascota.Dueno.Name"
+                                        <RadzenText Text="@mascota.Owner.Name"
                                                     Style="font-size:18px; font-weight:600;"/>
                                     </RadzenLink>
 
-                                    <RadzenText Text="@mascota.Dueno.Email"
+                                    <RadzenText Text="@mascota.Owner.Email"
                                                 Style="font-size:13px; opacity:0.9;"/>
                                 </RadzenStack>
                             </RadzenStack>
@@ -138,11 +139,11 @@
                             <RadzenStack Style="padding:20px;">
                                 <RadzenText Text="📞 Teléfono"
                                             Style="font-weight:600;"/>
-                                <RadzenText Text="@mascota.Dueno.Phone"/>
+                                <RadzenText Text="@mascota.Owner.Phone"/>
 
                                 <RadzenText Text="🏠 Dirección"
                                             Style="font-weight:600; margin-top:10px;"/>
-                                <RadzenText Text="@mascota.Dueno.Street"/>
+                                <RadzenText Text="@mascota.Owner.Street"/>
                             </RadzenStack>
 
                         </RadzenCard>
@@ -158,17 +159,17 @@
     
 @code {
 
-    List<Domain.Entities.Pet> mascotas = new();
-    List<Domain.Entities.Pet> mascotasFiltradas = new();
+    List<Pet> mascotas = new();
+    List<Pet> mascotasFiltradas = new();
 
     string filtroNombre = "";
     string filtroEspecie = "";
 
-    HashSet<string> duenosVisibles = new();
+    HashSet<string> VisibleOwners = new();
 
     protected override void OnInitialized()
     {
-        var dueno1 = new Dueno
+        var dueno1 = new Owner
         {
             Id = "1",
             Name = "Juan Pérez",
@@ -177,7 +178,7 @@
             Street = "Av. Siempre Viva 742"
         };
 
-        var dueno2 = new Dueno
+        var dueno2 = new Domain.Entities.Owner
         {
             Id = "2",
             Name = "María López",
@@ -186,9 +187,9 @@
             Street = "Calle Falsa 123"
         };
 
-        mascotas = new List<Domain.Entities.Pet>
+        mascotas = new List<Pet>
         {
-            new Domain.Entities.Pet
+            new Pet
             {
                 Id = "M1",
                 Name = "Rocky",
@@ -196,9 +197,9 @@
                 Breed = "Labrador",
                 Age = 5,
                 Weight = 28,
-                Dueno = dueno1
+                Owner = dueno1
             },
-            new Domain.Entities.Pet
+            new Pet
             {
                 Id = "M2",
                 Name = "Michi",
@@ -206,14 +207,14 @@
                 Breed = "Siames",
                 Age = 3,
                 Weight = 6,
-                Dueno = dueno2
+                Owner = dueno2
             }
         };
 
         mascotasFiltradas = mascotas;
     }
 
-    void AplicarFiltros()
+    void AplyFilters()
     {
         mascotasFiltradas = mascotas
             .Where(m =>
@@ -225,16 +226,16 @@
             .ToList();
     }
 
-    void ToggleDueno(string mascotaId)
+    void ToggleOwners(string mascotaId)
     {
-        if (duenosVisibles.Contains(mascotaId))
-            duenosVisibles.Remove(mascotaId);
+        if (VisibleOwners.Contains(mascotaId))
+            VisibleOwners.Remove(mascotaId);
         else
-            duenosVisibles.Add(mascotaId);
+            VisibleOwners.Add(mascotaId);
     }
 
-    void IrAPerfilMascota(string idMascota)
+    void goPetProfile(string mascotaId)
     {
-        Nav.NavigateTo($"/PerfilMascota/{idMascota}");
+        Nav.NavigateTo($"/PerfilMascota/{mascotaId}");
     }
 }
