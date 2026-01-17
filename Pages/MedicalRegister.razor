@@ -3,32 +3,33 @@
 @using Radzen
 @using Radzen.Blazor
 
-
 <RadzenRow Style="height:100%">
-    <!-- Menú lateral -->
-    <RadzenColumn Size="12" SizeMD="3" SizeLG="2" Style="background:#f5f5f5; padding:0">
-        <RadzenPanelMenu Style="border:none">
+
+    <!-- Menú horizontal arriba -->
+    <RadzenColumn Size="12" Style="background:#f5f5f5; padding:5px 0;">
+        <RadzenPanelMenu Style="border:none; display:flex; justify-content:space-around;">
             <RadzenPanelMenuItem Text="Consulta" Icon="medical_services"
-                                 Click="() => SelectCase(MedicalCase.Consultation)"/>
-            <RadzenPanelMenuItem Text="Vacuna" Icon="vaccines" Click="() => SelectCase(MedicalCase.Vaccine)"/>
+                                 Click="() => SelectCase(MedicalCase.Consultation)" Style="flex:1; text-align:center;"/>
+            <RadzenPanelMenuItem Text="Vacuna" Icon="vaccines"
+                                 Click="() => SelectCase(MedicalCase.Vaccine)" Style="flex:1; text-align:center;"/>
             <RadzenPanelMenuItem Text="Tratamiento" Icon="healing"
-                                 Click="() => SelectCase(MedicalCase.Treatment)"/>
+                                 Click="() => SelectCase(MedicalCase.Treatment)" Style="flex:1; text-align:center;"/>
             <RadzenPanelMenuItem Text="Cirugía" Icon="content_cut"
-                                 Click="() => SelectCase(MedicalCase.Surgery)"/>
+                                 Click="() => SelectCase(MedicalCase.Surgery)" Style="flex:1; text-align:center;"/>
             <RadzenPanelMenuItem Text="Peso" Icon="monitor_weight"
-                                 Click="() => SelectCase(MedicalCase.Weight)"/>
+                                 Click="() => SelectCase(MedicalCase.Weight)" Style="flex:1; text-align:center;"/>
             <RadzenPanelMenuItem Text="Diagnóstico" Icon="fact_check"
-                                 Click="() => SelectCase(MedicalCase.Diagnosis)"/>
+                                 Click="() => SelectCase(MedicalCase.Diagnosis)" Style="flex:1; text-align:center;"/>
             <RadzenPanelMenuItem Text="Alergia" Icon="report_problem"
-                                 Click="() => SelectCase(MedicalCase.Allergy)"/>
+                                 Click="() => SelectCase(MedicalCase.Allergy)" Style="flex:1; text-align:center;"/>
             <RadzenPanelMenuItem Text="Documento" Icon="description"
-                                 Click="() => SelectCase(MedicalCase.Document)"/>
+                                 Click="() => SelectCase(MedicalCase.Document)" Style="flex:1; text-align:center;"/>
         </RadzenPanelMenu>
     </RadzenColumn>
 
-    <!-- Contenido -->
-    <RadzenColumn Size="12" SizeMD="9" SizeLG="10" Style="padding:30px">
-        <RadzenCard Style="max-width:900px">
+    <!-- Contenido debajo del menú -->
+    <RadzenColumn Size="12" Style="padding:30px">
+        <RadzenCard Style="max-width:900px; margin:auto;">
             <RadzenText Text="@Title" TextStyle="TextStyle.H6" Style="margin-bottom:20px"/>
 
             @switch (SelectedCase)
@@ -60,6 +61,7 @@
             }
         </RadzenCard>
     </RadzenColumn>
+
 </RadzenRow>
 
 
@@ -183,8 +185,7 @@
 
                     </RadzenFieldset>
                 }
-
-
+                
                 <RadzenButton Text="Agregar medicamento"
                               Icon="add"
                               Click="@AddMedication"
@@ -305,8 +306,7 @@
 
         </RadzenFieldset>
     </RadzenTemplateForm>;
-
-
+  
     void AddProcedure()
     {
         surgery.Procedures ??= new List<SurgeryProcedure>();
