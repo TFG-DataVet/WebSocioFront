@@ -3,74 +3,65 @@
 @using Radzen
 @using Radzen.Blazor
 
-<RadzenLayout Style="min-height:100vh">
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
-                     JustifyContent="JustifyContent.SpaceBetween" Style="padding:10px">
-            <RadzenText Text="Centro Veterinario - Registro Médico" TextStyle="TextStyle.H5"/>
-        </RadzenStack>
-    </RadzenHeader>
 
-    <RadzenBody>
-        <RadzenRow Style="height:100%">
-            <!-- Menú lateral -->
-            <RadzenColumn Size="12" SizeMD="3" SizeLG="2" Style="background:#f5f5f5; padding:0">
-                <RadzenPanelMenu Style="border:none">
-                    <RadzenPanelMenuItem Text="Consulta" Icon="medical_services"
-                                         Click="() => SelectCase(MedicalCase.Consultation)"/>
-                    <RadzenPanelMenuItem Text="Vacuna" Icon="vaccines" Click="() => SelectCase(MedicalCase.Vaccine)"/>
-                    <RadzenPanelMenuItem Text="Tratamiento" Icon="healing"
-                                         Click="() => SelectCase(MedicalCase.Treatment)"/>
-                    <RadzenPanelMenuItem Text="Cirugía" Icon="content_cut"
-                                         Click="() => SelectCase(MedicalCase.Surgery)"/>
-                    <RadzenPanelMenuItem Text="Peso" Icon="monitor_weight"
-                                         Click="() => SelectCase(MedicalCase.Weight)"/>
-                    <RadzenPanelMenuItem Text="Diagnóstico" Icon="fact_check"
-                                         Click="() => SelectCase(MedicalCase.Diagnosis)"/>
-                    <RadzenPanelMenuItem Text="Alergia" Icon="report_problem"
-                                         Click="() => SelectCase(MedicalCase.Allergy)"/>
-                    <RadzenPanelMenuItem Text="Documento" Icon="description"
-                                         Click="() => SelectCase(MedicalCase.Document)"/>
-                </RadzenPanelMenu>
-            </RadzenColumn>
+<RadzenRow Style="height:100%">
+    <!-- Menú lateral -->
+    <RadzenColumn Size="12" SizeMD="3" SizeLG="2" Style="background:#f5f5f5; padding:0">
+        <RadzenPanelMenu Style="border:none">
+            <RadzenPanelMenuItem Text="Consulta" Icon="medical_services"
+                                 Click="() => SelectCase(MedicalCase.Consultation)"/>
+            <RadzenPanelMenuItem Text="Vacuna" Icon="vaccines" Click="() => SelectCase(MedicalCase.Vaccine)"/>
+            <RadzenPanelMenuItem Text="Tratamiento" Icon="healing"
+                                 Click="() => SelectCase(MedicalCase.Treatment)"/>
+            <RadzenPanelMenuItem Text="Cirugía" Icon="content_cut"
+                                 Click="() => SelectCase(MedicalCase.Surgery)"/>
+            <RadzenPanelMenuItem Text="Peso" Icon="monitor_weight"
+                                 Click="() => SelectCase(MedicalCase.Weight)"/>
+            <RadzenPanelMenuItem Text="Diagnóstico" Icon="fact_check"
+                                 Click="() => SelectCase(MedicalCase.Diagnosis)"/>
+            <RadzenPanelMenuItem Text="Alergia" Icon="report_problem"
+                                 Click="() => SelectCase(MedicalCase.Allergy)"/>
+            <RadzenPanelMenuItem Text="Documento" Icon="description"
+                                 Click="() => SelectCase(MedicalCase.Document)"/>
+        </RadzenPanelMenu>
+    </RadzenColumn>
 
-            <!-- Contenido -->
-            <RadzenColumn Size="12" SizeMD="9" SizeLG="10" Style="padding:30px">
-                <RadzenCard Style="max-width:900px">
-                    <RadzenText Text="@Title" TextStyle="TextStyle.H6" Style="margin-bottom:20px"/>
+    <!-- Contenido -->
+    <RadzenColumn Size="12" SizeMD="9" SizeLG="10" Style="padding:30px">
+        <RadzenCard Style="max-width:900px">
+            <RadzenText Text="@Title" TextStyle="TextStyle.H6" Style="margin-bottom:20px"/>
 
-                    @switch (SelectedCase)
-                    {
-                        case MedicalCase.Consultation:
-                            @ConsultationForm()
-                            break;
-                        case MedicalCase.Vaccine:
-                            @VaccineForm()
-                            break;
-                        case MedicalCase.Treatment:
-                            @TreatmentForm()
-                            break;
-                        case MedicalCase.Surgery:
-                            @SurgeryForm()
-                            break;
-                        case MedicalCase.Weight:
-                            @WeightForm()
-                            break;
-                        case MedicalCase.Diagnosis:
-                            @DiagnosisForm()
-                            break;
-                        case MedicalCase.Allergy:
-                            @AllergyForm()
-                            break;
-                        case MedicalCase.Document:
-                            @DocumentForm()
-                            break;
-                    }
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenBody>
-</RadzenLayout>
+            @switch (SelectedCase)
+            {
+                case MedicalCase.Consultation:
+                    @ConsultationForm()
+                    break;
+                case MedicalCase.Vaccine:
+                    @VaccineForm()
+                    break;
+                case MedicalCase.Treatment:
+                    @TreatmentForm()
+                    break;
+                case MedicalCase.Surgery:
+                    @SurgeryForm()
+                    break;
+                case MedicalCase.Weight:
+                    @WeightForm()
+                    break;
+                case MedicalCase.Diagnosis:
+                    @DiagnosisForm()
+                    break;
+                case MedicalCase.Allergy:
+                    @AllergyForm()
+                    break;
+                case MedicalCase.Document:
+                    @DocumentForm()
+                    break;
+            }
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
+
 
 @code {
 
@@ -137,31 +128,196 @@
 
     RenderFragment TreatmentForm() => @<RadzenTemplateForm TItem="Treatment" Data="@treatment">
         <RadzenFieldset Text="Tratamiento">
-            <RadzenTextBox @bind-Value="treatment.Medication" Placeholder="Medicamento" Style="width:100%"/>
-            <RadzenTextBox @bind-Value="treatment.Dosage" Placeholder="Dosis y frecuencia" Style="width:100%"/>
 
-            <RadzenDatePicker TValue="DateTime?" @bind-Value="treatment.StartDate"
-                              Placeholder="Inicio del tratamiento" Style="width:100%"/>
+            <RadzenTextBox @bind-Value="treatment.TreatmentName"
+                           Placeholder="Nombre del tratamiento"
+                           Style="width:100%"/>
 
-            <RadzenDatePicker TValue="DateTime?" @bind-Value="treatment.EndDate"
-                              Placeholder="Fin del tratamiento" Style="width:100%"/>
+            <RadzenDatePicker TValue="DateTime?"
+                              @bind-Value="treatment.StartDate"
+                              Placeholder="Inicio del tratamiento"
+                              Style="width:100%"/>
 
-            <RadzenTextArea @bind-Value="treatment.Notes" Placeholder="Indicaciones adicionales" Style="width:100%"/>
+            <RadzenDatePicker TValue="DateTime?"
+                              @bind-Value="treatment.EndDate"
+                              Placeholder="Fin del tratamiento"
+                              Style="width:100%"/>
+
+            <RadzenTextArea @bind-Value="treatment.Instructions"
+                            Placeholder="Indicaciones"
+                            Style="width:100%"/>
+
+
+            <RadzenCheckBox TValue="bool"
+                            Value="treatment.FollowUpRequired"
+                            Change="@((bool value) => treatment.FollowUpRequired = value)"/>
+            <RadzenLabel Text="¿Requiere seguimiento?" Style="margin-left:5px"/>
+
+
+            <RadzenFieldset Text="Medicamentos">
+
+                @foreach (var medication in treatment.Medications)
+                {
+                    <RadzenFieldset Text="Medicamento" Style="margin-bottom:10px">
+
+                        <RadzenTextBox @bind-Value="medication.Name"
+                                       Placeholder="Medicamento"
+                                       Style="width:100%"/>
+
+                        <RadzenTextBox @bind-Value="medication.Dosage"
+                                       Placeholder="Dosis"
+                                       Style="width:100%"/>
+
+                        <RadzenTextBox @bind-Value="medication.Frequency"
+                                       Placeholder="Frecuencia"
+                                       Style="width:100%"/>
+
+                        <RadzenNumeric TValue="int?"
+                                       @bind-Value="medication.DurationInDays"
+                                       Placeholder="Duración (días)"
+                                       Style="width:100%"/>
+
+                        <RadzenTextArea @bind-Value="medication.Notes"
+                                        Placeholder="Notas"
+                                        Style="width:100%"/>
+
+                    </RadzenFieldset>
+                }
+
+
+                <RadzenButton Text="Agregar medicamento"
+                              Icon="add"
+                              Click="@AddMedication"
+                              Style="margin-top:10px"/>
+
+            </RadzenFieldset>
+
         </RadzenFieldset>
     </RadzenTemplateForm>;
 
+    void AddMedication()
+    {
+        treatment.Medications ??= new List<TreatmentMedication>();
+        treatment.Medications.Add(new TreatmentMedication());
+    }
 
-    RenderFragment SurgeryForm() => @<RadzenTemplateForm TItem="Surgery" Data="@surgery">
+
+  RenderFragment SurgeryForm() => @<RadzenTemplateForm TItem="Surgery" Data="@surgery">
         <RadzenFieldset Text="Cirugía">
-            <RadzenTextBox @bind-Value="surgery.Type" Placeholder="Tipo de cirugía" Style="width:100%"/>
 
-            <RadzenDatePicker TValue="DateTime?" @bind-Value="surgery.Date"
-                              Placeholder="Fecha" Style="width:100%"/>
+            <RadzenTextBox @bind-Value="surgery.SurgeryName"
+                           Placeholder="Nombre de la cirugía"
+                           Style="width:100%" />
 
-            <RadzenTextArea @bind-Value="surgery.Procedure" Placeholder="Procedimiento realizado" Style="width:100%"/>
-            <RadzenTextArea @bind-Value="surgery.PostOpCare" Placeholder="Cuidados postoperatorios" Style="width:100%"/>
+            <RadzenDropDown TValue="SurgeryType"
+                            @bind-Value="surgery.SurgeryType"
+                            Data="@Enum.GetValues(typeof(SurgeryType))"
+                            Placeholder="Tipo de cirugía"
+                            Style="width:100%" />
+
+            <RadzenDatePicker TValue="DateTime?"
+                              @bind-Value="surgery.SurgeryDate"
+                              Placeholder="Fecha de cirugía"
+                              Style="width:100%" />
+
+            <RadzenDropDown TValue="SurgeryOutcome"
+                            @bind-Value="surgery.Outcome"
+                            Data="@Enum.GetValues(typeof(SurgeryOutcome))"
+                            Placeholder="Resultado"
+                            Style="width:100%" />
+
+            <RadzenTextBox @bind-Value="surgery.AnesthesiaType"
+                           Placeholder="Tipo de anestesia"
+                           Style="width:100%" />
+
+            <RadzenCheckBox TValue="bool"
+                            Value="surgery.HospitalizationRequired"
+                            Change="@((bool value) => surgery.HospitalizationRequired = value)" />
+            <RadzenLabel Text="¿Requiere hospitalización?" Style="margin-left:5px" />
+
+            <RadzenNumeric TValue="int?"
+                           @bind-Value="surgery.HospitalizationDays"
+                           Placeholder="Días de hospitalización"
+                           Style="width:100%"
+                           Disabled="@(!surgery.HospitalizationRequired)" />
+
+            <RadzenCheckBox TValue="bool"
+                            Value="surgery.FollowUpRequired"
+                            Change="@((bool value) => surgery.FollowUpRequired = value)" />
+            <RadzenLabel Text="¿Requiere seguimiento?" Style="margin-left:5px" />
+
+            <RadzenDatePicker TValue="DateTime?"
+                              @bind-Value="surgery.FollowUpDate"
+                              Placeholder="Fecha de seguimiento"
+                              Style="width:100%"
+                              Disabled="@(!surgery.FollowUpRequired)" />
+
+            <!-- Procedimientos realizados -->
+            <RadzenFieldset Text="Procedimientos realizados">
+                @foreach (var procedure in surgery.Procedures)
+                {
+                    <RadzenFieldset Text="Procedimiento" Style="margin-bottom:10px">
+                        <RadzenTextBox @bind-Value="procedure.name"
+                                       Placeholder="Nombre del procedimiento"
+                                       Style="width:100%" />
+                    </RadzenFieldset>
+                }
+
+                <RadzenButton Text="Agregar procedimiento"
+                              Icon="add"
+                              Click="@AddProcedure"
+                              Style="margin-top:10px" />
+            </RadzenFieldset>
+
+            <!-- Medicamentos postoperatorios -->
+            <RadzenFieldset Text="Medicamentos postoperatorios">
+                @foreach (var med in surgery.PostOpMedications)
+                {
+                    <RadzenFieldset Text="Medicamento" Style="margin-bottom:10px">
+                        <RadzenTextBox @bind-Value="med.Name"
+                                       Placeholder="Nombre"
+                                       Style="width:100%" />
+
+                        <RadzenTextBox @bind-Value="med.Dosage"
+                                       Placeholder="Dosis"
+                                       Style="width:100%" />
+
+                        <RadzenTextBox @bind-Value="med.Frequency"
+                                       Placeholder="Frecuencia"
+                                       Style="width:100%" />
+
+                        <RadzenNumeric TValue="int?"
+                                        @bind-Value="med.DurationInDays"
+                                        Placeholder="Duración (días)"
+                                        Style="width:100%" />
+
+                        <RadzenTextArea @bind-Value="med.Notes"
+                                        Placeholder="Notas"
+                                        Style="width:100%" />
+                    </RadzenFieldset>
+                }
+
+                <RadzenButton Text="Agregar medicamento"
+                              Icon="add"
+                              Click="@AddPostOpMedication"
+                              Style="margin-top:10px" />
+            </RadzenFieldset>
+
         </RadzenFieldset>
     </RadzenTemplateForm>;
+
+
+    void AddProcedure()
+    {
+        surgery.Procedures ??= new List<SurgeryProcedure>();
+        surgery.Procedures.Add(new SurgeryProcedure());
+    }
+
+    void AddPostOpMedication()
+    {
+        surgery.PostOpMedications ??= new List<SurgeryMedication>();
+        surgery.PostOpMedications.Add(new SurgeryMedication());
+    }
 
 
     RenderFragment WeightForm() => @<RadzenTemplateForm TItem="WeightRecord" Data="@weight">
