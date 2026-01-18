@@ -3,7 +3,7 @@
 @using Radzen
 @using Radzen.Blazor
 
-<RadzenRow Style="height:100%">
+<RadzenRow Style="height:10%">
 
     <!-- Menú horizontal arriba -->
     <RadzenColumn Size="12" Style="background:#f5f5f5; padding:5px 0;">
@@ -26,10 +26,10 @@
                                  Click="() => SelectCase(MedicalCase.Document)" Style="flex:1; text-align:center;"/>
         </RadzenPanelMenu>
     </RadzenColumn>
-
+</RadzenRow>
     <!-- Contenido debajo del menú -->
-    <RadzenColumn Size="12" Style="padding:30px">
-        <RadzenCard Style="max-width:900px; margin:auto;">
+    <RadzenColumn Size="12" Style="padding:10px">
+        <RadzenCard Style="width:100%; height:80%; margin:0; padding:20px; box-sizing:border-box;">
             <RadzenText Text="@Title" TextStyle="TextStyle.H6" Style="margin-bottom:20px"/>
 
             @switch (SelectedCase)
@@ -62,7 +62,7 @@
         </RadzenCard>
     </RadzenColumn>
 
-</RadzenRow>
+
 
 
 @code {
@@ -92,109 +92,10 @@
         _ => "Registro Médico"
     };
 
-    void SelectCase(MedicalCase medicalCase)
+   void SelectCase(MedicalCase medicalCase)
     {
         SelectedCase = medicalCase;
     }
-
-    RenderFragment ConsultationForm() => @<RadzenTemplateForm TItem="Consultation" Data="@consultation">
-        <RadzenFieldset Text="Datos de la Consulta">
-            <RadzenTextBox @bind-Value="consultation.Reason" Placeholder="Motivo de la consulta" Style="width:100%"/>
-            <RadzenTextArea @bind-Value="consultation.Symptoms" Placeholder="Síntomas observados" Style="width:100%"/>
-            <RadzenTextArea @bind-Value="consultation.PhysicalExam" Placeholder="Examen físico" Style="width:100%"/>
-            <RadzenTextArea @bind-Value="consultation.Notes" Placeholder="Observaciones del veterinario"
-                            Style="width:100%"/>
-        </RadzenFieldset>
-    </RadzenTemplateForm>;
-
-
-    RenderFragment VaccineForm() => @<RadzenTemplateForm TItem="Vaccine" Data="@vaccine">
-        <RadzenFieldset Text="Vacunación">
-            <RadzenTextBox @bind-Value="vaccine.VaccineName" Placeholder="Nombre de la vacuna" Style="width:100%"/>
-
-            <RadzenDatePicker TValue="DateTime?"
-                              @bind-Value="vaccine.ApplicationDate"
-                              Placeholder="Fecha de aplicación"
-                              Style="width:100%"/>
-
-            <RadzenDatePicker TValue="DateTime?"
-                              @bind-Value="vaccine.NextDoseDate"
-                              Placeholder="Próxima dosis"
-                              Style="width:100%"/>
-
-            <RadzenTextBox @bind-Value="vaccine.BatchNumber" Placeholder="Número de lote" Style="width:100%"/>
-            <RadzenTextBox @bind-Value="vaccine.Manufacturer" Placeholder="Fabricante" Style="width:100%"/>
-        </RadzenFieldset>
-    </RadzenTemplateForm>;
-
-
-    RenderFragment TreatmentForm() => @<RadzenTemplateForm TItem="Treatment" Data="@treatment">
-        <RadzenFieldset Text="Tratamiento">
-
-            <RadzenTextBox @bind-Value="treatment.TreatmentName"
-                           Placeholder="Nombre del tratamiento"
-                           Style="width:100%"/>
-
-            <RadzenDatePicker TValue="DateTime?"
-                              @bind-Value="treatment.StartDate"
-                              Placeholder="Inicio del tratamiento"
-                              Style="width:100%"/>
-
-            <RadzenDatePicker TValue="DateTime?"
-                              @bind-Value="treatment.EndDate"
-                              Placeholder="Fin del tratamiento"
-                              Style="width:100%"/>
-
-            <RadzenTextArea @bind-Value="treatment.Instructions"
-                            Placeholder="Indicaciones"
-                            Style="width:100%"/>
-
-
-            <RadzenCheckBox TValue="bool"
-                            Value="treatment.FollowUpRequired"
-                            Change="@((bool value) => treatment.FollowUpRequired = value)"/>
-            <RadzenLabel Text="¿Requiere seguimiento?" Style="margin-left:5px"/>
-
-
-            <RadzenFieldset Text="Medicamentos">
-
-                @foreach (var medication in treatment.Medications)
-                {
-                    <RadzenFieldset Text="Medicamento" Style="margin-bottom:10px">
-
-                        <RadzenTextBox @bind-Value="medication.Name"
-                                       Placeholder="Medicamento"
-                                       Style="width:100%"/>
-
-                        <RadzenTextBox @bind-Value="medication.Dosage"
-                                       Placeholder="Dosis"
-                                       Style="width:100%"/>
-
-                        <RadzenTextBox @bind-Value="medication.Frequency"
-                                       Placeholder="Frecuencia"
-                                       Style="width:100%"/>
-
-                        <RadzenNumeric TValue="int?"
-                                       @bind-Value="medication.DurationInDays"
-                                       Placeholder="Duración (días)"
-                                       Style="width:100%"/>
-
-                        <RadzenTextArea @bind-Value="medication.Notes"
-                                        Placeholder="Notas"
-                                        Style="width:100%"/>
-
-                    </RadzenFieldset>
-                }
-                
-                <RadzenButton Text="Agregar medicamento"
-                              Icon="add"
-                              Click="@AddMedication"
-                              Style="margin-top:10px"/>
-
-            </RadzenFieldset>
-
-        </RadzenFieldset>
-    </RadzenTemplateForm>;
 
     void AddMedication()
     {
@@ -202,111 +103,6 @@
         treatment.Medications.Add(new TreatmentMedication());
     }
 
-
-  RenderFragment SurgeryForm() => @<RadzenTemplateForm TItem="Surgery" Data="@surgery">
-        <RadzenFieldset Text="Cirugía">
-
-            <RadzenTextBox @bind-Value="surgery.SurgeryName"
-                           Placeholder="Nombre de la cirugía"
-                           Style="width:100%" />
-
-            <RadzenDropDown TValue="SurgeryType"
-                            @bind-Value="surgery.SurgeryType"
-                            Data="@Enum.GetValues(typeof(SurgeryType))"
-                            Placeholder="Tipo de cirugía"
-                            Style="width:100%" />
-
-            <RadzenDatePicker TValue="DateTime?"
-                              @bind-Value="surgery.SurgeryDate"
-                              Placeholder="Fecha de cirugía"
-                              Style="width:100%" />
-
-            <RadzenDropDown TValue="SurgeryOutcome"
-                            @bind-Value="surgery.Outcome"
-                            Data="@Enum.GetValues(typeof(SurgeryOutcome))"
-                            Placeholder="Resultado"
-                            Style="width:100%" />
-
-            <RadzenTextBox @bind-Value="surgery.AnesthesiaType"
-                           Placeholder="Tipo de anestesia"
-                           Style="width:100%" />
-
-            <RadzenCheckBox TValue="bool"
-                            Value="surgery.HospitalizationRequired"
-                            Change="@((bool value) => surgery.HospitalizationRequired = value)" />
-            <RadzenLabel Text="¿Requiere hospitalización?" Style="margin-left:5px" />
-
-            <RadzenNumeric TValue="int?"
-                           @bind-Value="surgery.HospitalizationDays"
-                           Placeholder="Días de hospitalización"
-                           Style="width:100%"
-                           Disabled="@(!surgery.HospitalizationRequired)" />
-
-            <RadzenCheckBox TValue="bool"
-                            Value="surgery.FollowUpRequired"
-                            Change="@((bool value) => surgery.FollowUpRequired = value)" />
-            <RadzenLabel Text="¿Requiere seguimiento?" Style="margin-left:5px" />
-
-            <RadzenDatePicker TValue="DateTime?"
-                              @bind-Value="surgery.FollowUpDate"
-                              Placeholder="Fecha de seguimiento"
-                              Style="width:100%"
-                              Disabled="@(!surgery.FollowUpRequired)" />
-
-            <!-- Procedimientos realizados -->
-            <RadzenFieldset Text="Procedimientos realizados">
-                @foreach (var procedure in surgery.Procedures)
-                {
-                    <RadzenFieldset Text="Procedimiento" Style="margin-bottom:10px">
-                        <RadzenTextBox @bind-Value="procedure.name"
-                                       Placeholder="Nombre del procedimiento"
-                                       Style="width:100%" />
-                    </RadzenFieldset>
-                }
-
-                <RadzenButton Text="Agregar procedimiento"
-                              Icon="add"
-                              Click="@AddProcedure"
-                              Style="margin-top:10px" />
-            </RadzenFieldset>
-
-            <!-- Medicamentos postoperatorios -->
-            <RadzenFieldset Text="Medicamentos postoperatorios">
-                @foreach (var med in surgery.PostOpMedications)
-                {
-                    <RadzenFieldset Text="Medicamento" Style="margin-bottom:10px">
-                        <RadzenTextBox @bind-Value="med.Name"
-                                       Placeholder="Nombre"
-                                       Style="width:100%" />
-
-                        <RadzenTextBox @bind-Value="med.Dosage"
-                                       Placeholder="Dosis"
-                                       Style="width:100%" />
-
-                        <RadzenTextBox @bind-Value="med.Frequency"
-                                       Placeholder="Frecuencia"
-                                       Style="width:100%" />
-
-                        <RadzenNumeric TValue="int?"
-                                        @bind-Value="med.DurationInDays"
-                                        Placeholder="Duración (días)"
-                                        Style="width:100%" />
-
-                        <RadzenTextArea @bind-Value="med.Notes"
-                                        Placeholder="Notas"
-                                        Style="width:100%" />
-                    </RadzenFieldset>
-                }
-
-                <RadzenButton Text="Agregar medicamento"
-                              Icon="add"
-                              Click="@AddPostOpMedication"
-                              Style="margin-top:10px" />
-            </RadzenFieldset>
-
-        </RadzenFieldset>
-    </RadzenTemplateForm>;
-  
     void AddProcedure()
     {
         surgery.Procedures ??= new List<SurgeryProcedure>();
@@ -318,79 +114,6 @@
         surgery.PostOpMedications ??= new List<SurgeryMedication>();
         surgery.PostOpMedications.Add(new SurgeryMedication());
     }
-
-
-    RenderFragment WeightForm() => @<RadzenTemplateForm TItem="WeightRecord" Data="@weight">
-        <RadzenFieldset Text="Control de Peso">
-
-            <RadzenNumeric TValue="decimal"
-                           @bind-Value="weight.WeightKg"
-                           Placeholder="Peso (kg)"
-                           Style="width:100%"/>
-
-            <RadzenDatePicker TValue="DateTime?"
-                              @bind-Value="weight.Date"
-                              Placeholder="Fecha de medición"
-                              Style="width:100%"/>
-
-            <RadzenTextArea @bind-Value="weight.Notes" Placeholder="Observaciones" Style="width:100%"/>
-        </RadzenFieldset>
-    </RadzenTemplateForm>;
-
-
-    RenderFragment DiagnosisForm() => @<RadzenTemplateForm TItem="Diagnosis" Data="@diagnosis">
-    <RadzenFieldset Text="Diagnóstico">
-        
-        <RadzenTextBox @bind-Value="diagnosis.DiagnosisName"
-                       Placeholder="Nombre del diagnóstico"
-                       Style="width:100%" />
-
-        <RadzenDropDown @bind-Value="diagnosis.Category"
-                        Data="@Enum.GetValues(typeof(DiagnosisCategory))"
-                        TextProperty="Name"
-                        ValueProperty="Value"
-                        Placeholder="Categoría"
-                        Style="width:100%" />
-
-        <RadzenTextArea @bind-Value="diagnosis.Description"
-                        Placeholder="Descripción"
-                        Style="width:100%" />
-
-        <RadzenDropDown @bind-Value="diagnosis.Severity"
-                        Data="@Enum.GetValues(typeof(DiagnosisSeverity))"
-                        Placeholder="Severidad"
-                        Style="width:100%" />
-
-        <RadzenDatePicker @bind-Value="diagnosis.DiagnosedAt"
-                           DateFormat="dd/MM/yyyy"
-                           Placeholder="Fecha de diagnóstico"
-                           Style="width:100%" />
-
-        <RadzenCheckBox @bind-Value="diagnosis.Chronic" />
-        <RadzenLabel Text="Crónico" />
-
-        <RadzenCheckBox @bind-Value="diagnosis.Contagious" />
-        <RadzenLabel Text="Contagioso" />
-
-        <RadzenTextArea @bind-Value="symptomsText"
-                        Placeholder="Síntomas (separados por comas)"
-                        Style="width:100%" />
-
-        <RadzenTextArea @bind-Value="recommendationsText"
-                        Placeholder="Recomendaciones (separadas por comas)"
-                        Style="width:100%" />
-
-        <RadzenCheckBox @bind-Value="diagnosis.FollowUpRequired" />
-        <RadzenLabel Text="Requiere seguimiento" />
-
-        <RadzenDatePicker @bind-Value="diagnosis.FollowUpDate"
-                           DateFormat="dd/MM/yyyy"
-                           Placeholder="Fecha de seguimiento"
-                           Style="width:100%"
-                           Disabled="@(!diagnosis.FollowUpRequired)" />
-
-    </RadzenFieldset>
-</RadzenTemplateForm>;
 
     private string symptomsText
     {
@@ -410,25 +133,293 @@
             .ToList();
     }
 
-    RenderFragment AllergyForm() => @<RadzenTemplateForm TItem="Allergy" Data="@allergy">
-        <RadzenFieldset Text="Alergias">
-            <RadzenTextBox @bind-Value="allergy.Substance" Placeholder="Sustancia" Style="width:100%"/>
-            <RadzenTextArea @bind-Value="allergy.Reaction" Placeholder="Reacción" Style="width:100%"/>
-            <RadzenTextArea @bind-Value="allergy.Notes" Placeholder="Notas adicionales" Style="width:100%"/>
+    private string reactionsText
+    {
+        get => string.Join(", ", allergy.Reactions ?? new List<string>());
+        set => allergy.Reactions = value?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(r => r.Trim())
+            .ToList();
+    }
+}
+
+<!-- ============================ FORMS ============================ -->
+
+@functions {
+
+RenderFragment ConsultationForm() => @<RadzenTemplateForm TItem="Consultation" Data="@consultation">
+    <RadzenFieldset Text="Datos de la Consulta" Style="padding:15px;">
+        <RadzenTextBox @bind-Value="consultation.Reason"
+                       Placeholder="Motivo de la consulta"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="consultation.Symptoms"
+                        Placeholder="Síntomas observados"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="consultation.PhysicalExam"
+                        Placeholder="Examen físico"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="consultation.Notes"
+                        Placeholder="Observaciones del veterinario"
+                        Style="width:100%; margin-bottom:15px;" />
+    </RadzenFieldset>
+</RadzenTemplateForm>;
+
+RenderFragment VaccineForm() => @<RadzenTemplateForm TItem="Vaccine" Data="@vaccine">
+    <RadzenFieldset Text="Vacunación" Style="padding:15px;">
+        <RadzenTextBox @bind-Value="vaccine.VaccineName"
+                       Placeholder="Nombre de la vacuna"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="vaccine.ApplicationDate"
+                           Placeholder="Fecha de aplicación"
+                           Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="vaccine.NextDoseDate"
+                           Placeholder="Próxima dosis"
+                           Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextBox @bind-Value="vaccine.BatchNumber"
+                       Placeholder="Número de lote"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextBox @bind-Value="vaccine.Manufacturer"
+                       Placeholder="Fabricante"
+                       Style="width:100%; margin-bottom:15px;" />
+    </RadzenFieldset>
+</RadzenTemplateForm>;
+
+RenderFragment TreatmentForm() => @<RadzenTemplateForm TItem="Treatment" Data="@treatment">
+    <RadzenFieldset Text="Tratamiento" Style="padding:15px;">
+        <RadzenTextBox @bind-Value="treatment.TreatmentName"
+                       Placeholder="Nombre del tratamiento"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="treatment.StartDate"
+                           Placeholder="Inicio del tratamiento"
+                           Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="treatment.EndDate"
+                           Placeholder="Fin del tratamiento"
+                           Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="treatment.Instructions"
+                        Placeholder="Indicaciones"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenCheckBox TValue="bool" Value="treatment.FollowUpRequired"
+                        Change="@((bool value) => treatment.FollowUpRequired = value)" />
+        <RadzenLabel Text="¿Requiere seguimiento?" Style="margin-left:5px; margin-bottom:15px;" />
+
+        <RadzenFieldset Text="Medicamentos" Style="padding:10px;">
+            @foreach (var medication in treatment.Medications)
+            {
+                <RadzenFieldset Text="Medicamento" Style="margin-bottom:15px; padding:10px;">
+                    <RadzenTextBox @bind-Value="medication.Name"
+                                   Placeholder="Medicamento"
+                                   Style="width:100%; margin-bottom:10px;" />
+                    <RadzenTextBox @bind-Value="medication.Dosage"
+                                   Placeholder="Dosis"
+                                   Style="width:100%; margin-bottom:10px;" />
+                    <RadzenTextBox @bind-Value="medication.Frequency"
+                                   Placeholder="Frecuencia"
+                                   Style="width:100%; margin-bottom:10px;" />
+                    <RadzenNumeric TValue="int?" @bind-Value="medication.DurationInDays"
+                                   Placeholder="Duración (días)"
+                                   Style="width:100%; margin-bottom:10px;" />
+                    <RadzenTextArea @bind-Value="medication.Notes"
+                                    Placeholder="Notas"
+                                    Style="width:100%; margin-bottom:10px;" />
+                </RadzenFieldset>
+            }
+            <RadzenButton Text="Agregar medicamento" Icon="add"
+                          Click="@AddMedication"
+                          Style="margin-top:10px; margin-bottom:15px;" />
         </RadzenFieldset>
-    </RadzenTemplateForm>;
+    </RadzenFieldset>
+</RadzenTemplateForm>;
 
+RenderFragment SurgeryForm() => @<RadzenTemplateForm TItem="Surgery" Data="@surgery">
+    <RadzenFieldset Text="Cirugía" Style="padding:15px;">
+        <RadzenTextBox @bind-Value="surgery.SurgeryName"
+                       Placeholder="Nombre de la cirugía"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenDropDown TValue="SurgeryType" @bind-Value="surgery.SurgeryType"
+                        Data="@Enum.GetValues(typeof(SurgeryType))"
+                        Placeholder="Tipo de cirugía"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="surgery.SurgeryDate"
+                           Placeholder="Fecha de cirugía"
+                           Style="width:100%; margin-bottom:15px;" />
+        <RadzenDropDown TValue="SurgeryOutcome" @bind-Value="surgery.Outcome"
+                        Data="@Enum.GetValues(typeof(SurgeryOutcome))"
+                        Placeholder="Resultado"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextBox @bind-Value="surgery.AnesthesiaType"
+                       Placeholder="Tipo de anestesia"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenCheckBox TValue="bool" Value="surgery.HospitalizationRequired"
+                        Change="@((bool value) => surgery.HospitalizationRequired = value)" />
+        <RadzenLabel Text="¿Requiere hospitalización?" Style="margin-left:5px; margin-bottom:10px;" />
+        <RadzenNumeric TValue="int?" @bind-Value="surgery.HospitalizationDays"
+                       Placeholder="Días de hospitalización"
+                       Style="width:100%; margin-bottom:15px;"
+                       Disabled="@(!surgery.HospitalizationRequired)" />
+        <RadzenCheckBox TValue="bool" Value="surgery.FollowUpRequired"
+                        Change="@((bool value) => surgery.FollowUpRequired = value)" />
+        <RadzenLabel Text="¿Requiere seguimiento?" Style="margin-left:5px; margin-bottom:10px;" />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="surgery.FollowUpDate"
+                           Placeholder="Fecha de seguimiento"
+                           Style="width:100%; margin-bottom:15px;"
+                           Disabled="@(!surgery.FollowUpRequired)" />
 
-    RenderFragment DocumentForm() => @<RadzenTemplateForm TItem="DocumentRecord" Data="@document">
-        <RadzenFieldset Text="Documentos">
-            <RadzenTextBox @bind-Value="document.Title" Placeholder="Título del documento" Style="width:100%"/>
-            <RadzenUpload ChooseText="Subir archivo"/>
-            <RadzenTextArea @bind-Value="document.Description" Placeholder="Descripción" Style="width:100%"/>
+        <!-- Procedimientos -->
+        <RadzenFieldset Text="Procedimientos realizados" Style="padding:10px;">
+            @foreach (var procedure in surgery.Procedures)
+            {
+                <RadzenFieldset Text="Procedimiento" Style="margin-bottom:10px; padding:10px;">
+                    <RadzenTextBox @bind-Value="procedure.name"
+                                   Placeholder="Nombre del procedimiento"
+                                   Style="width:100%; margin-bottom:10px;" />
+                </RadzenFieldset>
+            }
+            <RadzenButton Text="Agregar procedimiento" Icon="add"
+                          Click="@AddProcedure"
+                          Style="margin-top:10px; margin-bottom:15px;" />
         </RadzenFieldset>
-    </RadzenTemplateForm>;
+
+        <!-- Medicamentos postoperatorios -->
+        <RadzenFieldset Text="Medicamentos postoperatorios" Style="padding:10px;">
+            @foreach (var med in surgery.PostOpMedications)
+            {
+                <RadzenFieldset Text="Medicamento" Style="margin-bottom:10px; padding:10px;">
+                    <RadzenTextBox @bind-Value="med.Name" Placeholder="Nombre" Style="width:100%; margin-bottom:10px;" />
+                    <RadzenTextBox @bind-Value="med.Dosage" Placeholder="Dosis" Style="width:100%; margin-bottom:10px;" />
+                    <RadzenTextBox @bind-Value="med.Frequency" Placeholder="Frecuencia" Style="width:100%; margin-bottom:10px;" />
+                    <RadzenNumeric TValue="int?" @bind-Value="med.DurationInDays" Placeholder="Duración (días)" Style="width:100%; margin-bottom:10px;" />
+                    <RadzenTextArea @bind-Value="med.Notes" Placeholder="Notas" Style="width:100%; margin-bottom:10px;" />
+                </RadzenFieldset>
+            }
+            <RadzenButton Text="Agregar medicamento" Icon="add"
+                          Click="@AddPostOpMedication"
+                          Style="margin-top:10px; margin-bottom:15px;" />
+        </RadzenFieldset>
+    </RadzenFieldset>
+</RadzenTemplateForm>;
+
+RenderFragment WeightForm() => @<RadzenTemplateForm TItem="WeightRecord" Data="@weight">
+    <RadzenFieldset Text="Control de Peso" Style="padding:15px;">
+        <RadzenNumeric TValue="decimal" @bind-Value="weight.WeightKg"
+                       Placeholder="Peso (kg)"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker TValue="DateTime?" @bind-Value="weight.Date"
+                           Placeholder="Fecha de medición"
+                           Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="weight.Notes"
+                        Placeholder="Observaciones"
+                        Style="width:100%; margin-bottom:15px;" />
+    </RadzenFieldset>
+</RadzenTemplateForm>;
+
+RenderFragment DiagnosisForm() => @<RadzenTemplateForm TItem="Diagnosis" Data="@diagnosis">
+    <RadzenFieldset Text="Diagnóstico" Style="padding:15px;">
+        <RadzenTextBox @bind-Value="diagnosis.DiagnosisName"
+                       Placeholder="Nombre del diagnóstico"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenDropDown @bind-Value="diagnosis.Category"
+                        Data="@Enum.GetValues(typeof(DiagnosisCategory))"
+                        TextProperty="Name"
+                        ValueProperty="Value"
+                        Placeholder="Categoría"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="diagnosis.Description"
+                        Placeholder="Descripción"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenDropDown @bind-Value="diagnosis.Severity"
+                        Data="@Enum.GetValues(typeof(DiagnosisSeverity))"
+                        Placeholder="Severidad"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker @bind-Value="diagnosis.DiagnosedAt"
+                           DateFormat="dd/MM/yyyy"
+                           Placeholder="Fecha de diagnóstico"
+                           Style="width:100%; margin-bottom:15px;" />
+        <RadzenCheckBox @bind-Value="diagnosis.Chronic" />
+        <RadzenLabel Text="Crónico" Style="margin-left:5px; margin-bottom:15px;" />
+        <RadzenCheckBox @bind-Value="diagnosis.Contagious" />
+        <RadzenLabel Text="Contagioso" Style="margin-left:5px; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="symptomsText"
+                        Placeholder="Síntomas (separados por comas)"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="recommendationsText"
+                        Placeholder="Recomendaciones (separadas por comas)"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenCheckBox @bind-Value="diagnosis.FollowUpRequired" />
+        <RadzenLabel Text="Requiere seguimiento" Style="margin-left:5px; margin-bottom:15px;" />
+        <RadzenDatePicker @bind-Value="diagnosis.FollowUpDate"
+                           DateFormat="dd/MM/yyyy"
+                           Placeholder="Fecha de seguimiento"
+                           Style="width:100%; margin-bottom:15px;"
+                           Disabled="@(!diagnosis.FollowUpRequired)" />
+    </RadzenFieldset>
+</RadzenTemplateForm>;
+
+RenderFragment AllergyForm() => @<RadzenTemplateForm TItem="Allergy" Data="@allergy">
+    <RadzenFieldset Text="Alergias" Style="padding:15px;">
+        <RadzenTextBox @bind-Value="allergy.Allergen"
+                       Placeholder="Alérgeno"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenDropDown @bind-Value="allergy.Type"
+                        Data="@Enum.GetValues(typeof(AllergyType))"
+                        Placeholder="Tipo de alergia"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenDropDown @bind-Value="allergy.Severity"
+                        Data="@Enum.GetValues(typeof(AllergySeverity))"
+                        Placeholder="Severidad"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="reactionsText"
+                        Placeholder="Reacciones (separadas por comas)"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenCheckBox @bind-Value="allergy.LifeThreatening" />
+        <RadzenLabel Text="Potencialmente mortal" Style="margin-left:5px; margin-bottom:15px;" />
+        <RadzenDatePicker @bind-Value="allergy.IdentifiedAt"
+                          DateFormat="dd/MM/yyyy"
+                          Placeholder="Fecha de identificación"
+                          Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="allergy.Notes"
+                        Placeholder="Notas adicionales"
+                        Style="width:100%; margin-bottom:15px;" />
+    </RadzenFieldset>
+</RadzenTemplateForm>;
+
+RenderFragment DocumentForm() => @<RadzenTemplateForm TItem="DocumentRecord" Data="@document">
+    <RadzenFieldset Text="Documentos" Style="padding:15px;">
+        <RadzenTextBox @bind-Value="document.DocumentName"
+                       Placeholder="Nombre del documento"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextBox @bind-Value="document.DocumentType"
+                       Placeholder="Tipo de documento"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenUpload @bind-Value="document.FileUrl"
+                      ChooseText="Subir archivo"
+                      Placeholder="URL del archivo"
+                      Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextBox @bind-Value="document.MimeType"
+                       Placeholder="Tipo MIME"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenDatePicker @bind-Value="document.UploadedAt"
+                          DateFormat="dd/MM/yyyy"
+                          Placeholder="Fecha de subida"
+                          Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextBox @bind-Value="document.UploadedBy"
+                       Placeholder="Subido por"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenTextArea @bind-Value="document.Description"
+                        Placeholder="Descripción"
+                        Style="width:100%; margin-bottom:15px;" />
+        <RadzenNumeric @bind-Value="document.FileSizeInBytes"
+                       Placeholder="Tamaño del archivo (bytes)"
+                       Style="width:100%; margin-bottom:15px;" />
+        <RadzenCheckBox @bind-Value="document.Confidential" />
+        <RadzenLabel Text="Confidencial" Style="margin-left:5px; margin-bottom:15px;" />
+        <RadzenTextBox @bind-Value="document.Checksum"
+                       Placeholder="Checksum"
+                       Style="width:100%; margin-bottom:15px;" />
+    </RadzenFieldset>
+</RadzenTemplateForm>;
 
 
-    enum MedicalCase
+enum MedicalCase
     {
         Consultation,
         Vaccine,
