@@ -339,15 +339,76 @@
 
 
     RenderFragment DiagnosisForm() => @<RadzenTemplateForm TItem="Diagnosis" Data="@diagnosis">
-        <RadzenFieldset Text="Diagnóstico">
-            <RadzenTextArea @bind-Value="diagnosis.MainDiagnosis" Placeholder="Diagnóstico principal"
-                            Style="width:100%"/>
-            <RadzenTextArea @bind-Value="diagnosis.SecondaryDiagnosis" Placeholder="Diagnósticos secundarios"
-                            Style="width:100%"/>
-            <RadzenTextArea @bind-Value="diagnosis.ClinicalPlan" Placeholder="Plan clínico" Style="width:100%"/>
-        </RadzenFieldset>
-    </RadzenTemplateForm>;
+    <RadzenFieldset Text="Diagnóstico">
+        
+        <RadzenTextBox @bind-Value="diagnosis.DiagnosisName"
+                       Placeholder="Nombre del diagnóstico"
+                       Style="width:100%" />
 
+        <RadzenDropDown @bind-Value="diagnosis.Category"
+                        Data="@Enum.GetValues(typeof(DiagnosisCategory))"
+                        TextProperty="Name"
+                        ValueProperty="Value"
+                        Placeholder="Categoría"
+                        Style="width:100%" />
+
+        <RadzenTextArea @bind-Value="diagnosis.Description"
+                        Placeholder="Descripción"
+                        Style="width:100%" />
+
+        <RadzenDropDown @bind-Value="diagnosis.Severity"
+                        Data="@Enum.GetValues(typeof(DiagnosisSeverity))"
+                        Placeholder="Severidad"
+                        Style="width:100%" />
+
+        <RadzenDatePicker @bind-Value="diagnosis.DiagnosedAt"
+                           DateFormat="dd/MM/yyyy"
+                           Placeholder="Fecha de diagnóstico"
+                           Style="width:100%" />
+
+        <RadzenCheckBox @bind-Value="diagnosis.Chronic" />
+        <RadzenLabel Text="Crónico" />
+
+        <RadzenCheckBox @bind-Value="diagnosis.Contagious" />
+        <RadzenLabel Text="Contagioso" />
+
+        <RadzenTextArea @bind-Value="symptomsText"
+                        Placeholder="Síntomas (separados por comas)"
+                        Style="width:100%" />
+
+        <RadzenTextArea @bind-Value="recommendationsText"
+                        Placeholder="Recomendaciones (separadas por comas)"
+                        Style="width:100%" />
+
+        <RadzenCheckBox @bind-Value="diagnosis.FollowUpRequired" />
+        <RadzenLabel Text="Requiere seguimiento" />
+
+        <RadzenDatePicker @bind-Value="diagnosis.FollowUpDate"
+                           DateFormat="dd/MM/yyyy"
+                           Placeholder="Fecha de seguimiento"
+                           Style="width:100%"
+                           Disabled="@(!diagnosis.FollowUpRequired)" />
+
+    </RadzenFieldset>
+</RadzenTemplateForm>;
+
+    private string symptomsText
+    {
+        get => string.Join(", ", diagnosis.Symptoms ?? new List<string>());
+        set => diagnosis.Symptoms = value?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => s.Trim())
+            .ToList();
+    }
+
+    private string recommendationsText
+    {
+        get => string.Join(", ", diagnosis.Recommendations ?? new List<string>());
+        set => diagnosis.Recommendations = value?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(r => r.Trim())
+            .ToList();
+    }
 
     RenderFragment AllergyForm() => @<RadzenTemplateForm TItem="Allergy" Data="@allergy">
         <RadzenFieldset Text="Alergias">
