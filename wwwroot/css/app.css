@@ -108,11 +108,7 @@ code {
 }
 
 
-body {
-    background-color: var(--color-background);
-    color: var(--color-text);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
+
 
 
 .rz-button {
@@ -121,10 +117,7 @@ body {
     color: white !important;
 }
 
-.rz-card {
-    background-color: var(--color-surface) !important;
-    border: 1px solid var(--color-border);
-}
+
 
 .rz-inputtext, .rz-password {
     background-color: var(--color-surface);

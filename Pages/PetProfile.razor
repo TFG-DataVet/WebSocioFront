@@ -30,6 +30,9 @@
 
                 <RadzenButton Text="Ver dueño" Icon="account_box" ButtonStyle="ButtonStyle.Primary"
                               Style="border-radius:10px; background:#4b3e48; color:white;" Click="@SeeOwner"/>
+                
+                <RadzenButton Text="Registro médico" Icon="account_box" ButtonStyle="ButtonStyle.Primary"
+                              Style="border-radius:10px; background:#4b3e48; color:white;" Click="@MedicalRegister"/>
             </RadzenStack>
         </RadzenStack>
     </RadzenStack>
@@ -229,6 +232,8 @@
     }
 
     void SeeOwner() => Nav.NavigateTo($"/PerfilDueno/{pet.Owner?.Id}");
+    
+    void MedicalRegister() => Nav.NavigateTo($"/MedicalRegister");
 
     void Save()
     {
