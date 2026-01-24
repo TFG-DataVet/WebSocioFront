@@ -1,5 +1,4 @@
 ﻿namespace SocioWeb.Entities;
-using System.ComponentModel.DataAnnotations;
 public class Diagnosis
 {
     public string DiagnosisName { get; set; }
@@ -14,55 +13,3 @@ public class Diagnosis
     public bool FollowUpRequired { get; set; }
     public DateTime? FollowUpDate { get; set; }
 }
-
-public enum DiagnosisCategory
-{
-    [Display(Name = "Infecciosa")]
-    Infectious,
-
-    [Display(Name = "Parásita")]
-    Parasitic,
-
-    [Display(Name = "Genética")]
-    Genetic,
-
-    [Display(Name = "Metabólica")]
-    Metabolic,
-
-    [Display(Name = "Neurológica")]
-    Neurological,
-
-    [Display(Name = "Dermatológica")]
-    Dermatological,
-
-    [Display(Name = "Ortopédica")]
-    Orthopedic,
-
-    [Display(Name = "Cardiovascular")]
-    Cardiovascular,
-
-    [Display(Name = "Respiratoria")]
-    Respiratory,
-
-    [Display(Name = "Digestiva")]
-    Digestive,
-
-    [Display(Name = "Otra")]
-    Other
-}
-
-public enum DiagnosisSeverity
-{
-    [Display(Name = "Leve")]
-    Mild,
-
-    [Display(Name = "Moderada")]
-    Moderate,
-
-    [Display(Name = "Severa")]
-    Severe,
-
-    [Display(Name = "Crítica")]
-    Critical
-}
-
