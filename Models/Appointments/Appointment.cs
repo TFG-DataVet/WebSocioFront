@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SocioWeb.Domain.Entities;
 
 public class Appointment
 {
@@ -12,4 +11,6 @@ public class Appointment
     public string OwnerName { get; set; }
     public string Phone { get; set; }
     public string Status { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

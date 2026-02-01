@@ -31,6 +31,14 @@
                   Text="Filtrar"
                   ButtonStyle="ButtonStyle.Primary"
                   Click="@ApplyFilters"/>
+    
+    <RadzenButton Icon="add_circle"
+                  Text="Crear cita"
+                  ButtonStyle="ButtonStyle.Success"
+                  Style="border-radius:10px;"
+                  @onclick="@(() => Nav.NavigateTo($"/AppointmentProfile/new"))" />
+
+    
 </RadzenStack>
 
 <!-- ================= LISTA DE CITAS ================= -->
@@ -40,10 +48,11 @@
         @foreach (var cita in appointmentFilter)
         {
             <RadzenCard Style="margin-bottom:25px;
-                               border-radius:16px;
-                               box-shadow:0 4px 20px rgba(0,0,0,0.1);
-                               cursor:pointer;"
-                        Click="@(() => Nav.NavigateTo($"/PerfilCita/{cita.Id}"))">
+                   border-radius:16px;
+                   box-shadow:0 4px 20px rgba(0,0,0,0.1);
+                   cursor:pointer;"
+                        @onclick="@(() => Nav.NavigateTo($"/AppointmentProfile/{cita.Id}"))">
+
 
                 <!-- HEADER -->
                 <RadzenStack Orientation="Orientation.Horizontal"
