@@ -7,8 +7,13 @@
     <!-- HEADER -->
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
-                 JustifyContent="JustifyContent.SpaceBetween">
-
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 Style="
+                    padding:20px;
+                    background: linear-gradient(135deg, #f8ff29 0%, #fef200 100%);
+                    color: black;
+                    border-radius:16px;
+                    box-shadow:0 4px 20px rgba(0,0,0,0.1);">
         <RadzenText Text="Calendario de Citas"
                     TextStyle="TextStyle.H4"
                     Style="font-weight:600"/>
@@ -20,37 +25,37 @@
     </RadzenStack>
 
     <!-- CALENDARIO -->
-    <RadzenCard Style="border-radius:16px;
-                       box-shadow:0 4px 20px rgba(0,0,0,0.1);
-                       padding:10px">
+    
 
         <RadzenScheduler TItem="Appointment"
                          Data="@appointments"
                          StartProperty="Start"
                          EndProperty="End"
                          TextProperty="PetName"
-                         CurrentDate="@DateTime.Today"
-                         SelectedIndex="2" 
-                         SlotSelect="@OnSlotSelect"
-                         AppointmentSelect="@OnAppointmentSelect"
-                         Style="height:750px">
+                         SelectedIndex="0"   
+            SlotSelect="@OnSlotSelect"
+            AppointmentSelect="@OnAppointmentSelect"
+            Style="height:800px"> <!-- Más altura -->
 
-            <!-- Orden recomendado -->
-            <RadzenMonthView />
-            <RadzenWeekView />
             <RadzenDayView />
-            </RadzenScheduler>
+            <RadzenWeekView />
+            <RadzenMonthView />
+            <RadzenYearView />
 
-    </RadzenCard>
+        </RadzenScheduler>
+
+  
+
 
 </RadzenStack>
 
 @code {
+    
+
     List<Appointment> appointments = new();
 
     protected override void OnInitialized()
     {
-        // Inicializamos citas con DateTimeKind.Local para evitar que MonthView no las pinte
         appointments = new List<Appointment>
         {
             new Appointment
@@ -59,8 +64,8 @@
                 PetName = "Firulais",
                 OwnerName = "Juan Pérez",
                 Phone = "555-1234",
-                Start = DateTime.SpecifyKind(DateTime.Today.AddHours(10), DateTimeKind.Local),
-                End = DateTime.SpecifyKind(DateTime.Today.AddHours(11), DateTimeKind.Local),
+                Start = DateTime.Today.AddHours(10),
+                End = DateTime.Today.AddHours(11),
                 Reason = "Vacunación",
                 Status = "Pendiente"
             },
@@ -71,21 +76,20 @@
                 PetName = "Michi",
                 OwnerName = "Ana López",
                 Phone = "555-9876",
-                Start = DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(16), DateTimeKind.Local),
-                End = DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(17), DateTimeKind.Local),
+                Start = DateTime.Today.AddDays(1).AddHours(16),
+                End = DateTime.Today.AddDays(1).AddHours(17),
                 Reason = "Control general",
                 Status = "Confirmada"
             }
         };
     }
 
-    // Click en un slot vacío del calendario
     void OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
+        // Ir a crear cita con fecha seleccionada
         Nav.NavigateTo($"/CreateAppointment?date={args.Start:O}");
     }
 
-    // Click en una cita existente
     void OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
     {
         Nav.NavigateTo($"/AppointmentProfile/{args.Data.Id}");
@@ -102,8 +106,10 @@
         public string PetName { get; set; }
         public string OwnerName { get; set; }
         public string Phone { get; set; }
+
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+
         public string Reason { get; set; }
         public string Status { get; set; }
     }
