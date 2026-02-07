@@ -32,14 +32,14 @@
                   ButtonStyle="ButtonStyle.Primary"
                   Click="@ApplyFilters"/>
     
-    <RadzenButton Icon="add_circle"
-                  Text="Crear cita"
-                  ButtonStyle="ButtonStyle.Success"
-                  Style="border-radius:10px;"
-                  @onclick="@(() => Nav.NavigateTo($"/AppointmentProfile/new"))" />
+    <RadzenButton Text="Crear cita"
+                  Icon="add_circle"
+                  Click="@(() => Nav.NavigateTo("/CreateAppointment"))" />
 
     
+
 </RadzenStack>
+
 
 <!-- ================= LISTA DE CITAS ================= -->
 <RadzenRow>
@@ -80,7 +80,7 @@
                             <RadzenLabel Text="📅 Fecha y Hora" Style="font-weight:600;"/>
                             <RadzenText Text="@cita.Date.ToString("dd/MM/yyyy HH:mm")"/>
 
-                            <RadzenLabel Text="🐶 Mascota" Style="font-weight:600; margin-top:10px;"/>
+                            <RadzenLabel Text="🐶 Mascota " Style="font-weight:600; margin-top:10px;"/>
                             <RadzenText Text="@cita.PetName"/>
                         </RadzenColumn>
 
