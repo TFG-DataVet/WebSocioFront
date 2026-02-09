@@ -1,5 +1,4 @@
-﻿
-@page "/Citas"
+﻿@page "/Citas"
 @inject NavigationManager Nav
 
 <!-- ================= FILTROS ================= -->
@@ -35,12 +34,8 @@
     <RadzenButton Text="Crear cita"
                   Icon="add_circle"
                   Click="@(() => Nav.NavigateTo("/CreateAppointment"))" />
-
     
-
 </RadzenStack>
-
-
 <!-- ================= LISTA DE CITAS ================= -->
 <RadzenRow>
     <RadzenColumn Size="12">
@@ -154,6 +149,4 @@
             )
             .ToList();
     }
-
-    
 }
