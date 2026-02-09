@@ -1,10 +1,7 @@
 ﻿@page "/CreateAppointment"
-
-
 @inject NavigationManager Nav
 
 <RadzenCard>
-
     <!-- CABECERA -->
     <RadzenStack Orientation="Orientation.Horizontal"
                  Gap="25"
@@ -98,16 +95,4 @@
                            Style="width:100%; background:white; border-radius:10px;" />
         </RadzenStack>;
     };
-
-    class Appointment
-    {
-        public string Id { get; set; }
-        public string PetName { get; set; }
-        public string OwnerName { get; set; }
-        public string Phone { get; set; }
-        public DateTime Date { get; set; }
-        public string Reason { get; set; }
-        public string Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }
 }

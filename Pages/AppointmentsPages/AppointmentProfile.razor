@@ -1,10 +1,8 @@
 ﻿@page "/AppointmentProfile/{id}"
 
-
 @inject NavigationManager Nav
 
 <RadzenCard>
-
     <!-- CABECERA -->
     <RadzenStack Orientation="Orientation.Horizontal"
                  Gap="25"
@@ -80,9 +78,7 @@
     </RadzenRow>
 
     <RadzenDivider Style="margin:30px 0;"/>
-
     
-
     @if (isEditing)
     {
         <RadzenStack AlignItems="AlignItems.End" Style="margin-top:30px;">
@@ -115,8 +111,7 @@
             isEditing = true;
         }
     }
-
-
+    
     bool isEditing = false;
 
     Appointment _appointment = new Appointment
@@ -133,7 +128,6 @@
        
     };
     
-
     void Save()
     {
         _appointment.UpdatedAt = DateTime.UtcNow;
@@ -168,23 +162,4 @@
             }
         </RadzenStack>;
     };
-
-    class Appointment
-    {
-        public string Id { get; set; }
-        public string PetName { get; set; }
-        public string OwnerName { get; set; }
-        public string Phone { get; set; }
-        public DateTime Date { get; set; }
-        public string Reason { get; set; }
-        public string Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-    }
-
-    class LogEntry
-    {
-        public DateTime Date { get; set; }
-        public string Description { get; set; }
-    }
 }
