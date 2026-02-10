@@ -1,0 +1,98 @@
+﻿@page "/CreateAppointment"
+@inject NavigationManager Nav
+
+<RadzenCard>
+    <!-- CABECERA -->
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 Gap="25"
+                 AlignItems="AlignItems.Center"
+                 Style="margin-bottom:30px;">
+
+        <RadzenCard Style="
+                    width:120px;
+                    height:120px;
+                    border-radius:50%;
+                    background:#e0e7ff;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:50px;">
+            🐶
+        </RadzenCard>
+
+        <RadzenStack Gap="5">
+            <RadzenText Text="Nueva cita veterinaria"
+                        Style="font-size:24px; font-weight:600; color:#333;" />
+
+            <RadzenButton Text="Cancelar"
+                          Icon="close"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Style="border-radius:10px;"
+                          Click="@Cancel" />
+        </RadzenStack>
+    </RadzenStack>
+
+    <!-- INFORMACIÓN -->
+    <RadzenText Text="Información de la cita"
+                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;" />
+
+    <RadzenRow Gap="25">
+        <RadzenColumn Size="6">@Campo("Mascota", _appointment.PetName, v => _appointment.PetName = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Dueño", _appointment.OwnerName, v => _appointment.OwnerName = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Teléfono", _appointment.Phone, v => _appointment.Phone = v)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Estado", _appointment.Status, v => _appointment.Status = v)</RadzenColumn>
+
+        <RadzenColumn Size="6">
+            @Campo("Fecha y hora",
+                _appointment.Date.ToString("dd/MM/yyyy HH:mm"),
+                v => _appointment.Date = DateTime.Parse(v))
+        </RadzenColumn>
+
+        <RadzenColumn Size="12">@Campo("Motivo", _appointment.Reason, v => _appointment.Reason = v)</RadzenColumn>
+    </RadzenRow>
+
+    <RadzenStack AlignItems="AlignItems.End" Style="margin-top:30px;">
+        <RadzenButton Text="Crear cita"
+                      Icon="save"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Style="background:#4b3e48; color:white; border-radius:10px;"
+                      Click="@Save" />
+    </RadzenStack>
+
+</RadzenCard>
+
+@code {
+
+    Appointment _appointment = new Appointment
+    {
+        Id = Guid.NewGuid().ToString(),
+        Date = DateTime.Now,
+        Status = "Pendiente",
+        CreatedAt = DateTime.UtcNow
+    };
+
+    void Save()
+    {
+        // 👉 Aquí guardarías en base de datos / API
+
+        Console.WriteLine("Cita creada");
+
+        Nav.NavigateTo("/Appointments"); // vuelve al listado
+    }
+
+    void Cancel()
+    {
+        Nav.NavigateTo("/Appointments");
+    }
+
+    RenderFragment Campo(string label, string valor, Action<string>? onChange) => __builder =>
+    {
+        <RadzenStack Gap="5">
+            <RadzenText Text="@label" Style="color:#777;" />
+
+            <RadzenTextBox Value="@valor"
+                           Change="@(e => onChange?.Invoke(e.ToString()))"
+                           Style="width:100%; background:white; border-radius:10px;" />
+        </RadzenStack>;
+    };
+}
