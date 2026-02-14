@@ -1,5 +1,7 @@
 ﻿@page "/AppointmentProfile/{id}"
+@using SocioWeb.Services.AppointmentService
 
+@inject AppointmentService AppointmentService
 @inject NavigationManager Nav
 
 <RadzenCard>
@@ -42,6 +44,12 @@
                               Style="border-radius:10px;"
                               Click="@Cancel"/>
             }
+            <RadzenButton Text="Eliminar cita"
+                          Icon="delete"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Style="border-radius:10px; margin-left:10px;"
+                          Click="@Delete"/>
+
         </RadzenStack>
     </RadzenStack>
 
@@ -93,6 +101,20 @@
 </RadzenCard>
 
 @code {
+    
+    void Delete()
+    {
+        // Buscar la cita por Id y eliminarla del servicio
+        var cita = AppointmentService.Appointments.FirstOrDefault(a => a.Id == _appointment.Id);
+        if (cita != null)
+        {
+            AppointmentService.Appointments.Remove(cita);
+        }
+
+        // Volver al calendario
+        Nav.NavigateTo("/Calendario");
+    }
+
     
     [Parameter] public string id { get; set; }
 

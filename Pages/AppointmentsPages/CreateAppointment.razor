@@ -1,5 +1,7 @@
 ﻿@page "/CreateAppointment"
+@using SocioWeb.Services.AppointmentService
 @inject NavigationManager Nav
+@inject AppointmentService AppointmentService
 
 <RadzenCard>
     <!-- CABECERA -->
@@ -73,16 +75,25 @@
 
     void Save()
     {
-        // 👉 Aquí guardarías en base de datos / API
+        // Crear la cita y agregarla al servicio
+        AppointmentService.Add(new Appointment
+        {
+            Id = _appointment.Id,
+            PetName = _appointment.PetName,
+            OwnerName = _appointment.OwnerName,
+            Phone = _appointment.Phone,
+            Start = _appointment.Date,
+            End = _appointment.Date.AddHours(1), // por ejemplo
+            Reason = _appointment.Reason,
+            Status = _appointment.Status
+        });
 
-        Console.WriteLine("Cita creada");
-
-        Nav.NavigateTo("/Appointments"); // vuelve al listado
+        Nav.NavigateTo("/Calendario"); // vuelve al calendario y la cita ya se verá
     }
 
     void Cancel()
     {
-        Nav.NavigateTo("/Appointments");
+        Nav.NavigateTo("/Citas");
     }
 
     RenderFragment Campo(string label, string valor, Action<string>? onChange) => __builder =>
