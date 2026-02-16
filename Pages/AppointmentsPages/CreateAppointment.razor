@@ -1,5 +1,4 @@
 ﻿@page "/CreateAppointment"
-@using SocioWeb.Services.AppointmentService
 @inject NavigationManager Nav
 @inject AppointmentService AppointmentService
 
@@ -75,20 +74,8 @@
 
     void Save()
     {
-        // Crear la cita y agregarla al servicio
-        AppointmentService.Add(new Appointment
-        {
-            Id = _appointment.Id,
-            PetName = _appointment.PetName,
-            OwnerName = _appointment.OwnerName,
-            Phone = _appointment.Phone,
-            Start = _appointment.Date,
-            End = _appointment.Date.AddHours(1), // por ejemplo
-            Reason = _appointment.Reason,
-            Status = _appointment.Status
-        });
-
-        Nav.NavigateTo("/Calendario"); // vuelve al calendario y la cita ya se verá
+        AppointmentService.Create(_appointment);
+        Nav.NavigateTo("/Calendario");
     }
 
     void Cancel()

@@ -34,10 +34,26 @@ public class AppointmentService
             Status = "Confirmada"
         });
     }
-
     public void Add(Appointment appointment)
     {
         Appointments.Add(appointment);
+    }
+    
+    public void Create(Appointment appoint)
+    {
+        var appointment = new Appointment
+        {
+            Id = Guid.NewGuid().ToString(),
+            PetName = appoint.PetName,
+            OwnerName = appoint.OwnerName,
+            Phone = appoint.Phone,
+            Start = appoint.Date,
+            End = appoint.Date.AddHours(1),
+            Reason = appoint.Reason,
+            Status = "Pendiente",
+            CreatedAt = DateTime.UtcNow
+        };
+        Add(appointment);
     }
 }
 
