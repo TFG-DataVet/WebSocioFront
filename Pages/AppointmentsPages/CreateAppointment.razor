@@ -1,5 +1,6 @@
 ﻿@page "/CreateAppointment"
 @inject NavigationManager Nav
+@inject AppointmentService AppointmentService
 
 <RadzenCard>
     <!-- CABECERA -->
@@ -73,16 +74,13 @@
 
     void Save()
     {
-        // 👉 Aquí guardarías en base de datos / API
-
-        Console.WriteLine("Cita creada");
-
-        Nav.NavigateTo("/Appointments"); // vuelve al listado
+        AppointmentService.Create(_appointment);
+        Nav.NavigateTo("/Calendario");
     }
 
     void Cancel()
     {
-        Nav.NavigateTo("/Appointments");
+        Nav.NavigateTo("/Citas");
     }
 
     RenderFragment Campo(string label, string valor, Action<string>? onChange) => __builder =>
