@@ -11,3 +11,15 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddSingleton<AppointmentService>();
 
 await builder.Build().RunAsync();
+
+
+builder.Services.AddScoped(sp =>
+    new HttpClient
+    {
+        BaseAddress = new Uri("https://localhost:5001/") // backend real
+    });
+
+builder.Services.AddScoped<IAppointmentService, AppointmentsApiService>();
+builder.Services.AddScoped<IOwnerService, OwnersApiService>();
+builder.Services.AddScoped<IPetService, PetsApiService>();
+builder.Services.AddScoped<IProductService, ProductsApiService>();
