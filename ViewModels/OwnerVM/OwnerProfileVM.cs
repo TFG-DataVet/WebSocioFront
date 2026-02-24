@@ -32,7 +32,7 @@ public class OwnerProfileVM
             IsLoading = true;
             ErrorMessage = null;
 
-            Owner = await _service.GetByIdAsync(int.Parse(id));
+            Owner = await _service.GetByIdAsync(id);
         }
         catch (Exception ex)
         {

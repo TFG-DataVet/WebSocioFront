@@ -6,8 +6,8 @@ namespace SocioWeb.Services.AppointmentService;
 public interface IPetService
 {
     Task<List<Pet>> GetAllAsync();
-    Task<Pet?> GetByIdAsync(int id);
+    Task<Pet?> GetByIdAsync(String id);
     Task CreateAsync(PetDto dto);
-    Task UpdateAsync(int id, PetDto dto);
-    Task DeleteAsync(int id);
+    Task UpdateAsync(String id, PetDto dto);
+    Task DeleteAsync(String id);
 }
