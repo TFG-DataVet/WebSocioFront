@@ -1,5 +1,5 @@
 ﻿@page "/Calendario"
-@using SocioWeb.Services.AppointmentService
+@using SocioWeb.Domain.Entities
 @inject AppointmentService AppointmentService
 @inject NavigationManager Nav
 
@@ -30,7 +30,7 @@
                      StartProperty="Start"
                      EndProperty="End"
                      TextProperty="PetName"
-                     SelectedIndex="0"   
+                     SelectedIndex="0"
                      SlotSelect="@OnSlotSelect"
                      AppointmentSelect="@OnAppointmentSelect"
                      Style="height:800px">
@@ -43,17 +43,25 @@
 </RadzenStack>
 
 @code {
+
+    // Evento al seleccionar un espacio libre en el calendario
     void OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
-        // Ir a crear cita con fecha seleccionada
-        Nav.NavigateTo($"/CreateAppointment?date={args.Start:O}");
+        // Ejecutamos navegación de forma segura en el hilo de Blazor
+        InvokeAsync(() => 
+            Nav.NavigateTo($"/CreateAppointment?date={args.Start:O}")
+        );
     }
 
+    // Evento al seleccionar una cita existente
     void OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
     {
-        Nav.NavigateTo($"/AppointmentProfile/{args.Data.Id}");
+        InvokeAsync(() => 
+            Nav.NavigateTo($"/AppointmentProfile/{args.Data.Id}")
+        );
     }
 
+    // Botón de nueva cita
     void CreateAppointment()
     {
         Nav.NavigateTo("/CreateAppointment");
