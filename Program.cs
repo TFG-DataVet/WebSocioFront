@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SocioWeb;
 using SocioWeb.Services.AppointmentService;
+using SocioWeb.ViewModels;
 using SocioWeb.ViewModels.OwnerVM;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -22,5 +23,7 @@ builder.Services.AddScoped<IProductService, ProductsApiService>();
 // ViewModels
 builder.Services.AddScoped<OwnerPageVM>();
 builder.Services.AddScoped<OwnerProfileVM>();
+builder.Services.AddScoped<MedicalRegisterVM>();
+builder.Services.AddScoped<PetsMenuVM>();
 
 await builder.Build().RunAsync();
