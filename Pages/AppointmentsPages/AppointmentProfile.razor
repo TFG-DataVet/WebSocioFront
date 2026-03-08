@@ -1,9 +1,10 @@
 ﻿@page "/AppointmentProfile/{id}"
 
-@inject AppointmentService AppointmentService
+
 @inject NavigationManager Nav
 
 <RadzenCard>
+
     <!-- CABECERA -->
     <RadzenStack Orientation="Orientation.Horizontal"
                  Gap="25"
@@ -24,8 +25,7 @@
 
         <RadzenStack Gap="5">
             <RadzenText Text="@_appointment.PetName"
-                        TextStyle="TextStyle.H4"
-                        />
+                        Style="font-size:24px; font-weight:600; color:#333;"/>
             <RadzenText Text="Cita veterinaria"
                         Style="color:#777;"/>
 
@@ -44,21 +44,13 @@
                               Style="border-radius:10px;"
                               Click="@Cancel"/>
             }
-            <RadzenButton Text="Eliminar cita"
-                          Icon="delete"
-                          ButtonStyle="ButtonStyle.Danger"
-                          Style="border-radius:10px; margin-left:10px;"
-                          Click="@Delete"/>
-
         </RadzenStack>
     </RadzenStack>
 
     <!-- INFORMACIÓN DE LA CITA -->
     <RadzenText Text="Información de la cita"
-                TextStyle="TextStyle.H5"
-                TagName="TagName.H3"
-                Style="margin-bottom:20px;" />
-    
+                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
     <RadzenRow Gap="25">
         <RadzenColumn Size="6">@Campo("Mascota", _appointment.PetName, v => _appointment.PetName = v)</RadzenColumn>
         <RadzenColumn Size="6">@Campo("Dueño", _appointment.OwnerName, v => _appointment.OwnerName = v)</RadzenColumn>
@@ -76,10 +68,8 @@
 
     <!-- AUDITORÍA -->
     <RadzenText Text="Registro del sistema"
-                TextStyle="TextStyle.H5"
-                TagName="TagName.H3"
-                Style="margin-bottom:20px;" />
-    
+                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
+
     <RadzenRow Gap="25">
         <RadzenColumn Size="6">
             @Campo("Creado el", _appointment.CreatedAt.ToLocalTime().ToString(), null)
@@ -90,7 +80,9 @@
     </RadzenRow>
 
     <RadzenDivider Style="margin:30px 0;"/>
+
     
+
     @if (isEditing)
     {
         <RadzenStack AlignItems="AlignItems.End" Style="margin-top:30px;">
@@ -105,20 +97,6 @@
 </RadzenCard>
 
 @code {
-    
-    void Delete()
-    {
-        // Buscar la cita por Id y eliminarla del servicio
-        var cita = AppointmentService.Appointments.FirstOrDefault(a => a.Id == _appointment.Id);
-        if (cita != null)
-        {
-            AppointmentService.Appointments.Remove(cita);
-        }
-
-        // Volver al calendario
-        Nav.NavigateTo("/Calendario");
-    }
-
     
     [Parameter] public string id { get; set; }
 
@@ -137,7 +115,8 @@
             isEditing = true;
         }
     }
-    
+
+
     bool isEditing = false;
 
     Appointment _appointment = new Appointment
@@ -154,6 +133,7 @@
        
     };
     
+
     void Save()
     {
         _appointment.UpdatedAt = DateTime.UtcNow;
@@ -188,4 +168,12 @@
             }
         </RadzenStack>;
     };
+
+   
+
+    class LogEntry
+    {
+        public DateTime Date { get; set; }
+        public string Description { get; set; }
+    }
 }

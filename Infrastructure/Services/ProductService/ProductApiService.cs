@@ -21,10 +21,10 @@ public class ProductsApiService : IProductService
     public async Task<Product?> GetByIdAsync(String id)
         => await _http.GetFromJsonAsync<Product>($"api/products/{id}");
 
-    public async Task CreateAsync(ProductDto dto)
+    public async Task CreateAsync(Product dto)
         => await _http.PostAsJsonAsync("api/products", dto);
 
-    public async Task UpdateAsync(String id, ProductDto dto)
+    public async Task UpdateAsync(String id, Product dto)
         => await _http.PutAsJsonAsync($"api/products/{id}", dto);
 
     public async Task DeleteAsync(String id)

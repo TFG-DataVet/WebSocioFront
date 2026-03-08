@@ -1,11 +1,13 @@
 ﻿using SocioWeb.Domain.Entities;
-
 using SocioWeb.Entities;
+using SocioWeb.Services.AppointmentService;
 
 namespace SocioWeb.ViewModels.OwnerVM
 {
     public class OwnerPageVM
     {
+        private readonly OwnerService _ownerService;
+
         public List<Owner> Owners { get; private set; } = new();
         public List<Owner> FilteredOwners { get; private set; } = new();
 
@@ -20,16 +22,19 @@ namespace SocioWeb.ViewModels.OwnerVM
         public bool IsLoading { get; private set; }
         public string? ErrorMessage { get; private set; }
 
-        public OwnerPageVM() { }
+        public OwnerPageVM(OwnerService ownerService)
+        {
+            _ownerService = ownerService;
+        }
 
-        public Task LoadAsync()
+        public async Task LoadAsync()
         {
             try
             {
                 IsLoading = true;
                 ErrorMessage = null;
 
-                // --- DATOS DE EJEMPLO ---
+                // ========= EJEMPLOS (MOCK DATA) =========
                 Owners = new List<Owner>
                 {
                     new Owner
@@ -41,8 +46,8 @@ namespace SocioWeb.ViewModels.OwnerVM
                         CreatedAt = new DateTime(2022, 1, 10),
                         Pet = new List<Pet>
                         {
-                            new Pet { Id = "P1", Name = "Toby", Specie = "Perro", Breed="Labrador" },
-                            new Pet { Id = "P2", Name = "Mimi", Specie = "Gato", Breed="Siamés" }
+                            new Pet { Id = "P1", Name = "Toby", Specie = "Perro", Breed="Labrador", Age = 3 },
+                            new Pet { Id = "P2", Name = "Mimi", Specie = "Gato", Breed="Siamés", Age = 2 }
                         }
                     },
                     new Owner
@@ -54,7 +59,7 @@ namespace SocioWeb.ViewModels.OwnerVM
                         CreatedAt = new DateTime(2023, 3, 15),
                         Pet = new List<Pet>
                         {
-                            new Pet { Id = "P3", Name = "Rocky", Specie = "Perro", Breed="Golden Retriever" }
+                            new Pet { Id = "P3", Name = "Rocky", Specie = "Perro", Breed="Golden Retriever", Age = 4 }
                         }
                     },
                     new Owner
@@ -68,6 +73,9 @@ namespace SocioWeb.ViewModels.OwnerVM
                     }
                 };
 
+                // ========= CUANDO EXISTA API =========
+                // Owners = await _ownerService.GetOwnersAsync();
+
                 Owners = Owners.OrderBy(o => o.CreatedAt).ToList();
                 FilteredOwners = Owners;
             }
@@ -79,8 +87,6 @@ namespace SocioWeb.ViewModels.OwnerVM
             {
                 IsLoading = false;
             }
-
-            return Task.CompletedTask;
         }
 
         public void ApplyFilters()

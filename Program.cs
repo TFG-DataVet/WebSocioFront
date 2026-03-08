@@ -25,5 +25,10 @@ builder.Services.AddScoped<OwnerPageVM>();
 builder.Services.AddScoped<OwnerProfileVM>();
 builder.Services.AddScoped<MedicalRegisterVM>();
 builder.Services.AddScoped<PetsMenuVM>();
+builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<OwnerService>();
+builder.Services.AddScoped<PetProfileVM>();
+builder.Services.AddScoped<PetPageVM>();
+builder.Services.AddScoped<OwnerFormularyVM>();
 
 await builder.Build().RunAsync();

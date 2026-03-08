@@ -7,7 +7,7 @@ public interface IProductService
 {
     Task<List<Product>> GetAllAsync();
     Task<Product?> GetByIdAsync(String id);
-    Task CreateAsync(ProductDto dto);
-    Task UpdateAsync(String id, ProductDto dto);
+    Task CreateAsync(Product dto);
+    Task UpdateAsync(String id, Product dto);
     Task DeleteAsync(String id);
 }
