@@ -1,5 +1,5 @@
 ﻿@page "/Calendario"
-@using SocioWeb.Services.AppointmentService
+@using SocioWeb.Domain.Entities
 @inject AppointmentService AppointmentService
 @inject NavigationManager Nav
 
@@ -15,9 +15,11 @@
                     color: black;
                     border-radius:16px;
                     box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+
         <RadzenText Text="Calendario de Citas"
                     TextStyle="TextStyle.H4"
                     Style="font-weight:600"/>
+
         <RadzenButton Text="Nueva Cita"
                       Icon="add_circle"
                       ButtonStyle="ButtonStyle.Primary"
@@ -26,34 +28,46 @@
 
     <!-- CALENDARIO -->
     <RadzenScheduler TItem="Appointment"
-                     Data="@AppointmentService.Appointments"
+                     Data="@appointments"
                      StartProperty="Start"
                      EndProperty="End"
                      TextProperty="PetName"
-                     SelectedIndex="0"   
                      SlotSelect="@OnSlotSelect"
                      AppointmentSelect="@OnAppointmentSelect"
                      Style="height:800px">
+
         <RadzenDayView />
         <RadzenWeekView />
         <RadzenMonthView />
         <RadzenYearView />
+
     </RadzenScheduler>
 
 </RadzenStack>
 
 @code {
+
+    List<Appointment> appointments = new();
+
+    protected override void OnInitialized()
+    {
+        // Cargar citas desde el servicio
+        appointments = AppointmentService.Appointments.ToList();
+    }
+
+    // CLICK EN ESPACIO LIBRE DEL CALENDARIO
     void OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
-        // Ir a crear cita con fecha seleccionada
         Nav.NavigateTo($"/CreateAppointment?date={args.Start:O}");
     }
 
+    // CLICK EN CITA EXISTENTE
     void OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
     {
         Nav.NavigateTo($"/AppointmentProfile/{args.Data.Id}");
     }
 
+    // BOTÓN NUEVA CITA
     void CreateAppointment()
     {
         Nav.NavigateTo("/CreateAppointment");

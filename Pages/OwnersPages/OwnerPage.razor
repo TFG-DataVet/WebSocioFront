@@ -1,9 +1,17 @@
 ﻿@page "/Duenos"
 @inject NavigationManager Nav
+@inject OwnerListViewModel VM
+
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+}
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage"/>
+}
 
 <PageTitle>Dueños</PageTitle>
-
-<!-- ================= FILTROS ================= -->
 
 <RadzenStack Orientation="Orientation.Horizontal"
              AlignItems="AlignItems.Center"
@@ -12,67 +20,48 @@
 
     <RadzenText Text="Dueños" TextStyle="TextStyle.H5"/>
 
-    <RadzenDatePicker @bind-Value="DateSince"
-                      Placeholder="Desde"
-                      Style="width:160px"/>
+    <RadzenDatePicker @bind-Value="VM.DateSince" Placeholder="Desde" Style="width:160px"/>
+    <RadzenDatePicker @bind-Value="VM.DateTo"    Placeholder="Hasta" Style="width:160px"/>
 
-    <RadzenDatePicker @bind-Value="DateTo"
-                      Placeholder="Hasta"
-                      Style="width:160px"/>
-
-    <RadzenTextBox @bind-Value="CityFilter"
+    <RadzenTextBox @bind-Value="VM.CityFilter"
                    Placeholder="Ciudad"
                    Style="width:150px"/>
 
-    <RadzenTextBox @bind-Value="PostalCodeFilter"
+    <RadzenTextBox @bind-Value="VM.PostalCodeFilter"
                    Placeholder="Código Postal"
                    Style="width:120px"/>
 
-    <RadzenButton Icon="filter_alt"
-                  Text="Filtrar"
+    <RadzenButton Icon="filter_alt" Text="Filtrar"
                   ButtonStyle="ButtonStyle.Primary"
-                  Click="AplicarFiltros"/>
+                  Click="@VM.ApplyFilters"/>
 </RadzenStack>
-
-<!-- ================= BODY ================= -->
 
 <RadzenRow>
     <RadzenColumn Size="12">
 
-        @foreach (var dueno in FilterOwner)
+        @foreach (var dueno in VM.FilteredOwners)
         {
-            <RadzenCard Style="
-                        margin-bottom:30px;
-                        border-radius:16px;
-                        box-shadow:0 4px 20px rgba(0,0,0,0.1);
-                        overflow:hidden;
-                        cursor:pointer;"
+            <RadzenCard Style="margin-bottom:30px; border-radius:16px;
+                               box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden; cursor:pointer;"
                         Click="@(() => Nav.NavigateTo($"/PerfilDueno/{dueno.Id}"))">
 
-                <!-- HEADER DUEÑO -->
                 <RadzenStack Orientation="Orientation.Horizontal"
                              AlignItems="AlignItems.Center"
                              JustifyContent="JustifyContent.SpaceBetween"
-                             Style="
-                                        padding:20px;
-                                        background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                                        color:white;">
+                             Style="padding:20px;
+                                    background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
+                                    color:white;">
 
                     <RadzenStack Orientation="Orientation.Horizontal"
-                                 AlignItems="AlignItems.Center"
-                                 Gap="15">
-
+                                 AlignItems="AlignItems.Center" Gap="15">
                         <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png"
-                                      Size="70px"
-                                      Style="border:3px solid white;"/>
-
+                                      Size="70px" Style="border:3px solid white;"/>
                         <RadzenStack Gap="2">
                             <RadzenLink Path="@($"/PerfilDueno/{dueno.Id}")"
                                         Style="text-decoration:none; color:white;">
                                 <RadzenText Text="@dueno.Name"
                                             Style="font-size:22px; font-weight:600;"/>
                             </RadzenLink>
-
                             <RadzenText Text="@($"Cliente desde {dueno.CreatedAt:yyyy}")"
                                         Style="opacity:0.9; font-size:13px;"/>
                         </RadzenStack>
@@ -81,51 +70,38 @@
                     <RadzenButton Icon="more_vert"
                                   ButtonStyle="ButtonStyle.Light"
                                   Style="background:transparent; color:white;"
-                                  Click="@(() => TogglePets(dueno.Id))"/>
+                                  Click="@(() => VM.TogglePets(dueno.Id))"/>
                 </RadzenStack>
 
-                <!-- INFO DUEÑO -->
                 <RadzenStack Gap="15" Style="padding:20px;">
                     <RadzenRow>
                         <RadzenColumn Size="6">
                             <RadzenText Text="📞 Teléfono" Style="font-weight:600;"/>
                             <RadzenText Text="@dueno.Phone"/>
-
                             <RadzenText Text="📧 Email" Style="font-weight:600; margin-top:10px;"/>
                             <RadzenText Text="@dueno.Email"/>
                         </RadzenColumn>
-
                         <RadzenColumn Size="6">
                             <RadzenText Text="🏠 Dirección" Style="font-weight:600;"/>
                             <RadzenText Text="@dueno.Street"/>
-
                             <RadzenText Text="📝 Notas" Style="font-weight:600; margin-top:10px;"/>
                             <RadzenText Text="@dueno.Coments"/>
                         </RadzenColumn>
                     </RadzenRow>
                 </RadzenStack>
 
-                <!-- MASCOTAS -->
-                @if (visiblePets.Contains(dueno.Id))
+                @if (VM.VisiblePets.Contains(dueno.Id))
                 {
                     @foreach (var mascota in dueno.Pet)
                     {
-                        <RadzenCard Style="
-                                    margin:20px;
-                                    border-radius:16px;
-                                    overflow:hidden;">
-
+                        <RadzenCard Style="margin:20px; border-radius:16px; overflow:hidden;">
                             <RadzenStack Orientation="Orientation.Horizontal"
-                                         AlignItems="AlignItems.Center"
-                                         Gap="15"
-                                         Style="
-                                                    padding:20px;
-                                                    background:linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-                                                    color:white;">
-
+                                         AlignItems="AlignItems.Center" Gap="15"
+                                         Style="padding:20px;
+                                                background:linear-gradient(135deg,#ff9a9e 0%,#fad0c4 100%);
+                                                color:white;">
                                 <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png"
                                               Size="60px"/>
-
                                 <RadzenStack Gap="2">
                                     <RadzenText Text="@mascota.Name"
                                                 Style="font-size:20px; font-weight:600;"/>
@@ -133,130 +109,30 @@
                                                 Style="font-size:13px; opacity:0.9;"/>
                                 </RadzenStack>
                             </RadzenStack>
-
                             <RadzenStack Style="padding:20px;">
                                 <RadzenRow>
                                     <RadzenColumn Size="6">
                                         <RadzenText Text="🐾 Especie" Style="font-weight:600;"/>
                                         <RadzenText Text="@mascota.Specie"/>
-
-                                        <RadzenText Text="🐶 Raza"
-                                                    Style="font-weight:600; margin-top:10px;"/>
+                                        <RadzenText Text="🐶 Raza" Style="font-weight:600; margin-top:10px;"/>
                                         <RadzenText Text="@mascota.Breed"/>
                                     </RadzenColumn>
-
                                     <RadzenColumn Size="6">
                                         <RadzenText Text="🎂 Edad" Style="font-weight:600;"/>
                                         <RadzenText Text="@($"{mascota.Age} años")"/>
                                     </RadzenColumn>
                                 </RadzenRow>
                             </RadzenStack>
-
                         </RadzenCard>
                     }
                 }
 
             </RadzenCard>
         }
+
     </RadzenColumn>
 </RadzenRow>
 
 @code {
-
-    List<Owner> Owners = new();
-    List<Owner> FilterOwner = new();
-
-    DateTime? DateSince;
-    DateTime? DateTo;
-
-    string CityFilter = "";
-    string PostalCodeFilter = "";
-
-    HashSet<string> visiblePets = new();
-
-    protected override void OnInitialized()
-    {
-        var dueno1 = new Owner
-        {
-            Id = "1",
-            Name = "Juan Pérez",
-            Email = "juan@email.com",
-            Phone = "123456789",
-            Street = "Av. Siempre Viva 742",
-            City = "Madrid",
-            PostalCode = "28001",
-            Coments = "Cliente frecuente",
-            CreatedAt = new DateTime(2020, 5, 10),
-            Pet = new List<Pet>()
-            {
-                new Pet
-                {
-                    Name = "Rocky",
-                    Specie = "Perro",
-                    Breed = "Labrador",
-                    Age = 5
-                },
-                new Pet
-                {
-                    Name = "Luna",
-                    Specie = "Gato",
-                    Breed = "Siames",
-                    Age = 3
-                }
-            }
-        };
-
-        var dueno2 = new Owner
-        {
-            Id = "2",
-            Name = "María López",
-            Email = "maria@email.com",
-            Phone = "987654321",
-            Street = "Calle Falsa 123",
-            City = "Barcelona",
-            PostalCode = "08001",
-            Coments = "Nueva cliente",
-            CreatedAt = new DateTime(2022, 3, 15),
-            Pet = new List<Pet>
-            {
-                new Pet
-                {
-                    Name = "Michi",
-                    Specie = "Gato",
-                    Breed = "Criollo",
-                    Age = 2
-                }
-            }
-        };
-
-        Owners = new List<Owner> { dueno1, dueno2 };
-
-        // Orden inicial
-        Owners = Owners.OrderBy(d => d.CreatedAt).ToList();
-        FilterOwner = Owners;
-    }
-
-    void AplicarFiltros()
-    {
-        FilterOwner = Owners
-            .Where(d =>
-                (!DateSince.HasValue || d.CreatedAt >= DateSince) &&
-                (!DateTo.HasValue || d.CreatedAt <= DateTo) &&
-                (string.IsNullOrEmpty(CityFilter) ||
-                 d.City.Contains(CityFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(PostalCodeFilter) ||
-                 d.PostalCode.Contains(PostalCodeFilter, StringComparison.OrdinalIgnoreCase))
-            )
-            .ToList();
-    }
-
-    void TogglePets(string duenoId)
-    {
-        if (visiblePets.Contains(duenoId))
-            visiblePets.Remove(duenoId);
-        else
-            visiblePets.Add(duenoId);
-    }
+    protected override async Task OnInitializedAsync() => await VM.LoadAsync();
 }
-
-

@@ -18,15 +18,15 @@ public class OwnersApiService : IOwnerService
         => await _http.GetFromJsonAsync<List<Owner>>("api/owners")
            ?? new List<Owner>();
 
-    public async Task<Owner?> GetByIdAsync(int id)
+    public async Task<Owner?> GetByIdAsync(String id)
         => await _http.GetFromJsonAsync<Owner>($"api/owners/{id}");
 
     public async Task CreateAsync(OwnerDto dto)
         => await _http.PostAsJsonAsync("api/owners", dto);
 
-    public async Task UpdateAsync(int id, OwnerDto dto)
+    public async Task UpdateAsync(String id, OwnerDto dto)
         => await _http.PutAsJsonAsync($"api/owners/{id}", dto);
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(String id)
         => await _http.DeleteAsync($"api/owners/{id}");
 }

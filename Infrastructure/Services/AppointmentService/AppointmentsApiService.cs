@@ -17,15 +17,15 @@ public class AppointmentsApiService : IAppointmentService
         => await _http.GetFromJsonAsync<List<Appointment>>("api/appointments")
            ?? new List<Appointment>();
 
-    public async Task<Appointment?> GetByIdAsync(int id)
+    public async Task<Appointment?> GetByIdAsync(String id)
         => await _http.GetFromJsonAsync<Appointment>($"api/appointments/{id}");
 
     public async Task CreateAsync(AppointmentDto dto)
         => await _http.PostAsJsonAsync("api/appointments", dto);
 
-    public async Task UpdateAsync(int id, AppointmentDto dto)
+    public async Task UpdateAsync(String id, AppointmentDto dto)
         => await _http.PutAsJsonAsync($"api/appointments/{id}", dto);
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(String id)
         => await _http.DeleteAsync($"api/appointments/{id}");
 }

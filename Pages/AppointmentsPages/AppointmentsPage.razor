@@ -1,5 +1,16 @@
 ﻿@page "/Citas"
+@using SocioWeb.ViewModels.Appointments
 @inject NavigationManager Nav
+@inject AppointmentListViewModel VM
+
+@if (VM.IsLoading)
+                 {
+                     <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+                 }
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage"/>
+}
 
 <!-- ================= FILTROS ================= -->
 <RadzenStack Orientation="Orientation.Horizontal"
@@ -9,81 +20,55 @@
 
     <RadzenText Text="Citas Veterinarias" TextStyle="TextStyle.H5"/>
 
-    <RadzenDatePicker @bind-Value="dateSince"
-                      Placeholder="Desde"
-                      Style="width:160px"/>
+    <RadzenDatePicker @bind-Value="VM.DateSince" Placeholder="Desde" Style="width:160px"/>
+    <RadzenDatePicker @bind-Value="VM.DateTo" Placeholder="Hasta" Style="width:160px"/>
 
-    <RadzenDatePicker @bind-Value="dateTo"
-                      Placeholder="Hasta"
-                      Style="width:160px"/>
-
-    <RadzenDropDown Data="@states"
-                    @bind-Value="statusFilter"
+    <RadzenDropDown Data="@VM.States"
+                    @bind-Value="VM.StatusFilter"
                     Placeholder="Estado"
                     Style="width:150px"/>
 
-    <RadzenTextBox @bind-Value="searchFilter"
+    <RadzenTextBox @bind-Value="VM.SearchFilter"
                    Placeholder="Mascota o Dueño"
                    Style="width:200px"/>
 
-    <RadzenButton Icon="event"
-                  Text="Filtrar"
+    <RadzenButton Icon="event" Text="Filtrar"
                   ButtonStyle="ButtonStyle.Primary"
-                  Click="@ApplyFilters"/>
-    
-    <RadzenButton Text="Crear cita"
-                  Icon="add_circle"
-                  Click="@(() => Nav.NavigateTo("/CreateAppointment"))" />
-    
+                  Click="@VM.ApplyFilters"/>
+
+    <RadzenButton Text="Crear cita" Icon="add_circle"
+                  Click="@(() => Nav.NavigateTo("/CreateAppointment"))"/>
 </RadzenStack>
-<!-- ================= LISTA DE CITAS ================= -->
+
+<!-- ================= LISTA ================= -->
 <RadzenRow>
     <RadzenColumn Size="12">
-
-        @foreach (var cita in appointmentFilter)
+        @foreach (var cita in VM.FilteredAppointments)
         {
-            <RadzenCard Style="margin-bottom:25px;
-                   border-radius:16px;
-                   box-shadow:0 4px 20px rgba(0,0,0,0.1);
-                   cursor:pointer;"
+            <RadzenCard Style="margin-bottom:25px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); cursor:pointer;"
                         @onclick="@(() => Nav.NavigateTo($"/AppointmentProfile/{cita.Id}"))">
 
-
-                <!-- HEADER -->
                 <RadzenStack Orientation="Orientation.Horizontal"
                              JustifyContent="JustifyContent.SpaceBetween"
                              AlignItems="AlignItems.Center"
-                             Style="padding:20px;
-                                    background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                    color:white;">
-
+                             Style="padding:20px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white;">
                     <RadzenStack>
-                        <RadzenText Text="@cita.PetName"
-                                    Style="font-size:22px; font-weight:600;"/>
-                        <RadzenText Text="@($"Dueño: {cita.OwnerName}")"
-                                    Style="opacity:0.9; font-size:13px;"/>
+                        <RadzenText Text="@cita.PetName" Style="font-size:22px; font-weight:600;"/>
+                        <RadzenText Text="@($"Dueño: {cita.OwnerName}")" Style="opacity:0.9; font-size:13px;"/>
                     </RadzenStack>
-
-                    <RadzenText Text="@cita.Status"
-                                Style="font-weight:600;"/>
+                    <RadzenText Text="@cita.Status" Style="font-weight:600;"/>
                 </RadzenStack>
 
-                <!-- INFO -->
                 <RadzenStack Style="padding:20px;">
                     <RadzenRow>
                         <RadzenColumn Size="6">
                             <RadzenLabel Text="📅 Fecha y Hora" Style="font-weight:600;"/>
                             <RadzenText Text="@cita.Date.ToString("dd/MM/yyyy HH:mm")"/>
-
-                            <RadzenLabel Text="🐶 Mascota " Style="font-weight:600; margin-top:10px;"/>
-                            <RadzenText Text="@cita.PetName"/>
-                        </RadzenColumn>
-
-                        <RadzenColumn Size="6">
-                            <RadzenLabel Text="📞 Contacto" Style="font-weight:600;"/>
+                            <RadzenLabel Text="📞 Contacto" Style="font-weight:600; margin-top:10px;"/>
                             <RadzenText Text="@cita.Phone"/>
-
-                            <RadzenLabel Text="📝 Motivo" Style="font-weight:600; margin-top:10px;"/>
+                        </RadzenColumn>
+                        <RadzenColumn Size="6">
+                            <RadzenLabel Text="📝 Motivo" Style="font-weight:600;"/>
                             <RadzenText Text="@cita.Reason"/>
                         </RadzenColumn>
                     </RadzenRow>
@@ -95,58 +80,5 @@
 </RadzenRow>
 
 @code {
-
-    List<Appointment> appointments = new();
-    List<Appointment> appointmentFilter = new();
-
-    DateTime? dateSince;
-    DateTime? dateTo;
-
-    string statusFilter;
-    string searchFilter = "";
-
-    List<string> states = new() { "Pendiente", "Confirmada", "Cancelada" };
-
-    protected override void OnInitialized()
-    {
-        appointments = new List<Appointment>
-        {
-            new Appointment
-            {
-                Id = "1",
-                PetName = "Firulais",
-                OwnerName = "Juan Pérez",
-                Phone = "555-1234",
-                Date = DateTime.Now.AddDays(1),
-                Reason = "Vacunación",
-                Status = "Pendiente"
-            },
-            new Appointment
-            {
-                Id = "2",
-                PetName = "Michi",
-                OwnerName = "Ana López",
-                Phone = "555-9876",
-                Date = DateTime.Now.AddDays(2),
-                Reason = "Control general",
-                Status = "Confirmada"
-            }
-        };
-
-        appointmentFilter = appointments;
-    }
-
-    void ApplyFilters()
-    {
-        appointmentFilter = appointments
-            .Where(c =>
-                (!dateSince.HasValue || c.Date >= dateSince) &&
-                (!dateTo.HasValue || c.Date <= dateTo) &&
-                (string.IsNullOrEmpty(statusFilter) || c.Status == statusFilter) &&
-                (string.IsNullOrEmpty(searchFilter) ||
-                 c.PetName.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) ||
-                 c.OwnerName.Contains(searchFilter, StringComparison.OrdinalIgnoreCase))
-            )
-            .ToList();
-    }
+    protected override async Task OnInitializedAsync() => await VM.LoadAsync();
 }
