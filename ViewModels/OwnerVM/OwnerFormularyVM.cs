@@ -1,52 +1,132 @@
-﻿using Microsoft.AspNetCore.Components;
-using SocioWeb.Domain.Entities;
+﻿using System.Text.Json;
+
+namespace SocioWeb.ViewModels.Owners;
+
+using SocioWeb.ViewModels.Shared;
 using SocioWeb.Services.AppointmentService;
+using SocioWeb.Entities.Dtos;
 
-namespace SocioWeb.ViewModels.OwnerVM;
-
-public class OwnerFormularyVM
+public class OwnerFormularyVM : BaseViewModel
 {
-    
-        private readonly NavigationManager _nav;
-        private readonly IOwnerService _ownerService;
+    private readonly IOwnerService _service;
 
-        public OwnerFormularyVM(NavigationManager nav, IOwnerService ownerService)
+    public OwnerFormModel FormData { get; set; } = new();
+    public bool IsSaving { get; private set; }
+
+    public OwnerFormularyVM(IOwnerService service) => _service = service;
+
+    // ─── GET /owner/{id} — carga datos para edición ───────────────────────────
+
+    public async Task LoadForEditAsync(string id)
+    {
+        IsLoading = true;
+        ClearError();
+        try
         {
-            _nav = nav;
-            _ownerService = ownerService;
-            Owner = new Owner();
+            var owner = await _service.GetByIdAsync(id);
+            if (owner is not null)
+            {
+                FormData = new OwnerFormModel
+                {
+                    Name                 = owner.Name,
+                    LastName             = owner.LastName,
+                    IdentificationNumber = owner.IdentificationNumber,
+                    Email                = owner.Email,
+                    Phone                = owner.Phone,
+                    Street               = owner.Street,
+                    City                 = owner.City,
+                    PostalCode           = owner.PostalCode,
+                    Coments              = owner.Coments,
+                    Notifications        = owner.AcceptedNotification.ToString()
+                };
+            }
+            else
+            {
+                SetError("No se encontró el dueño.");
+            }
         }
-
-        public Owner Owner { get; set; }
-
-        public bool IsSaving { get; private set; }
-        public string? ErrorMessage { get; private set; }
-
-        public async Task SaveAsync()
+        catch (Exception ex)
         {
-            try
-            {
-                IsSaving = true;
-                ErrorMessage = null;
-
-                // Guardar en base de datos via servicio
-                //await _ownerService.CreateAsync();
-
-                // Redirigir a confirmación
-                _nav.NavigateTo("/confirmacion");
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-            }
-            finally
-            {
-                IsSaving = false;
-            }
+            SetError($"Error al cargar datos: {ex.Message}");
         }
-
-        public void NavigateToNewPet()
+        finally
         {
-            _nav.NavigateTo("/create-pet");
+            IsLoading = false;
         }
     }
+
+    // ─── POST /owner — crea un nuevo dueño ────────────────────────────────────
+
+    public async Task CreateAsync()
+    {
+        IsSaving = true;
+        ClearError();
+        try
+        {
+            var dto = MapToDto();
+            await _service.CreateAsync(dto);
+        }
+        catch (Exception ex)
+        {
+            SetError($"Error al registrar el dueño: {ex.Message}");
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+    // ─── PUT /owner/{id} — actualiza un dueño existente ───────────────────────
+
+    public async Task UpdateAsync(string id)
+    {
+        IsSaving = true;
+        ClearError();
+        try
+        {
+            var dto = MapToDto();
+            await _service.UpdateAsync(id, dto);
+        }
+        catch (Exception ex)
+        {
+            SetError($"Error al actualizar el dueño: {ex.Message}");
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    private OwnerDto MapToDto() => new OwnerDto
+    {
+        Name = FormData.Name ?? string.Empty,
+        LastName = FormData.LastName ?? string.Empty,
+        Dni = FormData.IdentificationNumber ?? string.Empty, // Mapeo de ID a DNI
+        Phone = FormData.Phone,
+        Email = FormData.Email ?? string.Empty,
+        Address = FormData.Street ?? string.Empty, // Ojo aquí con la estructura
+        City = FormData.City ?? string.Empty,
+        PostalCode = FormData.PostalCode
+    };
+
+    // ─── Form model ───────────────────────────────────────────────────────────
+
+    public class OwnerFormModel
+    {
+        public string? Name                 { get; set; }
+        public string? LastName             { get; set; }
+        public string? IdentificationNumber { get; set; }
+        public string? Email                { get; set; }
+        public string? Phone                { get; set; }
+        public string? Password             { get; set; }
+        public string? Street               { get; set; }
+        public string? City                 { get; set; }
+        public string? PostalCode           { get; set; }
+        public string? Coments              { get; set; }
+        public string  Notifications        { get; set; } = "Ninguna";
+    }
+    
+    
+}

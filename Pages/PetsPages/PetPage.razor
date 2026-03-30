@@ -1,112 +1,188 @@
 ﻿@page "/create-pet"
-
-@using SocioWeb.ViewModels
-@inject PetPageVM Vm
+@page "/edit-pet/{Id}"
+@using SocioWeb.ViewModels.Pets
+@using SocioWeb.Domain.Entities
 @inject NavigationManager Nav
+@inject PetPageVM VM
+@inject NotificationService NotificationService
 
-<PageTitle>Registrar Mascota</PageTitle>
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+}
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" AllowClose="true"
+                 Style="margin-bottom:1rem;" />
+}
 
-<RadzenRow>
-    <RadzenColumn Size="10" Offset="1">
-        <RadzenCard class="rz-p-6">
+<!-- BREADCRUMB -->
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="6"
+             Style="margin-bottom:1rem;">
+    <RadzenLink Path="/Duenos" Text="Dueños" Style="color:#4facfe; font-size:13px;" />
+    <RadzenText Text="/" Style="color:#ccc; font-size:13px;" />
+    <RadzenText Text="@(IsEditing ? "Editar mascota" : "Nueva mascota")"
+                Style="font-size:13px; color:#666;" />
+</RadzenStack>
 
-            <RadzenTemplateForm TItem="PetPageVM.RegisterPetForm"
-                                Data="@Vm.FormData"
-                                Submit="@HandleSubmit">
+<RadzenCard Style="border-radius:14px; overflow:hidden; max-width:900px; margin:auto;">
 
-                <RadzenRow class="rz-mb-4">
+    <!-- HEADER -->
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                padding:2rem; color:white;">
+        <RadzenText Text="@(IsEditing ? "✏️ Editar Mascota" : "🐾 Registrar Mascota")"
+                    Style="font-size:22px; font-weight:700; color:white; margin:0;" />
+        <RadzenText Text="@(IsEditing ? "Modifica los datos de la mascota" : "Completa la información para registrar una nueva mascota")"
+                    Style="font-size:13px; opacity:0.85; color:white; margin-top:4px;" />
+    </div>
 
-                    <RadzenColumn Size="12" SizeMD="4">
-                        <RadzenFormField Text="Nombre">
-                            <RadzenTextBox Name="NamePet"
-                                           @bind-Value="Vm.FormData.NamePet"
-                                           Style="width:100%" />
-                            <RadzenRequiredValidator Component="NamePet"
-                                                     Text="Nombre obligatorio" />
+    <div style="padding:2rem;">
+        <RadzenTemplateForm TItem="PetPageVM.PetFormModel" Data="@VM.FormData" Submit="@OnSubmit">
+
+            <RadzenFieldset Text="Información general" Style="margin-bottom:1.5rem;">
+                <RadzenRow Gap="20">
+
+                    <!-- Nombre -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Nombre *" Style="width:100%;">
+                            <RadzenTextBox Name="Name" @bind-Value="VM.FormData.Name"
+                                           Placeholder="Nombre de la mascota" />
+                            <RadzenRequiredValidator Component="Name" Text="El nombre es obligatorio." />
                         </RadzenFormField>
                     </RadzenColumn>
 
-                    <RadzenColumn Size="12" SizeMD="4">
-                        <RadzenFormField Text="Fecha nacimiento">
-                            <RadzenDatePicker Name="Birthday"
-                                              @bind-Value="Vm.FormData.Birthday"
-                                              DateFormat="yyyy-MM-dd"
-                                              Style="width:100%" />
+                    <!-- Especie -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Especie *" Style="width:100%;">
+                            <RadzenDropDown Data="@VM.SpeciesOptions"
+                                            @bind-Value="VM.FormData.Specie"
+                                            Change="@VM.OnSpeciesChanged"
+                                            Placeholder="Selecciona especie"
+                                            Style="width:100%;" />
+                            <RadzenRequiredValidator Component="Specie" Text="La especie es obligatoria." />
                         </RadzenFormField>
                     </RadzenColumn>
 
-                    <RadzenColumn Size="12" SizeMD="4">
-                        <RadzenFormField Text="Peso (kg)">
-                            <RadzenTextBox Name="Weight"
-                                           @bind-Value="Vm.FormData.Weight"
-                                           Style="width:100%" />
+                    <!-- Raza -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Raza *" Style="width:100%;">
+                            <RadzenDropDown Data="@VM.CurrentBreeds"
+                                            @bind-Value="VM.FormData.Breed"
+                                            Placeholder="Selecciona raza"
+                                            Style="width:100%;" />
+                            <RadzenRequiredValidator Component="Breed" Text="La raza es obligatoria." />
                         </RadzenFormField>
                     </RadzenColumn>
 
-                </RadzenRow>
-
-                <RadzenRow class="rz-mb-4">
-
-                    <RadzenColumn Size="12" SizeMD="4">
-                        <RadzenFormField Text="Especie">
-                            <RadzenDropDown Name="Species"
-                                            Data="@Vm.SpeciesOptions"
-                                            @bind-Value="Vm.FormData.Species"
-                                            Change="@Vm.OnSpeciesChanged"
-                                            Style="width:100%" />
+                    <!-- Sexo -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Sexo *" Style="width:100%;">
+                            <RadzenDropDown TValue="Sex?" Data="@(Enum.GetValues(typeof(Sex)))"
+                                            @bind-Value="VM.FormData.Sex"
+                                            Style="width:100%;" />
                         </RadzenFormField>
                     </RadzenColumn>
 
-                    <RadzenColumn Size="12" SizeMD="4">
-                        <RadzenFormField Text="Raza">
-                            <RadzenDropDown Name="Breed"
-                                            Data="@Vm.CurrentBreeds"
-                                            @bind-Value="Vm.FormData.Breed"
-                                            Style="width:100%" />
+                    <!-- Fecha nacimiento -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Fecha de nacimiento *" Style="width:100%;">
+                            <RadzenDatePicker TValue="DateTime"
+                                              @bind-Value="VM.FormData.BirthDate"
+                                              DateFormat="dd/MM/yyyy"
+                                              Style="width:100%;" />
+                            <RadzenRequiredValidator Component="BirthDate" Text="La fecha de nacimiento es obligatoria." />
+                            @if (!string.IsNullOrEmpty(VM.AgeCalculated))
+                            {
+                                <RadzenText Text="@($"Edad calculada: {VM.AgeCalculated}")"
+                                            Style="font-size:12px; color:#888;"/>
+                            }
                         </RadzenFormField>
                     </RadzenColumn>
 
-                    <RadzenColumn Size="12" SizeMD="4">
-                        <RadzenFormField Text="Sexo">
-                            <RadzenDropDown Name="Sex"
-                                            Data="@Vm.SexOptions"
-                                            @bind-Value="Vm.FormData.Sex"
-                                            Style="width:100%" />
+                    <!-- Peso -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Peso (kg)" Style="width:100%;">
+                            <RadzenNumeric TValue="double?" @bind-Value="VM.FormData.Weight"
+                                           Placeholder="Ej: 5.2"
+                                           Style="width:100%;" />
                         </RadzenFormField>
                     </RadzenColumn>
 
-                </RadzenRow>
+                    <!-- Chip -->
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Número de chip" Style="width:100%;">
+                            <RadzenTextBox @bind-Value="VM.FormData.Chip"
+                                           Placeholder="Número de identificación chip"
+                                           Style="width:100%;" />
+                        </RadzenFormField>
+                    </RadzenColumn>
 
-                <RadzenRow class="rz-mb-4">
+                    <!-- Información clínica -->
                     <RadzenColumn Size="12">
-                        <RadzenFormField Text="Edad calculada">
-                            <RadzenTextBox Value="@Vm.AgeCalculated"
-                                           ReadOnly="true"
-                                           Style="width:100%" />
+                        <RadzenFormField Text="Información clínica adicional" Style="width:100%;">
+                            <RadzenTextArea @bind-Value="VM.FormData.ClinicalInfo"
+                                            Placeholder="Tipo de sangre, alergias, observaciones..."
+                                            Style="width:100%;" Rows="3"/>
                         </RadzenFormField>
                     </RadzenColumn>
+
                 </RadzenRow>
+            </RadzenFieldset>
 
-                <RadzenRow>
-                    <RadzenColumn Size="12">
-                        <RadzenButton ButtonStyle="ButtonStyle.Primary"
-                                      Icon="save"
-                                      Text="Registrar Mascota"
-                                      Type="Submit"
-                                      Style="width:200px; margin:auto; display:block" />
-                    </RadzenColumn>
-                </RadzenRow>
+            <!-- BOTONES -->
+            <RadzenStack Orientation="Orientation.Horizontal"
+                         JustifyContent="JustifyContent.End"
+                         Gap="10">
+                <RadzenButton Text="Cancelar" Icon="close"
+                              ButtonStyle="ButtonStyle.Light"
+                              Style="border-radius:9px;"
+                              Type="ButtonType.Button"
+                              Click="@(() => Nav.NavigateTo(IsEditing ? $"/PerfilMascota/{Id}" : "/Duenos"))" />
+                <RadzenButton Text="@(IsEditing ? "Guardar cambios" : "Registrar mascota")"
+                              Icon="@(IsEditing ? "save" : "pets")"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Style="border-radius:9px;"
+                              Type="ButtonType.Submit"
+                              Disabled="@VM.IsSaving" />
+            </RadzenStack>
 
-            </RadzenTemplateForm>
-
-        </RadzenCard>
-    </RadzenColumn>
-</RadzenRow>
+        </RadzenTemplateForm>
+    </div>
+</RadzenCard>
 
 @code {
-    private async Task HandleSubmit()
+    [Parameter] public string? Id { get; set; }
+
+    bool IsEditing => !string.IsNullOrEmpty(Id);
+
+    protected override async Task OnInitializedAsync()
     {
-        await Vm.SaveAsync();
-        Nav.NavigateTo("/Mascotas");
+        if (IsEditing)
+            await VM.LoadForEditAsync(Id!);
+    }
+
+    async Task OnSubmit()
+    {
+        if (IsEditing)
+            await VM.UpdateAsync(Id!);
+        else
+            await VM.CreateAsync();
+
+        StateHasChanged();
+
+        if (!VM.HasError)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = IsEditing ? "Actualizado" : "Registrado",
+                Detail  = IsEditing
+                    ? "Los datos de la mascota se actualizaron correctamente."
+                    : "La mascota fue registrada correctamente.",
+                Duration = 3500
+            });
+
+            Nav.NavigateTo(IsEditing ? $"/PerfilMascota/{Id}" : "/Duenos");
+        }
     }
 }

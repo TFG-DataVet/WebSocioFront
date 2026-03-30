@@ -1,54 +1,77 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 using SocioWeb.Entities;
 
 namespace SocioWeb.Domain.Entities;
 
 public class Owner
 {
-    
-    public string Id { get; set; }
+    [JsonPropertyName("ownerId")]
+    public string Id { get; set; } = string.Empty;
 
-    // Relación con Clinica
-    [Required(ErrorMessage = "La clínica es obligatoria.")]
-    public string IdClinic { get; set; }
-    
-    public Clinic? Clinic { get; set; }
+    [JsonPropertyName("clinicId")]
+    public string IdClinic { get; set; } = string.Empty;
 
-    // Relación con Mascotas
-    public List<Pet> Pet { get; set; } = new List<Pet>();
-
-    // Datos personales
+    [JsonPropertyName("firstName")]
     [Required(ErrorMessage = "El nombre es obligatorio.")]
-    [StringLength(50, ErrorMessage = "El nombre no puede exceder 50 caracteres.")]
     public string Name { get; set; } = string.Empty;
 
+    [JsonPropertyName("lastName")]
     [Required(ErrorMessage = "El apellido es obligatorio.")]
-    [StringLength(50, ErrorMessage = "El apellido no puede exceder 50 caracteres.")]
     public string LastName { get; set; } = string.Empty;
+    
+    [JsonPropertyName("documentType")]
+    [Required(ErrorMessage = "El número de documento es obligatorio.")]
+    public string IdentificationType { get; set; } = string.Empty;
 
+    [JsonPropertyName("documentNumber")]
+    [Required(ErrorMessage = "El número de documento es obligatorio.")]
+    public string IdentificationNumber { get; set; } = string.Empty;
+
+    
+    [JsonPropertyName("email")]
     [Required(ErrorMessage = "El email es obligatorio.")]
     [EmailAddress(ErrorMessage = "Formato de email inválido.")]
     public string Email { get; set; } = string.Empty;
 
-    [Phone(ErrorMessage = "Formato de teléfono inválido.")]
+    // Nota: Java usa un objeto Phone, pero si recibes el string directamente:
+    [JsonPropertyName("phone")]
     public string? Phone { get; set; }
 
-    [Required(ErrorMessage = "La contraseña es obligatoria.")]
-    public string PasswordHash { get; set; } = string.Empty;
-    public string IdentificationNumber { get; set; }
-    public string Street { get; set; }
-    public string PostalCode { get; set; }
-    public string City { get; set; }
-    public string Coments { get; set; }
-    public List<LogEntry> Historic { get; set; } = new();
+    // Sincronización con el objeto Address de Java
+    [JsonPropertyName("Street")]
+    public string Street { get; set; } = string.Empty;
 
-    // Estado de la app y notificaciones
-    public StatusApp StatusApp { get; set; } = StatusApp.Active;
-    public AcceptedNotification AcceptedNotification { get; set; } = AcceptedNotification.Ninguna;
+    [JsonPropertyName("city")]
+    public string City { get; set; } = string.Empty;
 
-    // Auditoría
+    [JsonPropertyName("postalCode")]
+    public string PostalCode { get; set; } = string.Empty;
+
+    [JsonPropertyName("avatarUrl")]
+    public string? Url { get; set; }
+
+    [JsonPropertyName("active")]
+    public bool IsActive { get; set; } = true;
+
+    // Mapeo de Enums (asegúrate de que coincidan con los valores de Java)
+    public StatusApp StatusApp => IsActive ? StatusApp.Active : StatusApp.Inactive;
+
+    [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    [JsonPropertyName("updateAt")]
     public DateTime? UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
+
+    // Listas anidadas
+    public List<Pet> Pet { get; set; } = new();
+    public List<LogEntry> Historic { get; set; } = new();
+    
+    public string Coments { get; set; } = string.Empty;
+    public AcceptedNotification AcceptedNotification { get; set; } = AcceptedNotification.Ninguna;
+    
+    
+    [JsonPropertyName("acceptTermsAndCond")]
+    [Required(ErrorMessage = "El número de documento es obligatorio.")]
+    public bool acceptTermsAndCond {get; set;}
 }

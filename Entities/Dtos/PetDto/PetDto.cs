@@ -1,70 +1,86 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 using SocioWeb.Domain.Entities;
 
 namespace SocioWeb.Entities.Dtos.PetDto;
 
 public class PetDto
 {
-    
-    
-    public string Id { get; set; }
+    // ─── RELACIONES ─────────────────────────────
 
-    // Relaciones
     [Required]
-    public string IdOwner { get; set; }
-    
-    public Owner? Owner { get; set; }
+    [JsonPropertyName("ownerId")]
+    public string OwnerId { get; set; } = string.Empty;
 
-    [Required] 
-    public string IdClinic { get; set; }
-    
-    public Clinic? Clinic { get; set; }
+    [Required]
+    [JsonPropertyName("clinicId")]
+    public string ClinicId { get; set; } = string.Empty;
 
-    // Información básica
-    [Required]  
+    // ─── INFO BÁSICA ────────────────────────────
+
+    [Required]
     [StringLength(100)]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
-    public string? AvatarUrl { get; set; } // Para integrar con mobile
+    [JsonPropertyName("species")]
+    public string? Species { get; set; }
 
-    public string? Specie { get; set; }
-    public string? Chip { get; set; }
-
-    // Raza, Edad, Sexo, Fecha de nacimiento
+    [JsonPropertyName("breed")]
     public string? Breed { get; set; }
-    public int Age { get; set; }
-    public DateTime BirthDate { get; set; } = DateTime.UtcNow;
+
+    [JsonPropertyName("sex")]
     public Sex Sex { get; set; } = Sex.Other;
 
-    // Datos clínicos
-    public bool Vacines { get; set; } = false;
-    public string? WhichVacines { get; set; }
+    [JsonPropertyName("dateOfBirth")]
+    public DateTime DateOfBirth { get; set; }
 
-    public bool Operations { get; set; } = false;
-    public string? WhichOperations { get; set; }
+    [JsonPropertyName("chipNumber")]
+    public string? ChipNumber { get; set; }
 
-    public bool Diseases { get; set; } = false;
-    public string? WhichDiseases { get; set; }
+    [JsonPropertyName("avatarUrl")]
+    public string? AvatarUrl { get; set; }
 
-    public bool Food { get; set; } = false;
+    // ─── CLÍNICO (opcional según backend) ──────
 
-    public double? Weight { get; set; } // Peso en kg
+    [JsonPropertyName("weight")]
+    public double? Weight { get; set; }
 
-    public string? ClinicalInfo { get; set; } // Información libre: sangre, etc.
+    [JsonPropertyName("clinicalInfo")]
+    public string? ClinicalInfo { get; set; }
 
-    public bool Allergies { get; set; } = false;
+    [JsonPropertyName("allergies")]
+    public bool Allergies { get; set; }
+
+    [JsonPropertyName("whichAllergies")]
     public string? WhichAllergies { get; set; }
 
-    // Consultas y Citas
-    public List<Inquiry>? Inquiry { get; set; } = new List<Inquiry>();
-    public List<Appointment>? Appointments { get; set; } = new List<Appointment>();
+    [JsonPropertyName("vaccines")]
+    public bool Vaccines { get; set; }
 
-    // Información de seguro
+    [JsonPropertyName("whichVaccines")]
+    public string? WhichVaccines { get; set; }
+
+    [JsonPropertyName("operations")]
+    public bool Operations { get; set; }
+
+    [JsonPropertyName("whichOperations")]
+    public string? WhichOperations { get; set; }
+
+    [JsonPropertyName("diseases")]
+    public bool Diseases { get; set; }
+
+    [JsonPropertyName("whichDiseases")]
+    public string? WhichDiseases { get; set; }
+
+    [JsonPropertyName("food")]
+    public bool Food { get; set; }
+
+    // ─── SEGURO ────────────────────────────────
+
+    [JsonPropertyName("insurance")]
     public string? Insurance { get; set; }
-    public DateTime? DateLastContact { get; set; }
 
-    // Auditoría
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
+    [JsonPropertyName("dateLastContact")]
+    public DateTime? DateLastContact { get; set; }
 }

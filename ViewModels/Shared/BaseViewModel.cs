@@ -8,4 +8,9 @@ public abstract class BaseViewModel
 
     protected void SetError(string message) => ErrorMessage = message;
     protected void ClearError() => ErrorMessage = null;
+
+    /// <summary>
+    /// Versión pública para enlazar desde la vista (p.ej. botón de cerrar alerta).
+    /// </summary>
+    public void ClearErrorPublic() => ErrorMessage = null;
 }

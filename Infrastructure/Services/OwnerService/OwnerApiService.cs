@@ -1,32 +1,85 @@
-﻿using SocioWeb.Entities.Dtos;
-
-namespace SocioWeb.Services.AppointmentService;
-
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
+using System.Net;
 using SocioWeb.Domain.Entities;
+using SocioWeb.Entities.Dtos;
+using SocioWeb.Services.AppointmentService;
 
 public class OwnersApiService : IOwnerService
 {
     private readonly HttpClient _http;
+    private const string BaseEndpoint = "owner";
 
     public OwnersApiService(HttpClient http)
     {
         _http = http;
     }
 
-    public async Task<List<Owner>> GetAllAsync()
-        => await _http.GetFromJsonAsync<List<Owner>>("api/owners")
-           ?? new List<Owner>();
+    // ─── MÉTODO CENTRAL DE ERRORES ───────────────────────────────
 
-    public async Task<Owner?> GetByIdAsync(String id)
-        => await _http.GetFromJsonAsync<Owner>($"api/owners/{id}");
+    private async Task HandleError(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode) return;
+
+        var body = await response.Content.ReadAsStringAsync();
+
+        // 🔥 IMPORTANTE: lanzamos el JSON directamente
+        throw new Exception(body);
+    }
+
+    // ─── GET ALL ────────────────────────────────────────────────
+
+    public async Task<List<Owner>> GetAllAsync()
+    {
+        var response = await _http.GetAsync(BaseEndpoint);
+        await HandleError(response);
+
+        return await response.Content.ReadFromJsonAsync<List<Owner>>()
+               ?? new List<Owner>();
+    }
+
+    // ─── GET BY ID ──────────────────────────────────────────────
+
+    public async Task<Owner?> GetByIdAsync(string id)
+    {
+        var response = await _http.GetAsync($"{BaseEndpoint}/{id}");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return null;
+
+        await HandleError(response);
+
+        return await response.Content.ReadFromJsonAsync<Owner>();
+    }
+
+    // ─── CREATE ─────────────────────────────────────────────────
 
     public async Task CreateAsync(OwnerDto dto)
-        => await _http.PostAsJsonAsync("api/owners", dto);
+    {
+        var response = await _http.PostAsync(
+            BaseEndpoint,
+            JsonContent.Create(dto)
+        );
 
-    public async Task UpdateAsync(String id, OwnerDto dto)
-        => await _http.PutAsJsonAsync($"api/owners/{id}", dto);
+        await HandleError(response);
+    }
 
-    public async Task DeleteAsync(String id)
-        => await _http.DeleteAsync($"api/owners/{id}");
+    // ─── UPDATE ─────────────────────────────────────────────────
+
+    public async Task UpdateAsync(string id, OwnerDto dto)
+    {
+        var response = await _http.PutAsync(
+            $"{BaseEndpoint}/{id}",
+            JsonContent.Create(dto)
+        );
+
+        await HandleError(response);
+    }
+
+    // ─── DELETE ─────────────────────────────────────────────────
+
+    public async Task DeleteAsync(string id)
+    {
+        var response = await _http.DeleteAsync($"{BaseEndpoint}/{id}");
+        await HandleError(response);
+    }
 }

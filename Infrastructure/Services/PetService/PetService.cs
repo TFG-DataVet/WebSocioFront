@@ -55,11 +55,11 @@ public class PetService : IPetService
         {
             Id = Guid.NewGuid().ToString(),
             Name = dto.Name,
-            Specie = dto.Specie,
+            Specie = dto.Species,
             Breed = dto.Breed,
             Sex = dto.Sex,
             Weight = dto.Weight,
-            BirthDate = dto.BirthDate,
+            BirthDate = dto.DateOfBirth,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -73,11 +73,11 @@ public class PetService : IPetService
         if (pet != null)
         {
             pet.Name = dto.Name;
-            pet.Specie = dto.Specie;
+            pet.Specie = dto.Species;
             pet.Breed = dto.Breed;
             pet.Sex = dto.Sex;
             pet.Weight = dto.Weight;
-            pet.BirthDate = dto.BirthDate;
+            pet.BirthDate = dto.DateOfBirth;
             pet.UpdatedAt = DateTime.UtcNow;
         }
         return Task.CompletedTask;

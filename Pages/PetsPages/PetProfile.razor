@@ -1,6 +1,8 @@
 ﻿@page "/PerfilMascota/{Id}"
 @inject NavigationManager Nav
 @inject PetProfileViewModel VM
+@inject DialogService DialogService
+@inject NotificationService NotificationService
 
 @if (VM.IsLoading)
 {
@@ -8,219 +10,208 @@
 }
 @if (VM.HasError)
 {
-    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage"/>
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" AllowClose="true"
+                 Style="margin-bottom:1rem;" Close="@VM.ClearErrorPublic" />
 }
 
-<RadzenCard>
-    <RadzenStack Orientation="Orientation.Horizontal" Gap="25"
-                 AlignItems="AlignItems.Center" Style="margin-bottom:30px;">
+<!-- HERO HEADER -->
+<RadzenCard Style="border-radius:14px; overflow:hidden; padding:0;">
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                padding: 2rem 2rem 3.5rem; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:-40px; right:-40px; width:200px; height:200px;
+                    background:rgba(255,255,255,0.08); border-radius:50%;"></div>
+        <div style="position:absolute; bottom:-60px; left:30%; width:160px; height:160px;
+                    background:rgba(255,255,255,0.05); border-radius:50%;"></div>
 
-        <RadzenCard Style="width:120px; height:120px; border-radius:50%; background:#d9d9d9;
-                           display:flex; align-items:center; justify-content:center; font-size:50px;">
-            🐾
-        </RadzenCard>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="20">
+            <RadzenCard Style="width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.25);
+                               border:3px solid white; display:flex; align-items:center; justify-content:center; font-size:36px;">
+                🐾
+            </RadzenCard>
 
-        <RadzenStack Gap="5">
-            <RadzenText Text="@VM.Pet.Name" Style="font-size:24px; font-weight:600; color:#333;"/>
-            <RadzenText Text="Mascota registrada" Style="color:#777;"/>
-
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="10">
-                @if (!VM.IsEditing)
-                {
-                    <RadzenButton Text="Editar perfil" Icon="edit"
-                                  Style="border-radius:10px;"
-                                  Click="@(() => VM.IsEditing = true)"/>
-                }
-                else
-                {
-                    <RadzenButton Text="Cancelar" Icon="close"
-                                  ButtonStyle="ButtonStyle.Danger"
-                                  Style="border-radius:10px;"
-                                  Click="@VM.Cancel"/>
-                }
-                <RadzenButton Text="Ver dueño" Icon="account_box"
-                              ButtonStyle="ButtonStyle.Primary"
-                              Style="border-radius:10px; background:#4b3e48; color:white;"
-                              Click="@(() => Nav.NavigateTo($"/PerfilDueno/{VM.Pet.Owner?.Id}"))"/>
-                <RadzenButton Text="Registro médico" Icon="medical_services"
-                              ButtonStyle="ButtonStyle.Primary"
-                              Style="border-radius:10px; background:#4b3e48; color:white;"
-                              Click="@(() => Nav.NavigateTo("/MedicalRegister"))"/>
+            <RadzenStack Gap="4">
+                <RadzenText Text="@VM.Pet.Name"
+                            Style="font-size:26px; font-weight:700; color:white; margin:0;" />
+                <RadzenText Text="@($"{VM.Pet.Specie} · {VM.Pet.Breed}")"
+                            Style="font-size:14px; color:rgba(255,255,255,0.85);" />
             </RadzenStack>
         </RadzenStack>
-    </RadzenStack>
 
-    <RadzenText Text="Información de la mascota"
-                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
-
-    <RadzenRow Gap="25">
-        <RadzenColumn Size="6">@Campo("Nombre",   VM.Pet.Name,  v => VM.Pet.Name  = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Especie",  VM.Pet.Specie, v => VM.Pet.Specie = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Raza",     VM.Pet.Breed,  v => VM.Pet.Breed  = v)</RadzenColumn>
-        <RadzenColumn Size="6">
-            <RadzenStack Gap="5">
-                <RadzenText Text="Sexo" Style="color:#777;"/>
-                @if (!VM.IsEditing)
-                {
-                    <RadzenText Text="@VM.Pet.Sex.ToString()" Style="font-size:18px; color:#333;"/>
-                }
-                else
-                {
-                    <RadzenDropDown TValue="Sex"
-                                    Data="@(Enum.GetValues(typeof(Sex)))"
-                                    @bind-Value="VM.Pet.Sex"
-                                    Style="width:100%; border-radius:10px;"/>
-                }
-            </RadzenStack>
-        </RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Fecha nacimiento",
-            VM.Pet.BirthDate.ToShortDateString(),
-            v => VM.Pet.BirthDate = DateTime.Parse(v))</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Peso (kg)",
-            VM.Pet.Weight.ToString(),
-            v => VM.Pet.Weight = int.Parse(v))</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Número chip", VM.Pet.Chip, v => VM.Pet.Chip = v)</RadzenColumn>
-    </RadzenRow>
-
-    <RadzenDivider Style="margin:30px 0;"/>
-    <RadzenText Text="Registro del sistema"
-                Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
-    <RadzenRow Gap="25">
-        <RadzenColumn Size="6">@Campo("Creado el", VM.Pet.CreatedAt.ToLocalTime().ToString(), null)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Última actualización", VM.Pet.UpdatedAt?.ToLocalTime().ToString(), null)</RadzenColumn>
-    </RadzenRow>
-
-    <RadzenDivider Style="margin:30px 0;"/>
-
-    <RadzenCard Style="margin-top:20px; background:#f9f9f9; border-radius:12px; padding:20px;">
-        <RadzenStack Orientation="Orientation.Horizontal"
-                     JustifyContent="JustifyContent.SpaceBetween"
-                     AlignItems="AlignItems.Center">
-            <RadzenText Text="Historial médico" Style="font-size:18px; font-weight:600; color:#4b3e48;"/>
-            @if (!VM.IsEditingHistorial)
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="8" Wrap="FlexWrap.Wrap" Style="margin-top:15px;">
+            @if (!VM.IsEditing)
             {
-                <RadzenButton Text="Editar historial" Icon="edit"
-                              ButtonStyle="ButtonStyle.Primary"
-                              Style="border-radius:10px;"
-                              Click="@(() => VM.IsEditingHistorial = true)"/>
+                <RadzenButton Text="Editar perfil" Icon="edit"
+                              Style="background:white; color:#4facfe; font-weight:600; border-radius:9px;"
+                              Click="@(() => VM.IsEditing = true)" />
             }
             else
             {
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="10">
-                    <RadzenButton Text="Guardar" Icon="save"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Style="background:#4b3e48; color:white; border-radius:10px;"
-                                  Click="@VM.SaveHistorical"/>
-                    <RadzenButton Text="Cancelar" Icon="close"
-                                  ButtonStyle="ButtonStyle.Danger"
-                                  Style="border-radius:10px;"
-                                  Click="@(() => VM.IsEditingHistorial = false)"/>
+                <RadzenButton Text="Cancelar" Icon="close"
+                              ButtonStyle="ButtonStyle.Light"
+                              Style="border-radius:9px; background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);"
+                              Click="@VM.Cancel" />
+                <RadzenButton Text="Guardar" Icon="save"
+                              Style="background:white; color:#4facfe; font-weight:600; border-radius:9px;"
+                              Click="@OnSave" />
+            }
+
+            <RadzenButton Text="Ver dueño" Icon="account_box"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Style="border-radius:9px; background:#4b3e48; color:white;"
+                          Click="@(() => Nav.NavigateTo($"/PerfilDueno/{VM.Pet.Owner?.Id}"))" />
+        </RadzenStack>
+    </div>
+
+    <div style="padding:2rem;">
+
+        <!-- INFORMACIÓN DE LA MASCOTA -->
+        <RadzenText Text="Información de la mascota"
+                    Style="color:#4b3e48; font-size:18px; font-weight:600; margin-bottom:1.2rem;" />
+
+        <RadzenRow Gap="20" Style="margin-bottom:2rem;">
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Nombre", VM.Pet.Name, v => VM.Pet.Name = v)</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Especie", VM.Pet.Specie, v => VM.Pet.Specie = v)</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Raza", VM.Pet.Breed, v => VM.Pet.Breed = v)</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="5">
+                    <RadzenText Text="Sexo" Style="color:#777;"/>
+                    @if (!VM.IsEditing)
+                    {
+                        <RadzenText Text="@VM.Pet.Sex.ToString()" Style="font-size:18px; color:#333;"/>
+                    }
+                    else
+                    {
+                        <RadzenDropDown TValue="Sex"
+                                        Data="@(Enum.GetValues(typeof(Sex)))"
+                                        @bind-Value="VM.Pet.Sex"
+                                        Style="width:100%; border-radius:10px;" />
+                    }
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Fecha nacimiento", VM.Pet.BirthDate.ToShortDateString(), v => VM.Pet.BirthDate = DateTime.Parse(v))</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Peso (kg)", VM.Pet.Weight?.ToString(), v => VM.Pet.Weight = int.Parse(v))</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Número chip", VM.Pet.Chip, v => VM.Pet.Chip = v)</RadzenColumn>
+        </RadzenRow>
+
+        <RadzenDivider Style="margin:1.5rem 0;" />
+
+        <!-- HISTORIAL MÉDICO -->
+        <RadzenText Text="Historial médico"
+                    Style="color:#4b3e48; font-size:18px; font-weight:600; margin-bottom:1.2rem;" />
+
+        <RadzenCard Style="background:#f9f9f9; border-radius:12px; padding:20px;">
+            <RadzenStack Gap="15">
+                <RadzenStack Gap="5">
+                    <RadzenText Text="Operaciones" Style="font-weight:600; color:#4b3e48;" />
+                    @if (VM.IsEditingHistorial)
+                    {
+                        <RadzenTextBox @bind-Value="VM.Pet.WhichOperations" Style="width:100%; border:none; padding:2px;" Placeholder="Agregar operaciones..." />
+                    }
+                    else
+                    {
+                        @foreach (var op in (VM.Pet.WhichOperations?.Split('\n') ?? Array.Empty<string>()))
+                        {
+                            <div>• @op</div>
+                        }
+                    }
+                </RadzenStack>
+
+                <RadzenDivider/>
+
+                <RadzenStack Gap="5">
+                    <RadzenText Text="Enfermedades" Style="font-weight:600; color:#4b3e48;" />
+                    @if (VM.IsEditingHistorial)
+                    {
+                        <RadzenTextBox @bind-Value="VM.Pet.WhichDiseases" Style="width:100%; border:none; padding:2px;" Placeholder="Agregar enfermedades..." />
+                    }
+                    else
+                    {
+                        @foreach (var en in (VM.Pet.WhichDiseases?.Split('\n') ?? Array.Empty<string>()))
+                        {
+                            <div>• @en</div>
+                        }
+                    }
+                </RadzenStack>
+
+                <RadzenDivider/>
+
+                <RadzenStack Gap="5">
+                    <RadzenText Text="Vacunas" Style="font-weight:600; color:#4b3e48;" />
+                    @if (VM.IsEditingHistorial)
+                    {
+                        <RadzenTextBox @bind-Value="VM.Pet.WhichVacines" Style="width:100%; border:none; padding:2px;" Placeholder="Agregar vacunas..." />
+                    }
+                    else
+                    {
+                        @foreach (var vac in (VM.Pet.WhichVacines?.Split('\n') ?? Array.Empty<string>()))
+                        {
+                            <div>• @vac</div>
+                        }
+                    }
+                </RadzenStack>
+            </RadzenStack>
+
+            @if (VM.IsEditingHistorial)
+            {
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="10" Style="margin-top:15px;">
+                    <RadzenButton Text="Guardar historial" Icon="save" ButtonStyle="ButtonStyle.Primary" Style="background:#4b3e48; color:white; border-radius:10px;" Click="@VM.SaveHistorical" />
+                    <RadzenButton Text="Cancelar" Icon="close" ButtonStyle="ButtonStyle.Danger" Style="border-radius:10px;" Click="@(() => VM.IsEditingHistorial = false)" />
                 </RadzenStack>
             }
-        </RadzenStack>
+        </RadzenCard>
 
-        <RadzenStack Gap="20" Style="margin-top:15px;">
-            <RadzenStack Gap="5">
-                <RadzenText Text="Operaciones" Style="font-weight:600; color:#4b3e48;"/>
-                <div style="max-height:120px; overflow-y:auto; border:1px solid #ccc; padding:5px; border-radius:5px;">
-                    @if (VM.IsEditingHistorial)
-                    {
-                        <RadzenTextBox @bind-Value="VM.Pet.WhichOperations"
-                                       Style="width:100%; border:none; padding:2px;"
-                                       Placeholder="Agregar operaciones..."/>
-                    }
-                    else
-                    {
-                        @foreach (var log in (VM.Pet.WhichOperations?.Split('\n') ?? Array.Empty<string>()))
-                        {
-                            <div style="margin-bottom:4px;">• @log</div>
-                        }
-                    }
-                </div>
-            </RadzenStack>
+        <RadzenDivider Style="margin:1.5rem 0;" />
 
-            <RadzenDivider/>
+        <!-- FECHAS DEL SISTEMA -->
+        <RadzenText Text="Registro del sistema"
+                    Style="color:#4b3e48; font-size:18px; font-weight:600; margin-bottom:1.2rem;" />
 
-            <RadzenStack Gap="5">
-                <RadzenText Text="Enfermedades" Style="font-weight:600; color:#4b3e48;"/>
-                <div style="max-height:120px; overflow-y:auto; border:1px solid #ccc; padding:5px; border-radius:5px;">
-                    @if (VM.IsEditingHistorial)
-                    {
-                        <RadzenTextBox @bind-Value="VM.Pet.WhichDiseases"
-                                       Style="width:100%; border:none; padding:2px;"
-                                       Placeholder="Agregar enfermedades..."/>
-                    }
-                    else
-                    {
-                        @foreach (var log in (VM.Pet.WhichDiseases?.Split('\n') ?? Array.Empty<string>()))
-                        {
-                            <div style="margin-bottom:4px;">• @log</div>
-                        }
-                    }
-                </div>
-            </RadzenStack>
+        <RadzenRow Gap="20">
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Creado el", VM.Pet.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm"), null)</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">@Campo("Última actualización", VM.Pet.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm"), null)</RadzenColumn>
+        </RadzenRow>
 
-            <RadzenDivider/>
-
-            <RadzenStack Gap="5">
-                <RadzenText Text="Vacunas" Style="font-weight:600; color:#4b3e48;"/>
-                <div style="max-height:120px; overflow-y:auto; border:1px solid #ccc; padding:5px; border-radius:5px;">
-                    @if (VM.IsEditingHistorial)
-                    {
-                        <RadzenTextBox @bind-Value="VM.Pet.WhichVacines"
-                                       Style="width:100%; border:none; padding:2px;"
-                                       Placeholder="Agregar vacunas..."/>
-                    }
-                    else
-                    {
-                        @foreach (var log in (VM.Pet.WhichVacines?.Split('\n') ?? Array.Empty<string>()))
-                        {
-                            <div style="margin-bottom:4px;">• @log</div>
-                        }
-                    }
-                </div>
-            </RadzenStack>
-        </RadzenStack>
-    </RadzenCard>
-
-    @if (VM.IsEditing)
-    {
-        <RadzenStack AlignItems="AlignItems.End" Style="margin-top:30px;">
-            <RadzenButton Text="Guardar cambios" Icon="save"
-                          ButtonStyle="ButtonStyle.Primary"
-                          Style="background:#4b3e48; color:white; border-radius:10px;"
-                          Click="@(async () => await VM.SaveAsync())"/>
-        </RadzenStack>
-    }
+    </div>
 </RadzenCard>
 
 @code {
     [Parameter] public string Id { get; set; } = "";
 
-
     protected override async Task OnInitializedAsync() => await VM.LoadAsync(Id);
-        
+
+    async Task OnSave()
+    {
+        await VM.SaveAsync();
+        if (!VM.HasError)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity  = NotificationSeverity.Success,
+                Summary   = "Guardado",
+                Detail    = "Los cambios se guardaron correctamente.",
+                Duration  = 3000
+            });
+            VM.IsEditing = false;
+        }
+    }
+
     RenderFragment Campo(string label, string? valor, Action<string>? onChange) => __builder =>
     {
-        <RadzenStack Gap="5">
-            <RadzenText Text="@label" Style="color:#777;"/>
-
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="@label" Style="font-size:12px; font-weight:600; color:#999;" />
             @if (!VM.IsEditing)
             {
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="8">
-                    <RadzenText Text="@valor" Style="font-size:18px; color:#333;"/>
-                    <RadzenIcon Icon="edit" Style="font-size:18px; color:#aaa;"/>
-                </RadzenStack>
+                <RadzenText Text="@(valor ?? "—")" Style="font-size:15px; color:#333;" />
             }
             else if (onChange != null)
             {
                 <RadzenTextBox Value="@valor"
-                               Change="@(e => onChange(e.ToString()))"
-                               Style="width:100%; background:white; border-radius:10px;"/>
+                               Change="@(e => onChange(e?.ToString() ?? ""))"
+                               Style="width:100%; border-radius:8px;" />
             }
             else
             {
-                <RadzenText Text="@valor" Style="font-size:18px; color:#333;"/>
+                <RadzenText Text="@(valor ?? "—")" Style="font-size:15px; color:#666;" />
             }
         </RadzenStack>;
     };
