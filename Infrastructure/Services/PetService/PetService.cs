@@ -58,8 +58,7 @@ public class PetService : IPetService
             Specie = dto.Species,
             Breed = dto.Breed,
             Sex = dto.Sex,
-            Weight = dto.Weight,
-            BirthDate = dto.DateOfBirth,
+            BirthDate = dto.DateOfBirth.Value,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -76,8 +75,7 @@ public class PetService : IPetService
             pet.Specie = dto.Species;
             pet.Breed = dto.Breed;
             pet.Sex = dto.Sex;
-            pet.Weight = dto.Weight;
-            pet.BirthDate = dto.DateOfBirth;
+            pet.BirthDate = dto.DateOfBirth.Value;
             pet.UpdatedAt = DateTime.UtcNow;
         }
         return Task.CompletedTask;

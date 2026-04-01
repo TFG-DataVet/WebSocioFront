@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SocioWeb;
 using SocioWeb.Services.AppointmentService;
+using SocioWeb.Services.Exceptions.EmployeeService;
 using SocioWeb.ViewModels;
 using SocioWeb.ViewModels.Appointments;
+using SocioWeb.ViewModels.Employee;
 using SocioWeb.ViewModels.Medical;
 using SocioWeb.ViewModels.Owners;
 using SocioWeb.ViewModels.OwnerVM;
@@ -48,5 +50,7 @@ builder.Services.AddTransient<OwnerProfileViewModel>();
 builder.Services.AddTransient<ProductListViewModel>();
 builder.Services.AddTransient<ProductProfileViewModel>();
 builder.Services.AddTransient<MedicalRegisterViewModel>();
+builder.Services.AddScoped<IEmployeeService, EmployeesApiService>();
+builder.Services.AddTransient<EmployeeListViewModel>();
 
 await builder.Build().RunAsync();

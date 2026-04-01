@@ -22,7 +22,7 @@ public class ProductProfileVM
                 Category = "Alimentos",
                 Brand = "DogPlus",
                 Price = 29.99m,
-                Stock = 15,
+                Stock = 15.ToString(),
                 Active = true,
                 Description = "Bolsa 10kg alimento balanceado",
                 CreatedAt = DateTime.UtcNow.AddMonths(-3),

@@ -4,27 +4,34 @@
 @inject NavigationManager Nav
 
 <RadzenStack Gap="10" Style="padding:20px">
+    
+    <RadzenCard Style="
+    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+    color: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem 2rem;">
+    
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     Wrap="FlexWrap.Wrap"
+                     Gap="10">
 
-    <!-- HEADER -->
-    <RadzenStack Orientation="Orientation.Horizontal"
-                 AlignItems="AlignItems.Center"
-                 JustifyContent="JustifyContent.SpaceBetween"
-                 Style="
-                    padding:20px;
-                    background: linear-gradient(135deg, #f8ff29 0%, #fef200 100%);
-                    color: black;
-                    border-radius:16px;
-                    box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+            <RadzenStack Gap="2">
+                <RadzenText Text="Calendario de Citas"
+                            Style="font-size:28px; font-weight:700; color:white;" />
+                <RadzenText Text="@($"{appointments.Count} citas registradas")"
+                            Style="font-size:13px; opacity:0.85; color:white;" />
+            </RadzenStack>
 
-        <RadzenText Text="Calendario de Citas"
-                    TextStyle="TextStyle.H4"
-                    Style="font-weight:600"/>
-
-        <RadzenButton Text="Nueva Cita"
-                      Icon="add_circle"
-                      ButtonStyle="ButtonStyle.Primary"
-                      Click="@CreateAppointment"/>
-    </RadzenStack>
+            <RadzenButton Text="Nueva Cita"
+                          Icon="add_circle"
+                          Style="background:white; color:#ff7e5f; font-weight:600; border-radius:10px;"
+                          Click="@CreateAppointment" />
+        </RadzenStack>
+    </RadzenCard>
 
     <!-- CALENDARIO -->
     <RadzenScheduler TItem="Appointment"
@@ -55,19 +62,16 @@
         appointments = AppointmentService.Appointments.ToList();
     }
 
-    // CLICK EN ESPACIO LIBRE DEL CALENDARIO
     void OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
         Nav.NavigateTo($"/CreateAppointment?date={args.Start:O}");
     }
 
-    // CLICK EN CITA EXISTENTE
     void OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
     {
         Nav.NavigateTo($"/AppointmentProfile/{args.Data.Id}");
     }
 
-    // BOTÓN NUEVA CITA
     void CreateAppointment()
     {
         Nav.NavigateTo("/CreateAppointment");

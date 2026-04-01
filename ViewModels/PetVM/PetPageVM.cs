@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Components;
 using SocioWeb.ViewModels.Shared;
 using SocioWeb.Services.AppointmentService;
-using SocioWeb.Entities.Dtos.PetDto;
 using SocioWeb.Domain.Entities;
+using SocioWeb.Entities.Dtos;
+using SocioWeb.Entities.Dtos.PetDto;
 
 namespace SocioWeb.ViewModels.Pets;
 
@@ -16,7 +17,6 @@ public class PetPageVM : BaseViewModel
     public bool IsSaving { get; private set; }
 
     public List<string> SpeciesOptions { get; } = new() { "Perro", "Gato", "Ave", "Conejo", "Reptil", "Otro" };
-    public List<string> SexOptions { get; } = new() { "Macho", "Hembra", "Otro" };
     public List<string> CurrentBreeds { get; private set; } = new();
 
     private static readonly Dictionary<string, List<string>> _breedMap = new()
@@ -35,29 +35,39 @@ public class PetPageVM : BaseViewModel
         _nav     = nav;
     }
 
-    // ─── Carga datos de la mascota para edición ────────────────────────────────
+    // ─── CARGA DE MASCOTA PARA EDICIÓN ─────────────────────────────
     public async Task LoadForEditAsync(string id)
     {
         IsLoading = true;
         ClearError();
+
         try
         {
             var pet = await _service.GetByIdAsync(id);
+
             if (pet is not null)
             {
                 FormData = new PetFormModel
                 {
-                    Name      = pet.Name,
-                    Specie    = pet.Specie,
-                    Breed     = pet.Breed,
-                    Sex       = pet.Sex,
-                    BirthDate = pet.BirthDate,
-                    Weight    = pet.Weight,
-                    Chip      = pet.Chip,
-                    ClinicalInfo = pet.ClinicalInfo
+                    ClinicId    = pet.IdClinic,
+                    Name        = pet.Name,
+                    Species     = pet.Specie,
+                    Breed       = pet.Breed,
+                    Sex         = pet.Sex,
+                    DateOfBirth = pet.BirthDate,
+                    ChipNumber  = pet.Chip,
+                    AvatarUrl   = pet.AvatarUrl,
+
+                    Owner = new OwnerModel
+                    {
+                        OwnerId       = pet.Owner?.Id ?? pet.IdOwner ?? string.Empty,
+                        OwnerName     = pet.Owner?.Name ?? string.Empty,
+                        OwnerLastName = pet.Owner?.LastName ?? string.Empty,
+                        OwnerPhone    = pet.Owner?.Phone ?? string.Empty
+                    }
                 };
 
-                OnSpeciesChanged(FormData.Specie);
+                OnSpeciesChanged(FormData.Species);
             }
             else
             {
@@ -74,11 +84,12 @@ public class PetPageVM : BaseViewModel
         }
     }
 
-    // ─── Crear nueva mascota ───────────────────────────────────────────────────
+    // ─── CREAR MASCOTA ────────────────────────────────────────────
     public async Task CreateAsync()
     {
         IsSaving = true;
         ClearError();
+
         try
         {
             var dto = MapToDto();
@@ -94,11 +105,12 @@ public class PetPageVM : BaseViewModel
         }
     }
 
-    // ─── Actualizar mascota existente ──────────────────────────────────────────
+    // ─── ACTUALIZAR MASCOTA ───────────────────────────────────────
     public async Task UpdateAsync(string id)
     {
         IsSaving = true;
         ClearError();
+
         try
         {
             var dto = MapToDto();
@@ -114,20 +126,27 @@ public class PetPageVM : BaseViewModel
         }
     }
 
-    // ─── Mapeo a DTO ───────────────────────────────────────────────────────────
+    // ─── MAPEO A DTO ─────────────────────────────────────────────
     private PetDto MapToDto() => new PetDto
     {
+        ClinicId    = FormData.ClinicId ?? string.Empty,
         Name        = FormData.Name ?? string.Empty,
-        Species     = FormData.Specie ?? string.Empty,
+        Species     = FormData.Species ?? string.Empty,
         Breed       = FormData.Breed ?? string.Empty,
-        Sex         = FormData.Sex ?? Sex.Male, // si es nulo, usar un valor por defecto
-        DateOfBirth = FormData.BirthDate,
-        Weight      = FormData.Weight,
-        ChipNumber  = FormData.Chip ?? string.Empty,
-        ClinicalInfo = FormData.ClinicalInfo ?? string.Empty
+        Sex = FormData.Sex ?? Sex.Other,
+        DateOfBirth = FormData.DateOfBirth ?? DateTime.UtcNow,
+        ChipNumber  = FormData.ChipNumber,
+        AvatarUrl   = FormData.AvatarUrl,
+        Owner       = new OwnerDto
+        {
+            Id        = FormData.Owner.OwnerId ?? string.Empty,
+            Name      = FormData.Owner.OwnerName ?? string.Empty,
+            LastName  = FormData.Owner.OwnerLastName ?? string.Empty,
+            Phone     = FormData.Owner.OwnerPhone ?? string.Empty
+        }
     };
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
+    // ─── HELPERS ────────────────────────────────────────────────
     public void OnSpeciesChanged(object value)
     {
         if (value is string species && _breedMap.ContainsKey(species))
@@ -139,15 +158,16 @@ public class PetPageVM : BaseViewModel
     }
 
     public string AgeCalculated =>
-        FormData.BirthDate != default
-            ? $"{CalculateAge(FormData.BirthDate)} años"
+        FormData.DateOfBirth.HasValue
+            ? $"{CalculateAge(FormData.DateOfBirth.Value)} años"
             : string.Empty;
 
     private static int CalculateAge(DateTime birthday)
     {
         var today = DateTime.Today;
-        int age   = today.Year - birthday.Year;
-        if (birthday.Date > today.AddYears(-age)) age--;
+        int age = today.Year - birthday.Year;
+        if (birthday.Date > today.AddYears(-age))
+            age--;
         return age;
     }
 
@@ -156,16 +176,25 @@ public class PetPageVM : BaseViewModel
         _nav.NavigateTo("/DuenoFormulario");
     }
 
-    // ─── Modelo de formulario ──────────────────────────────────────────────────
+    // ─── MODELO DE FORMULARIO ────────────────────────────────────
     public class PetFormModel
     {
+        public string? ClinicId { get; set; }
         public string? Name { get; set; }
-        public string? Specie { get; set; }
+        public string? Species { get; set; }
         public string? Breed { get; set; }
         public Sex? Sex { get; set; }
-        public DateTime BirthDate { get; set; }
-        public double? Weight { get; set; }
-        public string? Chip { get; set; }
-        public string? ClinicalInfo { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? ChipNumber { get; set; }
+        public string? AvatarUrl { get; set; }
+        public OwnerModel Owner { get; set; } = new();
+    }
+
+    public class OwnerModel
+    {
+        public string? OwnerId { get; set; }
+        public string? OwnerName { get; set; }
+        public string? OwnerLastName { get; set; }
+        public string? OwnerPhone { get; set; }
     }
 }

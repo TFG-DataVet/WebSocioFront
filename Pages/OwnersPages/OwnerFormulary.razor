@@ -106,15 +106,6 @@
             <RadzenFieldset Text="Configuración de cuenta" Style="margin-bottom:1.5rem;">
                 <RadzenRow Gap="15">
                     <RadzenColumn Size="12" SizeMD="6">
-                        <RadzenFormField Text=@("Contraseña " + (IsEditing ? "(dejar vacío para no cambiar)" : "*"))
-                                         Style="width:100%;">
-                            <RadzenPassword Name="Password" @bind-Value="VM.FormData.Password"
-                                            Placeholder="Mínimo 8 caracteres" />
-                            @if (!IsEditing)
-                            {
-                                <RadzenRequiredValidator Component="Password" Text="La contraseña es obligatoria." />
-                            }
-                        </RadzenFormField>
                     </RadzenColumn>
                     <RadzenColumn Size="12" SizeMD="6">
                         <RadzenFormField Text="Notificaciones" Style="width:100%;">
