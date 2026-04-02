@@ -1,0 +1,47 @@
+@page "/Registro_Exitoso"
+
+<RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Style="min-height: calc(100vh - 90px);">
+    <RadzenStack
+        JustifyContent="JustifyContent.Center"
+        AlignItems="AlignItems.Center"
+        class="glass rz-p-10"
+        Style="max-width: 600px; border-radius: 2rem;">
+        
+        <RadzenImage Path="./Images/icons/idea.png" Style="width: 6rem;" class="rz-mb-3"/>
+
+        <RadzenText
+            Text="Nos alegra mucho que hayas dado este primer paso"
+            TextStyle="TextStyle.DisplayH3"
+            TextAlign="TextAlign.Center"/>
+        <RadzenText
+            Text="Ahora solo debes de ir a tu correo electronico"
+            TextStyle="TextStyle.DisplayH3"
+            TextAlign="TextAlign.Center"/>
+        <RadzenText
+            Text="para que podamos verificar tu correo."
+            TextStyle="TextStyle.DisplayH3"
+            TextAlign="TextAlign.Center"/>
+        
+        <RadzenButton
+            ButtonStyle="ButtonStyle.Primary"
+            Text="Abrir correo"
+            class="rz-w-50"/>
+            
+        <RadzenButton
+            ButtonStyle="ButtonStyle.Secondary"
+            Text="Volver a enviar correo"
+            Icon="Replay"
+            class="rz-mb-8 rz-w-100"/>
+        
+        <RadzenText >
+            <RadzenIcon
+                Icon="Question_mark"/>
+                No recibió su correo? Revise su carpeta de spam.
+            </RadzenText>
+        
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    
+}

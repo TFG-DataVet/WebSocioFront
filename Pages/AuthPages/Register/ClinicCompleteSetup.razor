@@ -1,0 +1,116 @@
+@page "/clinic/{clinicId:guid}/complete-setup"
+@using SocioWeb.Entities.Models.Auth
+@using SocioWeb.Entities.Models.Enums
+@inject CompleteProfileVM VM
+
+<RadzenRow>
+    <RadzenColumn Size="12">
+        <RadzenText
+            TextStyle="TextStyle.Subtitle1"
+            Text="Finaliza el registro de mi clinica"/>
+        <RadzenText
+            TextStyle="TextStyle.Body1"
+            Text="Para poder dar de alta tu clinica, necesitamos que completes los siguientes datos de la clinica y el responsable."/>
+    </RadzenColumn>
+
+    <RadzenTemplateForm TItem="FullClinicData" Data="@VM.Model" class="rz-w-100">
+        @* Poner el Submit *@
+        <RadzenRow class="rz-w-100">
+            <RadzenColumn Size="12">
+                <RadzenText
+                    TextStyle="TextStyle.Subtitle1"
+                    Text="Datos legales de la clinca"/>
+            </RadzenColumn>
+            
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenCard class="rz-w-100" Style="height: 500px">
+                    <RadzenFileInput
+                        @bind-Value=@VM.Model.Url
+                        TValue="string"
+                        Style="width: 100%"/>
+
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="8">
+                <RadzenCard>
+                    <RadzenRow>
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenFormField Text="Nombre Legal" class="rz-w-100">
+                                <RadzenTextBox
+                                    Name="clinicName"
+                                    @bind-Value="@VM.Model.LegalName"
+                                    Placeholder="Mis mascotas"/>
+                                <RadzenRequiredValidator Component="clinicName" Text="Requerido"/>
+                            </RadzenFormField>
+                        </RadzenColumn>
+                        
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenFormField Text="Numero legal" class="rz-w-100">
+                                <RadzenTextBox
+                                    Name="clinicNumberLegal"
+                                    @bind-Value="@VM.Model.LegalNumber"
+                                    Placeholder="XX-XXXXXXXX"/>
+                                <RadzenRequiredValidator Component="clinicNumberLegal" Text="Requerido"/>
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    
+                    <RadzenRow>
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenFormField Text="Tipo de corporación" Class="rz-w-100">
+                                <RadzenDropDown TValue="LegalType?" 
+                                                Data="@VM.Model.LegalTypes" 
+                                                TextProperty="Name" 
+                                                ValueProperty="Value" 
+                                                @bind-Value="VM.Model.LegalType" 
+                                                AllowClear="true"
+                                                Name="legalType" 
+                                                Placeholder="Tipo legal de persona"
+                                                Class="rz-w-100" />
+                                <RadzenRequiredValidator Component="legalType" Text="Requerido" />
+                            </RadzenFormField>
+                        </RadzenColumn>
+                        
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenFormField Text="Numero de contacto" class="rz-w-100">
+                                <RadzenTextBox
+                                    Name="phone"
+                                    @bind-Value="@VM.Model.Phone"/>
+                                <RadzenRequiredValidator Component="phone" Text="Requerido"/>
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    
+                    <RadzenRow>
+                        <RadzenColumn Size="12">
+                            <RadzenFormField Text="Correo del responsable" class="rz-w-100">
+                                <RadzenTextBox
+                                    Name="email"
+                                    @bind-Value="@VM.Model.Email"/>
+                                <RadzenRequiredValidator Component="email" Text="Requerido"/>
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                </RadzenCard>
+            </RadzenColumn>
+
+        </RadzenRow>
+        
+    </RadzenTemplateForm>
+
+</RadzenRow>
+
+
+
+@code {
+    [Parameter]
+    public Guid clinicId { get; set; } // Blazor llena esto automáticamente desde la URL
+
+    protected override void OnInitialized()
+    {
+        VM.ClinicId = clinicId;
+    }
+    
+}

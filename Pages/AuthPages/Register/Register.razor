@@ -1,0 +1,58 @@
+﻿@page "/registro"
+@using SocioWeb.Entities.Models.Auth
+@using SocioWeb.ViewModels
+@inject RegisterClinicVM Vm 
+
+<RadzenRow>
+    <RadzenColumn Size="12" SizeLG="6">
+        <RadzenImage Path="https://images.pexels.com/photos/35262159/pexels-photo-35262159.jpeg" 
+                     AlternateText="Iamgen de una persona con su mascota."
+                     style="width: 100%; max-height: 500px; object-fit: contain "/>
+    </RadzenColumn>
+    
+    <RadzenColumn Size="12" SizeLG="6">
+        <RadzenText TextStyle="TextStyle.H4">Registro de Clínica</RadzenText>
+
+        @if (!string.IsNullOrEmpty(Vm.ErrorMessage))
+        {
+            <RadzenAlert Severity="AlertSeverity.Error">@Vm.ErrorMessage</RadzenAlert>
+        }
+
+        <RadzenTemplateForm TItem="RegisterClinic" Data="@Vm.Model" Submit="@Vm.SaveAsync">
+            <RadzenStack Gap="1rem">
+                <RadzenFormField Text="Nombre de la Clínica">
+                    <RadzenTextBox @bind-Value="@Vm.Model.ClinicName" Name="clinicName" />
+                    <RadzenRequiredValidator Component="clinicName" Text="Requerido" />
+                </RadzenFormField>
+
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenLabel Text="Nombre" />
+                        <RadzenTextBox @bind-Value="@Vm.Model.FirstName" Name="firstName" class="w-100" />
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenLabel Text="Apellido" />
+                        <RadzenTextBox @bind-Value="@Vm.Model.LastName" Name="lastName" class="w-100" />
+                    </RadzenColumn>
+                </RadzenRow>
+                
+                <RadzenFormField Text="Telefono">
+                    <RadzenTextBox @bind-Value="@Vm.Model.Phone" Name="phone" class="rz-w-100"/>
+                </RadzenFormField>
+                
+
+                <RadzenFormField Text="Email">
+                    <RadzenTextBox @bind-Value="@Vm.Model.Email" Name="email" />
+                </RadzenFormField>
+
+                <RadzenFormField Text="Contraseña">
+                    <RadzenPassword @bind-Value="@Vm.Model.Password" Name="password" />
+                </RadzenFormField>
+
+                <RadzenButton ButtonType="ButtonType.Submit" 
+                              Text="Registrar Clínica" 
+                              Disabled="@Vm.ISLoading" />
+            </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+</RadzenRow>
