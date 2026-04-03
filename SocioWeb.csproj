@@ -14,8 +14,6 @@
 
     <ItemGroup>
       <Folder Include="Domain\" />
-      <Folder Include="Entities\Models\Employees\" />
-      <Folder Include="Pages\Employees\" />
     </ItemGroup>
 
 </Project>

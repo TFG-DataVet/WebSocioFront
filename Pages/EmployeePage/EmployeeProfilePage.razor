@@ -1,0 +1,109 @@
+﻿@page "/EmployeeProfile/{Id}"
+@using SocioWeb.ViewModels.Employee
+
+@inject DialogService DialogService
+@inject NavigationManager Nav
+@inject EmployeeProfileVM VM
+@inject NotificationService NotificationService
+
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" />
+}
+
+<RadzenCard Style="border-radius:14px; overflow:hidden;">
+
+    <!-- HEADER -->
+    <div style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+                padding:2rem; color:white;">
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="20">
+
+            <RadzenAvatar Image="@(string.IsNullOrWhiteSpace(VM.Employee.AvatarUrl)
+                                    ? "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                                    : VM.Employee.AvatarUrl)"
+                          Size="80px"
+                          Style="border:3px solid white;" />
+
+            <RadzenStack>
+                <RadzenText Text="@($"{VM.Employee.FirstName} {VM.Employee.LastName}")"
+                            Style="font-size:24px; font-weight:700;" />
+
+                <RadzenText Text="@VM.Employee.Email" />
+
+                <RadzenBadge Text="@VM.Employee.Role" BadgeStyle="BadgeStyle.Primary" />
+            </RadzenStack>
+
+        </RadzenStack>
+    </div>
+
+    <div style="padding:2rem;">
+
+        <RadzenText Text="Información" Style="font-weight:600; margin-bottom:10px;" />
+
+        <RadzenRow Gap="15">
+
+            <RadzenColumn Size="6">
+                <b>Teléfono:</b> @VM.Employee.Phone
+            </RadzenColumn>
+
+            <RadzenColumn Size="6">
+                <b>Especialidad:</b> @VM.Employee.Speciality
+            </RadzenColumn>
+
+            <RadzenColumn Size="6">
+                <b>Dirección:</b> @VM.Employee.Address
+            </RadzenColumn>
+
+            <RadzenColumn Size="6">
+                <b>Ciudad:</b> @VM.Employee.City
+            </RadzenColumn>
+
+            <RadzenColumn Size="6">
+                <b>Fecha contratación:</b> @VM.Employee.HireDate.ToString("dd/MM/yyyy")
+            </RadzenColumn>
+
+        </RadzenRow>
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="10" Style="margin-top:20px;">
+            <RadzenButton Text="Editar"
+                          Click="@(() => Nav.NavigateTo($"/EditEmployee/{Id}"))" />
+
+            <RadzenButton Text="Eliminar"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Click="@OnDelete" />
+        </RadzenStack>
+
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+        => await VM.LoadAsync(Id);
+
+    async Task OnDelete()
+    {
+        var confirm = await DialogService.Confirm(
+            "¿Eliminar empleado?",
+            "Confirmar",
+            new ConfirmOptions { OkButtonText = "Sí", CancelButtonText = "No" });
+
+        if (confirm != true) return;
+
+        await VM.DeleteAsync(Id);
+
+        if (!VM.HasError)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Eliminado",
+                Detail = "Empleado eliminado correctamente"
+            });
+
+            Nav.NavigateTo("/Employee");
+        }
+    }
+}

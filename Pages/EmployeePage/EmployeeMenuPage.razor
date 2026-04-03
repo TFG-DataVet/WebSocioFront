@@ -43,7 +43,7 @@
         <RadzenButton Text="Nuevo Empleado"
                       Icon="person_add"
                       Style="background:black; color:#f8c30f; font-weight:600; border-radius:10px;"
-                      Click="@(() => Nav.NavigateTo("/CreateEmployee"))" />
+                      Click="@(() => Nav.NavigateTo("/EmployeeForm"))" />
     </RadzenStack>
 </RadzenCard>
 
@@ -137,7 +137,7 @@
                         <RadzenButton Icon="visibility"
                                       ButtonStyle="ButtonStyle.Light"
                                       Size="ButtonSize.Small"
-                                      Click="@(() => Nav.NavigateTo($"/ProfileEmployee/{employee.Id}"))" />
+                                      Click="@(() => Nav.NavigateTo($"/EmployeeProfile/{employee.Id}"))" />
 
                         <RadzenButton Icon="edit"
                                       ButtonStyle="ButtonStyle.Primary"

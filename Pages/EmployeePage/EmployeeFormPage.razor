@@ -1,0 +1,171 @@
+﻿@page "/EmployeeForm"
+@page "/EditEmployee/{Id}"
+@using SocioWeb.ViewModels.Employee
+
+@inject NavigationManager Nav
+@inject EmployeeFormVM VM
+@inject NotificationService NotificationService
+
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" />
+}
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" />
+}
+
+<RadzenCard Style="max-width:900px; margin:auto; border-radius:14px; overflow:hidden;">
+
+    <!-- HEADER -->
+    <div style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+                padding:2rem; color:white;">
+        <RadzenText Text="@(IsEditing ? "Editar Empleado" : "Nuevo Empleado")"
+                    Style="font-size:22px; font-weight:700;" />
+    </div>
+
+    <div style="padding:2rem;">
+        <RadzenTemplateForm TItem="EmployeeFormVM.EmployeeFormModel"
+                            Data="@VM.FormData"
+                            Submit="@OnSubmit">
+
+            <!-- AVATAR -->
+            <RadzenFieldset Text="Avatar">
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="15">
+                    <RadzenAvatar Image="@(string.IsNullOrWhiteSpace(VM.FormData.AvatarUrl)
+                                            ? "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                                            : VM.FormData.AvatarUrl)"
+                                  Size="70px" />
+
+                    <RadzenTextBox @bind-Value="VM.FormData.AvatarUrl"
+                                   Placeholder="URL Avatar"
+                                   Style="width:100%;" />
+                </RadzenStack>
+            </RadzenFieldset>
+
+            <!-- DATOS -->
+            <RadzenFieldset Text="Datos personales">
+                <RadzenRow Gap="15">
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox Name="FirstName" @bind-Value="VM.FormData.FirstName" Placeholder="Nombre" />
+                        <RadzenRequiredValidator Component="FirstName" Text="Obligatorio" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox Name="LastName" @bind-Value="VM.FormData.LastName" Placeholder="Apellido" />
+                        <RadzenRequiredValidator Component="LastName" Text="Obligatorio" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox Name="Email" @bind-Value="VM.FormData.Email" Placeholder="Email" />
+                        <RadzenEmailValidator Component="Email" Text="Email inválido" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox Name="Phone" @bind-Value="VM.FormData.Phone" Placeholder="Teléfono" />
+                    </RadzenColumn>
+                    
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox @bind-Value="VM.FormData.DocumentType" Placeholder="Tipo Documento" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox @bind-Value="VM.FormData.DocumentNumber" Placeholder="Número Documento" />
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </RadzenFieldset>
+
+            <!-- PROFESIONAL -->
+            <RadzenFieldset Text="Profesional">
+                <RadzenRow Gap="15">
+
+                    <RadzenColumn Size="6">
+                        <RadzenDropDown @bind-Value="VM.FormData.Role"
+                                        Data="@roles"
+                                        Placeholder="Rol"
+                                        Style="width:100%;" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox @bind-Value="VM.FormData.Speciality" Placeholder="Especialidad" />
+                    </RadzenColumn>
+
+                    @if (VM.FormData.Role == "CLINIC_VETERINARIAN")
+                    {
+                        <RadzenColumn Size="12">
+                            <RadzenTextBox @bind-Value="VM.FormData.LicenseNumber"
+                                           Placeholder="Licencia" />
+                        </RadzenColumn>
+                    }
+
+                    <RadzenColumn Size="6">
+                        <RadzenDatePicker @bind-Value="VM.FormData.HireDate" Style="width:100%;" />
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </RadzenFieldset>
+
+            <!-- DIRECCIÓN -->
+            <RadzenFieldset Text="Dirección">
+                <RadzenRow Gap="15">
+
+                    <RadzenColumn Size="12">
+                        <RadzenTextBox @bind-Value="VM.FormData.Address" Placeholder="Dirección" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox @bind-Value="VM.FormData.City" Placeholder="Ciudad" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="6">
+                        <RadzenTextBox @bind-Value="VM.FormData.PostalCode" Placeholder="CP" />
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </RadzenFieldset>
+
+            <!-- BOTONES -->
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="10">
+                <RadzenButton Text="Cancelar" Click="@(() => Nav.NavigateTo("/Employee"))" />
+                <RadzenButton Text="Guardar" ButtonStyle="ButtonStyle.Primary" Type="ButtonType.Submit" />
+            </RadzenStack>
+
+        </RadzenTemplateForm>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    bool IsEditing => !string.IsNullOrEmpty(Id);
+
+    List<string> roles = new() { "ADMIN", "RECEPTIONIST", "CLINIC_VETERINARIAN" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEditing)
+            await VM.LoadForEditAsync(Id!);
+    }
+
+    async Task OnSubmit()
+    {
+        if (IsEditing)
+            await VM.UpdateAsync(Id!);
+        else
+            await VM.CreateAsync();
+
+        if (!VM.HasError)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "OK",
+                Detail = "Empleado guardado"
+            });
+
+            Nav.NavigateTo("/Employee");
+        }
+    }
+}

@@ -52,5 +52,9 @@ builder.Services.AddTransient<ProductProfileViewModel>();
 builder.Services.AddTransient<MedicalRegisterViewModel>();
 builder.Services.AddScoped<IEmployeeService, EmployeesApiService>();
 builder.Services.AddTransient<EmployeeListViewModel>();
+builder.Services.AddScoped<IEmployeeService, EmployeesApiService>();
+builder.Services.AddTransient<EmployeeFormVM>();
+builder.Services.AddTransient<EmployeeProfileVM>();
+builder.Services.AddTransient<EmployeeListViewModel>();
 
 await builder.Build().RunAsync();
