@@ -33,9 +33,9 @@
 
         <RadzenStack Gap="2">
             <RadzenText Text="Gestión de Mascotas"
-                        Style="font-size:28px; font-weight:700; color:white;" />
+                        Style="font-size:28px; font-weight:700;" />
             <RadzenText Text="@($"{VM.FilteredPets.Count} registros encontrados")"
-                        Style="font-size:13px; opacity:0.85;" />
+                        Style="font-size:18px; opacity:0.85;" />
         </RadzenStack>
 
         <RadzenButton Text="Nueva Mascota"
@@ -53,27 +53,27 @@
                  Gap="12">
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Desde" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Desde" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateSince" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Hasta" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Hasta" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateTo" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Nombre" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Nombre" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.NameFilter" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Especie" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Especie" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.SpecieFilter" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Raza" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Raza" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.BreedFilter" Style="width:140px" />
         </RadzenStack>
 

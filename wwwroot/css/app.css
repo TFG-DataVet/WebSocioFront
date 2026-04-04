@@ -370,3 +370,192 @@ code { color: #c02d76; }
     border-radius: 10px !important;
     border: 0.5px solid currentColor !important;
 }
+
+/* ============================================================
+   TEXTOS — TEMA CLARO
+   ============================================================ */
+
+[data-theme='light'],
+[data-theme='light'] .rz-layout,
+[data-theme='light'] .rz-body,
+[data-theme='light'] .rz-card,
+[data-theme='light'] .rz-panel,
+[data-theme='light'] .rz-fieldset,
+[data-theme='light'] .rz-datatable,
+[data-theme='light'] .rz-datagrid,
+[data-theme='light'] .rz-scheduler {
+    color: #374151 !important;
+}
+
+[data-theme='light'] .rz-text,
+[data-theme='light'] p,
+[data-theme='light'] span,
+[data-theme='light'] label,
+[data-theme='light'] h1,
+[data-theme='light'] h2,
+[data-theme='light'] h3,
+[data-theme='light'] h4,
+[data-theme='light'] h5,
+[data-theme='light'] h6,
+[data-theme='light'] td,
+[data-theme='light'] th,
+[data-theme='light'] li,
+[data-theme='light'] div {
+    color: #374151;
+}
+
+/* Texto secundario/muted en claro */
+[data-theme='light'] .rz-text-secondary,
+[data-theme='light'] .rz-color-secondary {
+    color: #6B7280 !important;
+}
+
+/* Radzen Text específico */
+[data-theme='light'] .rz-text-align-left,
+[data-theme='light'] .rz-text-align-center,
+[data-theme='light'] .rz-text-align-right {
+    color: #374151 !important;
+}
+
+
+/* ============================================================
+   TEXTOS — TEMA OSCURO
+   ============================================================ */
+
+[data-theme='dark'],
+[data-theme='dark'] .rz-layout,
+[data-theme='dark'] .rz-body,
+[data-theme='dark'] .rz-card,
+[data-theme='dark'] .rz-panel,
+[data-theme='dark'] .rz-fieldset,
+[data-theme='dark'] .rz-datatable,
+[data-theme='dark'] .rz-datagrid,
+[data-theme='dark'] .rz-scheduler {
+    color: #F9FAFB !important;
+}
+
+[data-theme='dark'] .rz-text,
+[data-theme='dark'] p,
+[data-theme='dark'] span,
+[data-theme='dark'] label,
+[data-theme='dark'] h1,
+[data-theme='dark'] h2,
+[data-theme='dark'] h3,
+[data-theme='dark'] h4,
+[data-theme='dark'] h5,
+[data-theme='dark'] h6,
+[data-theme='dark'] td,
+[data-theme='dark'] th,
+[data-theme='dark'] li,
+[data-theme='dark'] div {
+    color: #F9FAFB;
+}
+
+/* Texto secundario/muted en oscuro */
+[data-theme='dark'] .rz-text-secondary,
+[data-theme='dark'] .rz-color-secondary {
+    color: #9CA3AF !important;
+}
+
+[data-theme='dark'] .rz-text-align-left,
+[data-theme='dark'] .rz-text-align-center,
+[data-theme='dark'] .rz-text-align-right {
+    color: #F9FAFB !important;
+}
+
+
+/* ============================================================
+   INPUTS — texto dentro de campos
+   ============================================================ */
+
+[data-theme='light'] .rz-inputtext,
+[data-theme='light'] .rz-password input,
+[data-theme='light'] .rz-textarea,
+[data-theme='light'] .rz-dropdown .rz-dropdown-label,
+[data-theme='light'] .rz-dropdown-item,
+[data-theme='light'] input,
+[data-theme='light'] textarea,
+[data-theme='light'] select {
+    color: #374151 !important;
+}
+
+[data-theme='dark'] .rz-inputtext,
+[data-theme='dark'] .rz-password input,
+[data-theme='dark'] .rz-textarea,
+[data-theme='dark'] .rz-dropdown .rz-dropdown-label,
+[data-theme='dark'] .rz-dropdown-item,
+[data-theme='dark'] input,
+[data-theme='dark'] textarea,
+[data-theme='dark'] select {
+    color: #F9FAFB !important;
+}
+
+
+/* ============================================================
+   NAVEGACIÓN — colores de texto corregidos
+   ============================================================ */
+
+[data-theme='light'] .rz-panel-menu-item-link,
+[data-theme='light'] .rz-panelmenu-item-link,
+[data-theme='light'] .rz-navigation-item-text {
+    color: #374151 !important;
+}
+
+[data-theme='dark'] .rz-panel-menu-item-link,
+[data-theme='dark'] .rz-panelmenu-item-link,
+[data-theme='dark'] .rz-navigation-item-text {
+    color: #E5E7EB !important;
+}
+
+/* Item activo — siempre violeta independiente del tema */
+[data-theme='light'] .rz-panel-menu-item.rz-state-active .rz-panel-menu-item-link,
+[data-theme='dark']  .rz-panel-menu-item.rz-state-active .rz-panel-menu-item-link,
+[data-theme='light'] .rz-panelmenu-item.rz-state-active .rz-panelmenu-item-link,
+[data-theme='dark']  .rz-panelmenu-item.rz-state-active .rz-panelmenu-item-link {
+    color: #7F77DD !important;
+}
+
+
+/* ============================================================
+   DATAGRID — texto en celdas
+   ============================================================ */
+
+[data-theme='light'] .rz-data-grid td,
+[data-theme='light'] .rz-datatable td,
+[data-theme='light'] .rz-data-grid .rz-cell-data {
+    color: #374151 !important;
+}
+
+[data-theme='light'] .rz-data-grid th,
+[data-theme='light'] .rz-datatable th {
+    color: #6B7280 !important;
+}
+
+[data-theme='dark'] .rz-data-grid td,
+[data-theme='dark'] .rz-datatable td,
+[data-theme='dark'] .rz-data-grid .rz-cell-data {
+    color: #F9FAFB !important;
+}
+
+[data-theme='dark'] .rz-data-grid th,
+[data-theme='dark'] .rz-datatable th {
+    color: #9CA3AF !important;
+}
+
+
+/* ============================================================
+   BOTONES — mantener blanco siempre
+   ============================================================ */
+
+[data-theme='light'] .rz-button,
+[data-theme='dark']  .rz-button {
+    color: white !important;
+}
+
+
+/* ============================================================
+   PLACEHOLDER
+   ============================================================ */
+
+[data-theme='light'] ::placeholder { color: #9CA3AF !important; opacity: 1; }
+[data-theme='dark']  ::placeholder { color: #6B7280 !important; opacity: 1; }

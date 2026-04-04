@@ -31,9 +31,9 @@
                  Gap="10">
         <RadzenStack Gap="2">
             <RadzenText Text="Gestión de Dueños"
-                        Style="font-size:28px; font-weight:700; color:white; margin:0;" />
+                        Style="font-size:28px; font-weight:700; margin:0;" />
             <RadzenText Text="@($"{VM.FilteredOwners.Count} registros encontrados")"
-                        Style="font-size:13px; opacity:0.85; color:white;" />
+                        Style="font-size:18px; opacity:0.85;" />
         </RadzenStack>
         <RadzenButton Text="Nuevo Dueño"
                       Icon="person_add"
@@ -50,27 +50,27 @@
                  Gap="12">
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Desde" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Desde" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateSince" Placeholder="Fecha inicio" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Hasta" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Hasta" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateTo" Placeholder="Fecha fin" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Ciudad" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Ciudad" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.CityFilter" Placeholder="ej. Madrid" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Código Postal" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Código Postal" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.PostalCodeFilter" Placeholder="ej. 28001" Style="width:120px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Buscar" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Buscar" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.SearchFilter" Placeholder="Nombre o email..." Style="width:200px" />
         </RadzenStack>
 

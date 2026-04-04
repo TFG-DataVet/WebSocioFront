@@ -34,9 +34,9 @@
 
         <RadzenStack Gap="2">
             <RadzenText Text="Gestión de Citas"
-                        Style="font-size:28px; font-weight:700; color:white;" />
+                        Style="font-size:28px; font-weight:700;" />
             <RadzenText Text="@($"{VM.FilteredAppointments.Count} registros encontrados")"
-                        Style="font-size:13px; opacity:0.85;" />
+                        Style="font-size:18px; opacity:0.85;" />
         </RadzenStack>
 
         <RadzenButton Text="Nueva Cita"
@@ -54,22 +54,22 @@
                  Gap="12">
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Desde" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Desde" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateSince" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Hasta" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Hasta" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateTo" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Estado" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Estado" Style="font-size:16px; font-weight:600;" />
             <RadzenDropDown Data="@VM.States" @bind-Value="VM.StatusFilter" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Mascota o Dueño" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Mascota o Dueño" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.SearchFilter" Style="width:180px" />
         </RadzenStack>
 

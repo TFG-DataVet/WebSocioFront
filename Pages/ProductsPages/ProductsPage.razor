@@ -33,9 +33,9 @@
 
         <RadzenStack Gap="2">
             <RadzenText Text="Gestión de Productos"
-                        Style="font-size:28px; font-weight:700; color:white;" />
+                        Style="font-size:28px; font-weight:700;" />
             <RadzenText Text="@($"{VM.FilteredProducts.Count} registros encontrados")"
-                        Style="font-size:13px; opacity:0.85;" />
+                        Style="font-size:18px; opacity:0.85;" />
         </RadzenStack>
 
         <RadzenButton Text="Nuevo Producto"
@@ -53,27 +53,27 @@
                  Gap="12">
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Desde" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Desde" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateSince" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Hasta" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Hasta" Style="font-size:16px; font-weight:600;" />
             <RadzenDatePicker @bind-Value="VM.DateTo" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Categoría" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Categoría" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.CategoryFilter" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Marca" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Marca" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.BrandFilter" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Stock mínimo" Style="font-size:12px; font-weight:600; color:#777;" />
+            <RadzenLabel Text="Stock mínimo" Style="font-size:16px; font-weight:600;" />
             <RadzenNumeric @bind-Value="VM.MinimumStock" Style="width:120px" />
         </RadzenStack>
 

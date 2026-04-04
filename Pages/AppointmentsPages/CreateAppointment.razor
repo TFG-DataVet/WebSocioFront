@@ -13,7 +13,7 @@
     <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" />
 }
 
-<RadzenCard Style="border-radius:14px; overflow:hidden; max-width:900px; margin:auto;">
+<RadzenCard Style="border-radius:14px; overflow:hidden;width:100%; margin:auto;">
 
     <!-- HEADER BONITO -->
     <div style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
@@ -52,7 +52,7 @@
     <div style="padding:2rem;">
 
         <RadzenText Text="Información de la cita"
-                    Style="color:#4b3e48; font-size:18px; font-weight:600; margin-bottom:1.5rem;" />
+                    Style=" font-size:18px; font-weight:600; margin-bottom:1.5rem;" />
 
         <RadzenRow Gap="20">
 
@@ -70,7 +70,7 @@
 
             <RadzenColumn Size="12" SizeMD="6">
                 <RadzenStack Gap="5">
-                    <RadzenText Text="Estado" Style="color:#777;" />
+                    <RadzenText Text="Estado" />
 
                     <RadzenDropDown Data="@states"
                                     @bind-Value="VM.Appointment.Status"
@@ -80,7 +80,7 @@
 
             <RadzenColumn Size="12" SizeMD="6">
                 <RadzenStack Gap="5">
-                    <RadzenText Text="Fecha y hora" Style="color:#777;" />
+                    <RadzenText Text="Fecha y hora" />
 
                     <RadzenDatePicker @bind-Value="VM.Appointment.Date"
                                       ShowTime="true"
