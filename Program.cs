@@ -6,6 +6,8 @@ using SocioWeb.Services.AppointmentService;
 using SocioWeb.Services.Exceptions.EmployeeService;
 using SocioWeb.ViewModels;
 using SocioWeb.ViewModels.Appointments;
+using SocioWeb.ViewModels.Clinic;
+using SocioWeb.ViewModels.Clinic;
 using SocioWeb.ViewModels.Employee;
 using SocioWeb.ViewModels.Medical;
 using SocioWeb.ViewModels.Owners;
@@ -30,6 +32,7 @@ builder.Services.AddScoped<IProductService, ProductsApiService>();
 
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddTransient<ClinicprofileViewModel>();
 
 // ViewModels
 builder.Services.AddScoped<OwnerPageVM>();
