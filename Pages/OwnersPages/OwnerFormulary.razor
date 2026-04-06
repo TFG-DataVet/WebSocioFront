@@ -1,78 +1,237 @@
 ﻿@page "/DuenoFormulario"
-@using SocioWeb.ViewModels.OwnerVM
-@inject OwnerFormularyVM Vm
+@page "/EditarDueno/{Id}"
+@inject NavigationManager Nav
+@inject OwnerFormularyVM VM
+@inject NotificationService NotificationService
 
-<RadzenStack Gap="20px" Style="max-width:900px; margin:auto;">
-    <RadzenText Text="¡Queremos conocerte!" TextStyle="TextStyle.H3"
-                Style="color:#4b3e48; font-weight:bold;"/>
-    <RadzenText Text="Cuéntanos un poco sobre ti." TextStyle="TextStyle.H5"
-                Style="color:#6d5d66;"/>
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+}
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" AllowClose="true"
+                 Style="margin-bottom:1rem;" />
+}
 
-    @if (!string.IsNullOrWhiteSpace(Vm.ErrorMessage))
+<!-- BREADCRUMB -->
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="6"
+             Style="margin-bottom:1.5rem;">
+    <RadzenLink Path="/Duenos" Text="Dueños" Style="color:#7F77DD; font-size:13px;" />
+    <RadzenText Text="/" Style="font-size:13px;" />
+    <RadzenText Text="@(IsEditing ? "Editar dueño" : "Nuevo dueño")" Style="font-size:13px;" />
+</RadzenStack>
+
+<RadzenCard Style="border-radius:14px; overflow:hidden; width:100%;">
+
+    <!-- HEADER -->
+    <div style="background: linear-gradient(135deg, #7F77DD 0%, #534AB7 100%);
+                padding:1.75rem 2rem; color:white;">
+        <RadzenText Text="@(IsEditing ? "✏️ Editar Dueño" : "👤 Registrar Nuevo Dueño")"
+                    Style="font-size:20px; font-weight:700; color:white; margin:0;" />
+        <RadzenText Text="@(IsEditing ? "Modifica los datos del dueño" : "Completa la información para registrar un nuevo dueño")"
+                    Style="font-size:13px; opacity:0.85; color:white; margin-top:4px;" />
+    </div>
+
+    <div style="padding:2rem;">
+        <RadzenTemplateForm TItem="OwnerFormularyVM.OwnerFormModel" Data="@VM.FormData" Submit="@OnSubmit">
+
+            <!-- SECCIÓN: DATOS PERSONALES -->
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
+                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(127,119,221,0.2);">
+                    <div style="width:3px; height:18px; background:#7F77DD; border-radius:2px;"></div>
+                    <span style="font-size:13px; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; color:#7F77DD;">
+                        Datos personales
+                    </span>
+                </div>
+
+                <RadzenRow Gap="20">
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Nombre <span style="color:#E24B4A;">*</span></label>
+                            <RadzenTextBox Name="Name" @bind-Value="VM.FormData.Name"
+                                           Placeholder="Nombre del dueño" Style="width:75%;" />
+                            <RadzenRequiredValidator Component="Name" Text="El nombre es obligatorio." />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Apellido <span style="color:#E24B4A;">*</span></label>
+                            <RadzenTextBox Name="LastName" @bind-Value="VM.FormData.LastName"
+                                           Placeholder="Apellido" Style="width:75%;" />
+                            <RadzenRequiredValidator Component="LastName" Text="El apellido es obligatorio." />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Número de identificación <span style="color:#E24B4A;">*</span></label>
+                            <RadzenTextBox Name="IdentificationNumber" @bind-Value="VM.FormData.IdentificationNumber"
+                                           Placeholder="DNI / NIE / Pasaporte" Style="width:75%;" />
+                            <RadzenRequiredValidator Component="IdentificationNumber" Text="La identificación es obligatoria." />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Teléfono</label>
+                            <RadzenTextBox Name="Phone" @bind-Value="VM.FormData.Phone"
+                                           Placeholder="+34 600 000 000" Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Email <span style="color:#E24B4A;">*</span></label>
+                            <RadzenTextBox Name="Email" @bind-Value="VM.FormData.Email"
+                                           Placeholder="correo@ejemplo.com" Style="width:75%;" />
+                            <RadzenRequiredValidator Component="Email" Text="El email es obligatorio." />
+                            <RadzenEmailValidator Component="Email" Text="Formato de email inválido." />
+                        </div>
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </div>
+
+            <!-- SECCIÓN: DIRECCIÓN -->
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
+                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(127,119,221,0.2);">
+                    <div style="width:3px; height:18px; background:#1D9E75; border-radius:2px;"></div>
+                    <span style="font-size:13px; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; color:#1D9E75;">
+                        Dirección
+                    </span>
+                </div>
+
+                <RadzenRow Gap="20">
+
+                    <RadzenColumn Size="12">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Calle / Número</label>
+                            <RadzenTextBox Name="Street" @bind-Value="VM.FormData.Street"
+                                           Placeholder="Calle Mayor 123, 2ºB" Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Ciudad</label>
+                            <RadzenTextBox Name="City" @bind-Value="VM.FormData.City"
+                                           Placeholder="Madrid" Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Código Postal</label>
+                            <RadzenTextBox Name="PostalCode" @bind-Value="VM.FormData.PostalCode"
+                                           Placeholder="28001" Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </div>
+
+            <!-- SECCIÓN: CONFIGURACIÓN -->
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
+                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(127,119,221,0.2);">
+                    <div style="width:3px; height:18px; background:#BA7517; border-radius:2px;"></div>
+                    <span style="font-size:13px; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; color:#BA7517;">
+                        Configuración de cuenta
+                    </span>
+                </div>
+
+                <RadzenRow Gap="20">
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Notificaciones</label>
+                            <RadzenDropDown Name="Notifications"
+                                            @bind-Value="VM.FormData.Notifications"
+                                            Data="@notificationOptions"
+                                            TextProperty="Label"
+                                            ValueProperty="Value"
+                                            Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Comentarios / Notas</label>
+                            <RadzenTextArea Name="Coments" @bind-Value="VM.FormData.Coments"
+                                            Placeholder="Información adicional del dueño..." Rows="4"
+                                            Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </div>
+
+            <!-- BOTONES -->
+            <div style="padding-top:1rem; border-top:0.5px solid rgba(127,119,221,0.15);
+                        display:flex; justify-content:flex-end; gap:10px;">
+                <RadzenButton Text="Cancelar" Icon="close"
+                              ButtonStyle="ButtonStyle.Light"
+                              Style="border-radius:9px;"
+                              Type="ButtonType.Button"
+                              Click="@(() => Nav.NavigateTo(IsEditing ? $"/PerfilDueno/{Id}" : "/Duenos"))" />
+                <RadzenButton Text="@(IsEditing ? "Guardar cambios" : "Registrar dueño")"
+                              Icon="@(IsEditing ? "save" : "person_add")"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Style="border-radius:9px;"
+                              Type="ButtonType.Submit"
+                              Disabled="@VM.IsSaving" />
+            </div>
+
+        </RadzenTemplateForm>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    bool IsEditing => !string.IsNullOrEmpty(Id);
+
+    List<object> notificationOptions = new()
     {
-        <RadzenAlert Severity="AlertSeverity.Error">@Vm.ErrorMessage</RadzenAlert>
+        new { Label = "Ninguna",      Value = "Ninguna"    },
+        new { Label = "Email",        Value = "Email"      },
+        new { Label = "Push",         Value = "Push"       },
+        new { Label = "Email y Push", Value = "EmailYPush" },
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEditing)
+            await VM.LoadForEditAsync(Id!);
     }
 
-    <EditForm Model="@Vm.Owner" OnValidSubmit="Vm.SaveAsync">
-        <DataAnnotationsValidator/>
+    async Task OnSubmit()
+    {
+        if (IsEditing)
+            await VM.UpdateAsync(Id!);
+        else
+            await VM.CreateAsync();
 
-        <RadzenStack Gap="25px" Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+        StateHasChanged();
 
-            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                <RadzenLabel Text="Nombre"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.Name" Placeholder="Tu nombre" Style="width:100%;"/>
-                <RadzenRequiredValidator Component="Name" Text="Obligatorio"/>
-            </RadzenStack>
+        if (!VM.HasError)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity  = NotificationSeverity.Success,
+                Summary   = IsEditing ? "Actualizado" : "Registrado",
+                Detail    = IsEditing
+                    ? "Los datos del dueño se actualizaron correctamente."
+                    : "El dueño fue registrado correctamente.",
+                Duration  = 3500
+            });
 
-            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                <RadzenLabel Text="Apellido"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.LastName" Placeholder="Tu apellido" Style="width:100%;"/>
-                <RadzenRequiredValidator Component="LastName" Text="Obligatorio"/>
-            </RadzenStack>
-
-            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                <RadzenLabel Text="Número Identificación"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.IdentificationNumber" Placeholder="Tu número de identificación"
-                               Style="width:100%;"/>
-                <RadzenRequiredValidator Component="IdentificationNumber" Text="Obligatorio"/>
-            </RadzenStack>
-
-            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                <RadzenLabel Text="Teléfono"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.Phone" Placeholder="Tu teléfono" Style="width:100%;"/>
-            </RadzenStack>
-
-            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                <RadzenLabel Text="Email"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.Email" Placeholder="email@ejemplo.com" Style="width:100%;"/>
-                <RadzenEmailValidator Component="Email" Text="Email inválido"/>
-            </RadzenStack>
-
-            <RadzenStack Gap="10px" Style="flex:1 1 45%;">
-                <RadzenLabel Text="Calle"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.Street" Placeholder="Calle/Número..." Style="width:100%;"/>
-            </RadzenStack>
-
-            <RadzenStack Gap="10px" Style="flex:1 1 30%;">
-                <RadzenLabel Text="Código Postal"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.PostalCode" Placeholder="Código postal" Style="width:100%;"/>
-            </RadzenStack>
-
-            <RadzenStack Gap="10px" Style="flex:1 1 30%;">
-                <RadzenLabel Text="Ciudad"/>
-                <RadzenTextBox @bind-Value="Vm.Owner.City" Placeholder="Ciudad" Style="width:100%;"/>
-            </RadzenStack>
-
-        </RadzenStack>
-
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
-                     Style="margin-top:40px;">
-            <RadzenButton Text="Guardar" Style="width:120px; border-radius:20px; background:white; color:#4b3e48;"
-                          ButtonType="ButtonType.Submit" Disabled="@Vm.IsSaving"/>
-            <RadzenButton Text="Añadir Mascota ➜"
-                          Style="width:140px; border-radius:20px; background:#4b3e48; color:white;"
-                          Click="@Vm.NavigateToNewPet"/>
-        </RadzenStack>
-
-    </EditForm>
-</RadzenStack>
+            Nav.NavigateTo(IsEditing ? $"/PerfilDueno/{Id}" : "/Duenos");
+        }
+    }
+}

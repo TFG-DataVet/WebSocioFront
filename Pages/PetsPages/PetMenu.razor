@@ -1,122 +1,215 @@
 ﻿@page "/Mascotas"
 @inject NavigationManager Nav
 @inject PetListViewModel VM
+@inject DialogService DialogService
+@inject NotificationService NotificationService
 
 @if (VM.IsLoading)
 {
-    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                       Style="margin-bottom:1rem;" />
 }
 @if (VM.HasError)
 {
-    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage"/>
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" AllowClose="true" />
 }
 
-<RadzenStack Orientation="Orientation.Horizontal"
-             AlignItems="AlignItems.Center"
-             Gap="10"
-             Style="padding:10px 20px">
+<PageTitle>Mascotas</PageTitle>
 
-    <RadzenText Text="Mascotas" TextStyle="TextStyle.H5"/>
+<!-- HEADER -->
+<RadzenCard Style="
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    color: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(255,154,158,0.35);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem 2rem;">
+    
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 Wrap="FlexWrap.Wrap"
+                 Gap="10">
 
-    <RadzenTextBox @bind-Value="VM.NameFilter"
-                   Placeholder="Nombre mascota"
-                   Style="width:180px"/>
+        <RadzenStack Gap="2">
+            <RadzenText Text="Gestión de Mascotas"
+                        Style="font-size:28px; font-weight:700;" />
+            <RadzenText Text="@($"{VM.FilteredPets.Count} registros encontrados")"
+                        Style="font-size:18px; opacity:0.85;" />
+        </RadzenStack>
 
-    <RadzenTextBox @bind-Value="VM.SpecieFilter"
-                   Placeholder="Especie"
-                   Style="width:150px"/>
+        <RadzenButton Text="Nueva Mascota"
+                      Icon="pets"
+                      Style="background:white; color:#ff9a9e; font-weight:600; border-radius:10px;"
+                      Click="@(() => Nav.NavigateTo("/create-pet"))" />
+    </RadzenStack>
+</RadzenCard>
 
-    <RadzenButton Icon="filter_alt" Text="Filtrar"
-                  ButtonStyle="ButtonStyle.Primary"
-                  Click="@VM.ApplyFilters"/>
-</RadzenStack>
+<!-- FILTROS -->
+<RadzenCard Style="border-radius:12px; margin-bottom:1.5rem; padding:1.2rem 1.5rem;">
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.End"
+                 Wrap="FlexWrap.Wrap"
+                 Gap="12">
 
-<RadzenRow>
-    <RadzenColumn Size="12">
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="Desde" Style="font-size:16px; font-weight:600;" />
+            <RadzenDatePicker @bind-Value="VM.DateSince" Style="width:155px" />
+        </RadzenStack>
 
-        @foreach (var mascota in VM.FilteredPets)
-        {
-            <div style="cursor:pointer;" @onclick="@(() => NavigateToPetProfile(mascota.Id))">
-                <RadzenCard Style="margin-bottom:30px; border-radius:16px;
-                                   box-shadow:0 4px 20px rgba(0,0,0,0.1); overflow:hidden;">
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="Hasta" Style="font-size:16px; font-weight:600;" />
+            <RadzenDatePicker @bind-Value="VM.DateTo" Style="width:155px" />
+        </RadzenStack>
 
-                    <RadzenStack Orientation="Orientation.Horizontal"
-                                 AlignItems="AlignItems.Center"
-                                 JustifyContent="JustifyContent.SpaceBetween"
-                                 Style="padding:20px;
-                                        background:linear-gradient(135deg,#ff9a9e 0%,#fad0c4 100%);
-                                        color:white;">
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="Nombre" Style="font-size:16px; font-weight:600;" />
+            <RadzenTextBox @bind-Value="VM.NameFilter" Style="width:140px" />
+        </RadzenStack>
 
-                        <RadzenStack Orientation="Orientation.Horizontal"
-                                     AlignItems="AlignItems.Center" Gap="15">
-                            <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png"
-                                          Size="70px" Style="border:3px solid white;"/>
-                            <RadzenStack Gap="2">
-                                <RadzenText Text="@mascota.Name" Style="font-size:22px; font-weight:600;"/>
-                                <RadzenText Text="@mascota.Specie" Style="opacity:0.9; font-size:13px;"/>
-                            </RadzenStack>
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="Especie" Style="font-size:16px; font-weight:600;" />
+            <RadzenTextBox @bind-Value="VM.SpecieFilter" Style="width:140px" />
+        </RadzenStack>
+
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="Raza" Style="font-size:16px; font-weight:600;" />
+            <RadzenTextBox @bind-Value="VM.BreedFilter" Style="width:140px" />
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="8">
+            <RadzenButton Icon="filter_alt" Text="Filtrar"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Click="@VM.ApplyFilters" />
+            <RadzenButton Icon="clear" Text="Limpiar"
+                          ButtonStyle="ButtonStyle.Light"
+                          Click="@VM.ClearFilters" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenCard>
+
+<!-- TABLA -->
+<RadzenCard Style="border-radius:12px; padding:0; overflow:hidden;">
+    <RadzenDataGrid Data="@VM.FilteredPets"
+                    TItem="Pet"
+                    AllowSorting="true"
+                    AllowPaging="true"
+                    PageSize="10"
+                    ShowPagingSummary="true"
+                    PagingSummaryFormat="Página {0} de {1} — Total: {2}"
+                    EmptyText="No se encontraron mascotas."
+                    Style="border:none;">
+
+        <Columns>
+
+            <!-- Mascota -->
+            <RadzenDataGridColumn TItem="Pet" Title="Mascota" Width="220px">
+                <Template Context="pet">
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="10">
+                        <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png" Size="38px" />
+                        <RadzenStack Gap="0">
+                            <RadzenText Text="@pet.Name" Style="font-weight:600;" />
+                            <RadzenText Text="@pet.Specie" Style="font-size:12px; color:#888;" />
                         </RadzenStack>
-
-                        <RadzenButton Icon="person" Text="Dueño"
-                                      ButtonStyle="ButtonStyle.Light"
-                                      Style="background:transparent; color:white;"
-                                      Click="@(() => VM.ToggleOwner(mascota.Id))"
-                                      @onclick:stopPropagation="true"/>
                     </RadzenStack>
+                </Template>
+            </RadzenDataGridColumn>
 
-                    <RadzenStack Style="padding:20px;">
-                        <RadzenRow>
-                            <RadzenColumn Size="6">
-                                <RadzenText Text="🐾 Raza" Style="font-weight:600;"/>
-                                <RadzenText Text="@mascota.Breed"/>
-                                <RadzenText Text="🎂 Edad" Style="font-weight:600; margin-top:10px;"/>
-                                <RadzenText Text="@($"{mascota.Age} años")"/>
-                            </RadzenColumn>
-                            <RadzenColumn Size="6">
-                                <RadzenText Text="⚖️ Peso" Style="font-weight:600;"/>
-                                <RadzenText Text="@($"{mascota.Weight} kg")"/>
-                            </RadzenColumn>
-                        </RadzenRow>
-                    </RadzenStack>
+            <!-- Raza -->
+            <RadzenDataGridColumn TItem="Pet" Property="Breed" Title="Raza" Width="130px" />
 
-                    @if (VM.VisibleOwners.Contains(mascota.Id))
+            <!-- Peso -->
+            <RadzenDataGridColumn TItem="Pet" Title="Peso" Width="100px">
+                <Template Context="pet">
+                    <RadzenText Text="@(pet.Weight.HasValue ? $"{pet.Weight} kg" : "—")" />
+                </Template>
+            </RadzenDataGridColumn>
+
+            <!-- Fecha -->
+            <RadzenDataGridColumn TItem="Pet" Title="Nacimiento" Width="130px">
+                <Template Context="pet">
+                    <RadzenText Text="@pet.BirthDate.ToString("dd/MM/yyyy")" />
+                </Template>
+            </RadzenDataGridColumn>
+
+            <!-- Dueño -->
+            <RadzenDataGridColumn TItem="Pet" Title="Dueño" Width="200px">
+                <Template Context="pet">
+                    @if (pet.Owner != null)
                     {
-                        <RadzenCard Style="margin:20px; border-radius:16px; overflow:hidden;">
-                            <RadzenStack Orientation="Orientation.Horizontal"
-                                         AlignItems="AlignItems.Center" Gap="15"
-                                         Style="padding:20px;
-                                                background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
-                                                color:white;">
-                                <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/616/616408.png"
-                                              Size="60px"/>
-                                <RadzenStack Gap="2">
-                                    <RadzenLink Path="@($"/PerfilDueno/{mascota.Owner.Id}")"
-                                                Style="text-decoration:none; color:white;">
-                                        <RadzenText Text="@mascota.Owner.Name"
-                                                    Style="font-size:18px; font-weight:600;"/>
-                                    </RadzenLink>
-                                    <RadzenText Text="@mascota.Owner.Email"
-                                                Style="font-size:13px; opacity:0.9;"/>
-                                </RadzenStack>
-                            </RadzenStack>
-                            <RadzenStack Style="padding:20px;">
-                                <RadzenText Text="📞 Teléfono" Style="font-weight:600;"/>
-                                <RadzenText Text="@mascota.Owner.Phone"/>
-                                <RadzenText Text="🏠 Dirección" Style="font-weight:600; margin-top:10px;"/>
-                                <RadzenText Text="@mascota.Owner.Street"/>
-                            </RadzenStack>
-                        </RadzenCard>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="8">
+                            <RadzenIcon Icon="person" Style="color:#4facfe;" />
+                            <RadzenLink Path="@($"/PerfilDueno/{pet.Owner.Id}")">
+                                @($"{pet.Owner.Name} {pet.Owner.LastName}")
+                            </RadzenLink>
+                        </RadzenStack>
                     }
+                    else
+                    {
+                        <RadzenText Text="—" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
 
-                </RadzenCard>
-            </div>
-        }
+            <!-- Registrado -->
+            <RadzenDataGridColumn TItem="Pet" Property="CreatedAt" Title="Registrado" Width="130px">
+                <Template Context="pet">
+                    <RadzenText Text="@pet.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")"
+                                Style="font-size:13px; color:#666;" />
+                </Template>
+            </RadzenDataGridColumn>
 
-    </RadzenColumn>
-</RadzenRow>
+            <!-- Acciones -->
+            <RadzenDataGridColumn TItem="Pet" Title="Acciones" Width="140px" Sortable="false">
+                <Template Context="pet">
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="6">
+
+                        <RadzenButton Icon="visibility"
+                                      ButtonStyle="ButtonStyle.Light"
+                                      Size="ButtonSize.Small"
+                                      Click="@(() => Nav.NavigateTo($"/PerfilMascota/{pet.Id}"))" />
+
+                        <RadzenButton Icon="edit"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Size="ButtonSize.Small"
+                                      Click="@(() => Nav.NavigateTo($"/EditarMascota/{pet.Id}"))" />
+
+                        <RadzenButton Icon="delete"
+                                      ButtonStyle="ButtonStyle.Danger"
+                                      Size="ButtonSize.Small"
+                                      Click="@(async () => await ConfirmDelete(pet))" />
+
+                    </RadzenStack>
+                </Template>
+            </RadzenDataGridColumn>
+
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
 
 @code {
-    
-    protected override async Task OnInitializedAsync() => await VM.LoadAsync();
-    void NavigateToPetProfile(string petId) => Nav.NavigateTo($"/PerfilMascota/{petId}");
+
+    protected override async Task OnInitializedAsync()
+        => await VM.LoadAsync();
+
+    async Task ConfirmDelete(Pet pet)
+    {
+        var result = await DialogService.Confirm(
+            $"¿Eliminar a {pet.Name}? Esta acción no se puede deshacer.",
+            "Confirmar eliminación",
+            new ConfirmOptions { OkButtonText = "Eliminar", CancelButtonText = "Cancelar" });
+
+        if (result == true)
+        {
+            await VM.DeleteAsync(pet.Id);
+
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Eliminado",
+                Detail = $"{pet.Name} fue eliminado correctamente.",
+                Duration = 3000
+            });
+        }
+    }
 }

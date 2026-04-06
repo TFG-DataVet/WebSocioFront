@@ -1,45 +1,43 @@
-﻿using System.Net.Http.Json;
-using System.Net;
-using SocioWeb.Domain.Entities;
-using SocioWeb.Entities.Dtos;
-using SocioWeb.Services.AppointmentService;
+﻿using System.Net;
+using System.Net.Http.Json;
+using SocioWeb.Entities.Dtos.EmployeeDto;
+using SocioWeb.Entities.Models.Employee;
 
-public class OwnersApiService : IOwnerService
+namespace SocioWeb.Services.Exceptions.EmployeeService;
+
+public class EmployeesApiService : IEmployeeService
 {
     private readonly HttpClient _http;
-    private const string BaseEndpoint = "owner";
+    private const string BaseEndpoint = "employee";
 
-    public OwnersApiService(HttpClient http)
+    public EmployeesApiService(HttpClient http)
     {
         _http = http;
     }
 
     // ─── MÉTODO CENTRAL DE ERRORES ───────────────────────────────
-
     private async Task HandleError(HttpResponseMessage response)
     {
         if (response.IsSuccessStatusCode) return;
 
         var body = await response.Content.ReadAsStringAsync();
 
-        // 🔥 IMPORTANTE: lanzamos el JSON directamente
+        // 🔥 Lanzamos el JSON directamente
         throw new Exception(body);
     }
 
     // ─── GET ALL ────────────────────────────────────────────────
-
-    public async Task<List<Owner>> GetAllAsync()
+    public async Task<List<Employee>> GetAllAsync()
     {
         var response = await _http.GetAsync(BaseEndpoint);
         await HandleError(response);
 
-        return await response.Content.ReadFromJsonAsync<List<Owner>>()
-               ?? new List<Owner>();
+        return await response.Content.ReadFromJsonAsync<List<Employee>>() 
+               ?? new List<Employee>();
     }
 
     // ─── GET BY ID ──────────────────────────────────────────────
-
-    public async Task<Owner?> GetByIdAsync(string id)
+    public async Task<Employee?> GetByIdAsync(string id)
     {
         var response = await _http.GetAsync($"{BaseEndpoint}/{id}");
 
@@ -48,12 +46,11 @@ public class OwnersApiService : IOwnerService
 
         await HandleError(response);
 
-        return await response.Content.ReadFromJsonAsync<Owner>();
+        return await response.Content.ReadFromJsonAsync<Employee>();
     }
 
     // ─── CREATE ─────────────────────────────────────────────────
-
-    public async Task CreateAsync(OwnerDto dto)
+    public async Task CreateAsync(EmployeeDto dto)
     {
         var response = await _http.PostAsync(
             BaseEndpoint,
@@ -64,8 +61,7 @@ public class OwnersApiService : IOwnerService
     }
 
     // ─── UPDATE ─────────────────────────────────────────────────
-
-    public async Task UpdateAsync(string id, OwnerDto dto)
+    public async Task UpdateAsync(string id, EmployeeDto dto)
     {
         var response = await _http.PutAsync(
             $"{BaseEndpoint}/{id}",
@@ -76,7 +72,6 @@ public class OwnersApiService : IOwnerService
     }
 
     // ─── DELETE ─────────────────────────────────────────────────
-
     public async Task DeleteAsync(string id)
     {
         var response = await _http.DeleteAsync($"{BaseEndpoint}/{id}");

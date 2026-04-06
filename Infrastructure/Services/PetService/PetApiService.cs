@@ -1,32 +1,85 @@
-﻿using SocioWeb.Entities;
+﻿using System.Net.Http.Json;
+using System.Net;
+using SocioWeb.Entities;
 using SocioWeb.Entities.Dtos.PetDto;
-
-namespace SocioWeb.Services.AppointmentService;
-
-using System.Net.Http.Json;
+using SocioWeb.Services.AppointmentService;
 
 public class PetsApiService : IPetService
 {
     private readonly HttpClient _http;
+    private const string BaseEndpoint = "pet"; // 👈 igual que owner
 
     public PetsApiService(HttpClient http)
     {
         _http = http;
     }
 
-    public async Task<List<Pet>> GetAllAsync()
-        => await _http.GetFromJsonAsync<List<Pet>>("api/pets")
-           ?? new List<Pet>();
+    // ─── MANEJO DE ERRORES ─────────────────────────────
 
-    public async Task<Pet?> GetByIdAsync(String id)
-        => await _http.GetFromJsonAsync<Pet>($"api/pets/{id}");
+    private async Task HandleError(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode) return;
+
+        var body = await response.Content.ReadAsStringAsync();
+
+        // Igual que Owner
+        throw new Exception(body);
+    }
+
+    // ─── GET ALL ──────────────────────────────────────
+
+    public async Task<List<Pet>> GetAllAsync()
+    {
+        var response = await _http.GetAsync(BaseEndpoint);
+        await HandleError(response);
+
+        return await response.Content.ReadFromJsonAsync<List<Pet>>()
+               ?? new List<Pet>();
+    }
+
+    // ─── GET BY ID ────────────────────────────────────
+
+    public async Task<Pet?> GetByIdAsync(string id)
+    {
+        var response = await _http.GetAsync($"{BaseEndpoint}/{id}");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return null;
+
+        await HandleError(response);
+
+        return await response.Content.ReadFromJsonAsync<Pet>();
+    }
+
+    // ─── CREATE ───────────────────────────────────────
 
     public async Task CreateAsync(PetDto dto)
-        => await _http.PostAsJsonAsync("api/pets", dto);
+    {
+        var response = await _http.PostAsync(
+            BaseEndpoint,
+            JsonContent.Create(dto)
+        );
 
-    public async Task UpdateAsync(String id, PetDto dto)
-        => await _http.PutAsJsonAsync($"api/pets/{id}", dto);
+        await HandleError(response);
+    }
 
-    public async Task DeleteAsync(String id)
-        => await _http.DeleteAsync($"api/pets/{id}");
+    // ─── UPDATE ───────────────────────────────────────
+
+    public async Task UpdateAsync(string id, PetDto dto)
+    {
+        var response = await _http.PutAsync(
+            $"{BaseEndpoint}/{id}",
+            JsonContent.Create(dto)
+        );
+
+        await HandleError(response);
+    }
+
+    // ─── DELETE ───────────────────────────────────────
+
+    public async Task DeleteAsync(string id)
+    {
+        var response = await _http.DeleteAsync($"{BaseEndpoint}/{id}");
+        await HandleError(response);
+    }
 }
