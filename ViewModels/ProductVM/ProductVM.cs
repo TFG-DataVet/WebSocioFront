@@ -26,7 +26,7 @@ public class ProductVM
                 Category = "Alimentos",
                 Brand = "DogPlus",
                 Price = 29.99m,
-                Stock = 15,
+                Stock = 15.ToString(),
                 Description = "Bolsa 10kg alimento balanceado",
                 CreatedAt = new DateTime(2023, 1, 10)
             },
@@ -37,7 +37,7 @@ public class ProductVM
                 Category = "Higiene",
                 Brand = "CatClean",
                 Price = 12.50m,
-                Stock = 5,
+                Stock = 5.ToString(),
                 Description = "Arena aglomerante",
                 CreatedAt = new DateTime(2024, 2, 5)
             }
@@ -57,7 +57,7 @@ public class ProductVM
                  p.Category.Contains(CategoryFilter, StringComparison.OrdinalIgnoreCase)) &&
                 (string.IsNullOrEmpty(BrandFilter) ||
                  p.Brand.Contains(BrandFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (!MinimumStock.HasValue || p.Stock >= MinimumStock)
+                (!MinimumStock.HasValue || int.Parse(p.Stock) >= MinimumStock)
             )
             .ToList();
     }

@@ -1,0 +1,248 @@
+﻿@page "/EmployeeForm"
+@page "/EditEmployee/{Id}"
+@using SocioWeb.ViewModels.Employee
+
+@inject NavigationManager Nav
+@inject EmployeeFormVM VM
+@inject NotificationService NotificationService
+
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+}
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger"
+                 Text="@VM.ErrorMessage"
+                 AllowClose="true"
+                 Style="margin-bottom:1rem;" />
+}
+
+<!-- BREADCRUMB -->
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="6"
+             Style="margin-bottom:1.5rem;">
+    <RadzenLink Path="/Employee" Text="Empleados" Style="color:#7F77DD; font-size:13px;" />
+    <RadzenText Text="/" Style="font-size:13px;" />
+    <RadzenText Text="@(IsEditing ? "Editar empleado" : "Nuevo empleado")" Style="font-size:13px;" />
+</RadzenStack>
+
+<RadzenCard Style="border-radius:14px; overflow:hidden; width:100%; margin:auto;">
+
+    <!-- HEADER -->
+    <div style="background: linear-gradient(135deg, #7F77DD 0%, #534AB7 100%);
+                padding:1.75rem 2rem; color:white;">
+        <RadzenText Text="@(IsEditing ? "✏️ Editar Empleado" : "👨‍⚕️ Nuevo Empleado")"
+                    Style="font-size:20px; font-weight:700; color:white; margin:0;" />
+        <RadzenText Text="@(IsEditing ? "Modifica los datos del empleado" : "Completa la información del nuevo empleado")"
+                    Style="font-size:13px; opacity:0.85; color:white; margin-top:4px;" />
+    </div>
+
+    <div style="padding:2rem;">
+
+        <RadzenTemplateForm TItem="EmployeeFormVM.EmployeeFormModel"
+                            Data="@VM.FormData"
+                            Submit="@OnSubmit">
+
+            <!-- AVATAR -->
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
+                    <div style="width:3px; height:18px; background:#7F77DD;"></div>
+                    <span style="font-size:13px; font-weight:500; text-transform:uppercase; color:#7F77DD;">
+                        Avatar
+                    </span>
+                </div>
+
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="15" AlignItems="AlignItems.Center">
+
+                    <RadzenAvatar Image="@(string.IsNullOrWhiteSpace(VM.FormData.AvatarUrl)
+                                            ? "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                                            : VM.FormData.AvatarUrl)"
+                                  Size="70px" />
+
+                    <RadzenTextBox @bind-Value="VM.FormData.AvatarUrl"
+                                   Placeholder="URL del avatar"
+                                   Style="width:75%;" />
+                </RadzenStack>
+            </div>
+
+            <!-- DATOS PERSONALES -->
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
+                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(127,119,221,0.2);">
+                    <div style="width:3px; height:18px; background:#7F77DD;"></div>
+                    <span style="font-size:13px; font-weight:500; text-transform:uppercase; color:#7F77DD;">
+                        Datos personales
+                    </span>
+                </div>
+
+                <RadzenRow Gap="20">
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Nombre", "FirstName", VM.FormData.FirstName, v => VM.FormData.FirstName = v)
+                        <RadzenRequiredValidator Component="FirstName" Text="Obligatorio" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Apellido", "LastName", VM.FormData.LastName, v => VM.FormData.LastName = v)
+                        <RadzenRequiredValidator Component="LastName" Text="Obligatorio" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Email", "Email", VM.FormData.Email, v => VM.FormData.Email = v)
+                        <RadzenEmailValidator Component="Email" Text="Email inválido" />
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Teléfono", "Phone", VM.FormData.Phone, v => VM.FormData.Phone = v)
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Tipo documento", "DocumentType", VM.FormData.DocumentType, v => VM.FormData.DocumentType = v)
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Número documento", "DocumentNumber", VM.FormData.DocumentNumber, v => VM.FormData.DocumentNumber = v)
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </div>
+
+            <!-- PROFESIONAL -->
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
+                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(29,158,117,0.2);">
+                    <div style="width:3px; height:18px; background:#1D9E75;"></div>
+                    <span style="font-size:13px; font-weight:500; text-transform:uppercase; color:#1D9E75;">
+                        Información profesional
+                    </span>
+                </div>
+
+                <RadzenRow Gap="20">
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Rol</label>
+
+                            <RadzenDropDown @bind-Value="VM.FormData.Role"
+                                            Data="@roles"
+                                            Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Especialidad", null, VM.FormData.Speciality, v => VM.FormData.Speciality = v)
+                    </RadzenColumn>
+
+                    @if (VM.FormData.Role == "CLINIC_VETERINARIAN")
+                    {
+                        <RadzenColumn Size="12">
+                            @Input("Licencia", null, VM.FormData.LicenseNumber, v => VM.FormData.LicenseNumber = v)
+                        </RadzenColumn>
+                    }
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">Fecha de contratación</label>
+
+                            <RadzenDatePicker @bind-Value="VM.FormData.HireDate"
+                                              Style="width:75%;" />
+                        </div>
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </div>
+
+            <!-- DIRECCIÓN -->
+            <div style="margin-bottom:2rem;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
+                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(186,117,23,0.2);">
+                    <div style="width:3px; height:18px; background:#BA7517;"></div>
+                    <span style="font-size:13px; font-weight:500; text-transform:uppercase; color:#BA7517;">
+                        Dirección
+                    </span>
+                </div>
+
+                <RadzenRow Gap="20">
+
+                    <RadzenColumn Size="12">
+                        @Input("Dirección", null, VM.FormData.Address, v => VM.FormData.Address = v)
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Ciudad", null, VM.FormData.City, v => VM.FormData.City = v)
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        @Input("Código postal", null, VM.FormData.PostalCode, v => VM.FormData.PostalCode = v)
+                    </RadzenColumn>
+
+                </RadzenRow>
+            </div>
+
+            <!-- BOTONES -->
+            <div style="padding-top:1rem; border-top:0.5px solid rgba(127,119,221,0.15);
+                        display:flex; justify-content:flex-end; gap:10px;">
+
+                <RadzenButton Text="Cancelar"
+                              Icon="close"
+                              ButtonStyle="ButtonStyle.Light"
+                              Style="border-radius:9px;"
+                              Click="@(() => Nav.NavigateTo("/Employee"))" />
+
+                <RadzenButton Text="@(IsEditing ? "Guardar cambios" : "Crear empleado")"
+                              Icon="save"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Style="border-radius:9px;"
+                              Type="ButtonType.Submit" />
+
+            </div>
+
+        </RadzenTemplateForm>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    bool IsEditing => !string.IsNullOrEmpty(Id);
+
+    List<string> roles = new() { "ADMIN", "RECEPTIONIST", "CLINIC_VETERINARIAN" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEditing)
+            await VM.LoadForEditAsync(Id!);
+    }
+
+    async Task OnSubmit()
+    {
+        if (IsEditing)
+            await VM.UpdateAsync(Id!);
+        else
+            await VM.CreateAsync();
+
+        if (!VM.HasError)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "OK",
+                Detail = "Empleado guardado"
+            });
+
+            Nav.NavigateTo("/Employee");
+        }
+    }
+
+    RenderFragment Input(string label, string? name, string? valor, Action<string>? onChange) => __builder =>
+    {
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:13px; font-weight:500;">@label</label>
+
+            <RadzenTextBox Name="@name"
+                           Value="@valor"
+                           Change="@(e => onChange?.Invoke(e?.ToString() ?? ""))"
+                           Style="width:100%;" />
+        </div>;
+    };
+}

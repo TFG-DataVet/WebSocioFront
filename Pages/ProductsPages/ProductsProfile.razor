@@ -41,7 +41,7 @@
         <RadzenColumn Size="6">@Campo("Categoría",   VM.Product.Category,                v => VM.Product.Category    = v)</RadzenColumn>
         <RadzenColumn Size="6">@Campo("Marca",       VM.Product.Brand,                   v => VM.Product.Brand       = v)</RadzenColumn>
         <RadzenColumn Size="6">@Campo("Precio",      VM.Product.Price.ToString(),        v => VM.Product.Price       = decimal.Parse(v))</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Stock",       VM.Product.Stock.ToString(),        v => VM.Product.Stock       = int.Parse(v))</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Stock",       VM.Product.Stock.ToString(),        v => VM.Product.Stock       = v)</RadzenColumn>
         <RadzenColumn Size="6">@Campo("Estado",      VM.Product.Active ? "Activo" : "Inactivo", null)</RadzenColumn>
         <RadzenColumn Size="12">@Campo("Descripción", VM.Product.Description,            v => VM.Product.Description = v)</RadzenColumn>
     </RadzenRow>

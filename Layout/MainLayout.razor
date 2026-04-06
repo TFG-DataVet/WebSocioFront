@@ -2,34 +2,67 @@
 @inject IJSRuntime JS
 
 <RadzenLayout>
-    <RadzenHeader>
+    <RadzenHeader Style="
+        background: rgba(255,255,255,0.45);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 0.5px solid rgba(255,255,255,0.6);
+        box-shadow: none;
+        height: 56px;">
         <RadzenStack
             Orientation="Orientation.Horizontal"
             AlignItems="AlignItems.Center"
             JustifyContent="JustifyContent.SpaceBetween"
             Gap="0"
-            class="rz-pr-6">
-            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)"/>
-            <RadzenText Text="Header" TagName="TagName.H5" TextStyle="TextStyle.H6"/>
-            <RadzenButton Text="@(isDarkMode ? "🌞" : "🌙")" Click="@ToggleTheme" Variant="Variant.Filled"
-                          class="theme-toggle"/>
+            Style="height:100%; padding: 0 20px;">
+
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10">
+                <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)"
+                    Style="
+                        background: rgba(127,119,221,0.12);
+                        border: 0.5px solid rgba(127,119,221,0.25);
+                        border-radius: 8px;
+                        color: #7F77DD;"/>
+                <RadzenText Text="Data" TagName="TagName.Span"
+                    Style="font-size:16px; font-weight:500; color:#7F77DD; letter-spacing:0.02em;"/>
+                <RadzenText Text="Vet" TagName="TagName.Span"
+                    Style="font-size:16px; font-weight:500; color:#3C3489; margin-left:-6px;"/>
+            </RadzenStack>
+
+            <RadzenText Text="Clínica PetCare · Dr. Pérez"
+                Style="font-size:13px; color:rgba(80,60,180,0.6); position:absolute; left:50%; transform:translateX(-50%);"/>
+
+            <RadzenButton
+                Text="@(isDarkMode ? "☀ Claro" : "☾ Oscuro")"
+                Click="@ToggleTheme"
+                Variant="Variant.Outlined"
+                Style="
+                    background: rgba(127,119,221,0.10);
+                    border: 0.5px solid rgba(127,119,221,0.25);
+                    border-radius: 20px;
+                    color: #7F77DD;
+                    font-size: 12px;
+                    padding: 6px 14px;"/>
         </RadzenStack>
     </RadzenHeader>
 
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded" Style="
+        background: rgba(255,255,255,0.28);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-right: 0.5px solid rgba(255,255,255,0.55);
+        width: 220px;">
         <NavBar/>
     </RadzenSidebar>
 
-    <RadzenBody>
-        @Body
+    <RadzenBody Style="background: linear-gradient(135deg, #e8e6f8 0%, #d4edea 50%, #f0eaf8 100%); min-height: 100vh;">
+        <div style="padding: 20px;">
+            @Body
+        </div>
     </RadzenBody>
 
-    @* <RadzenSidebar Position="SidebarPosition.Right"> *@
-    @*     <div class="rz-p-4" Style="min-width: 70px; width: 30vw; max-width: 300px;"> *@
-    @*         Right Sidebar *@
-    @*     </div> *@
-    @* </RadzenSidebar> *@
-
+    <RadzenDialog/>
+    <RadzenNotification/>
 </RadzenLayout>
 
 

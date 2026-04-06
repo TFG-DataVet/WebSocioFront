@@ -1,7 +1,8 @@
-﻿@page "/Citas"
-@using SocioWeb.ViewModels.Appointments
+﻿@page "/Employee"
+@using SocioWeb.Entities.Models.Employee
+@using SocioWeb.ViewModels.Employee
 @inject NavigationManager Nav
-@inject AppointmentListViewModel VM
+@inject EmployeeListViewModel VM
 @inject DialogService DialogService
 @inject NotificationService NotificationService
 
@@ -15,14 +16,14 @@
     <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" AllowClose="true" />
 }
 
-<PageTitle>Citas Veterinarias</PageTitle>
+<PageTitle>Empleados</PageTitle>
 
 <!-- HEADER -->
 <RadzenCard Style="
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #f8c30f 0%, #e6b800 100%);
+    color: black;
     border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(102,126,234,0.35);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
     margin-bottom: 1.5rem;
     padding: 1.5rem 2rem;">
     
@@ -33,16 +34,16 @@
                  Gap="10">
 
         <RadzenStack Gap="2">
-            <RadzenText Text="Gestión de Citas"
+            <RadzenText Text="Gestión de Empleados"
                         Style="font-size:28px; font-weight:700;" />
-            <RadzenText Text="@($"{VM.FilteredAppointments.Count} registros encontrados")"
+            <RadzenText Text="@($"{VM.FilteredEmployees.Count} registros encontrados")"
                         Style="font-size:18px; opacity:0.85;" />
         </RadzenStack>
 
-        <RadzenButton Text="Nueva Cita"
-                      Icon="event"
-                      Style="background:white; color:#667eea; font-weight:600; border-radius:10px;"
-                      Click="@(() => Nav.NavigateTo("/CreateAppointment"))" />
+        <RadzenButton Text="Nuevo Empleado"
+                      Icon="person_add"
+                      Style="background:black; color:#f8c30f; font-weight:600; border-radius:10px;"
+                      Click="@(() => Nav.NavigateTo("/EmployeeForm"))" />
     </RadzenStack>
 </RadzenCard>
 
@@ -64,12 +65,17 @@
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Estado" Style="font-size:16px; font-weight:600;" />
-            <RadzenDropDown Data="@VM.States" @bind-Value="VM.StatusFilter" Style="width:140px" />
+            <RadzenLabel Text="Ciudad" Style="font-size:16px; font-weight:600;" />
+            <RadzenTextBox @bind-Value="VM.CityFilter" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Mascota o Dueño" Style="font-size:16px; font-weight:600;" />
+            <RadzenLabel Text="Código Postal" Style="font-size:16px; font-weight:600;" />
+            <RadzenTextBox @bind-Value="VM.PostalCodeFilter" Style="width:140px" />
+        </RadzenStack>
+
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="Nombre o Email" Style="font-size:16px; font-weight:600;" />
             <RadzenTextBox @bind-Value="VM.SearchFilter" Style="width:180px" />
         </RadzenStack>
 
@@ -86,63 +92,63 @@
 
 <!-- TABLA -->
 <RadzenCard Style="border-radius:12px; padding:0; overflow:hidden;">
-    <RadzenDataGrid Data="@VM.FilteredAppointments"
-                    TItem="Appointment"
+    <RadzenDataGrid Data="@VM.FilteredEmployees"
+                    TItem="Employee"
                     AllowSorting="true"
                     AllowPaging="true"
                     PageSize="10"
                     ShowPagingSummary="true"
                     PagingSummaryFormat="Página {0} de {1} — Total: {2}"
-                    EmptyText="No se encontraron citas."
+                    EmptyText="No se encontraron empleados."
                     Style="border:none;">
 
         <Columns>
 
-            <!-- Mascota -->
-            <RadzenDataGridColumn TItem="Appointment" Title="Mascota" Width="180px">
-                <Template Context="cita">
+            <!-- Empleado -->
+            <RadzenDataGridColumn TItem="Employee" Title="Empleado" Width="220px">
+                <Template Context="employee">
                     <RadzenStack Orientation="Orientation.Horizontal" Gap="10">
-                        <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png" Size="38" />
+                        <RadzenAvatar Image="@(employee.AvatarUrl ?? "https://cdn-icons-png.flaticon.com/512/3135/3135715.png")" Size="38px" />
                         <RadzenStack Gap="0">
-                            <RadzenText Text="@cita.PetName" Style="font-weight:600;" />
-                            <RadzenText Text="@cita.OwnerName" Style="font-size:12px; color:#888;" />
+                            <RadzenText Text="@($"{employee.FirstName} {employee.LastName}")" Style="font-weight:600;" />
+                            <RadzenText Text="@employee.Speciality" Style="font-size:12px; color:#888;" />
                         </RadzenStack>
                     </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
 
-            <!-- Estado -->
-            <RadzenDataGridColumn TItem="Appointment" Property="Status" Title="Estado" Width="120px" />
+            <!-- Rol -->
+            <RadzenDataGridColumn TItem="Employee" Property="Role" Title="Rol" Width="130px" />
 
-            <!-- Fecha -->
-            <RadzenDataGridColumn TItem="Appointment" Title="Fecha y Hora" Width="160px">
-                <Template Context="cita">
-                    <RadzenText Text="@cita.Date.ToString("dd/MM/yyyy HH:mm")" />
-                </Template>
-            </RadzenDataGridColumn>
+            <!-- Teléfono -->
+            <RadzenDataGridColumn TItem="Employee" Property="Phone" Title="Teléfono" Width="130px" />
 
-            <!-- Contacto -->
-            <RadzenDataGridColumn TItem="Appointment" Property="Phone" Title="Contacto" Width="150px" />
+            <!-- Email -->
+            <RadzenDataGridColumn TItem="Employee" Property="Email" Title="Email" Width="180px" />
 
-            <!-- Motivo -->
-            <RadzenDataGridColumn TItem="Appointment" Property="Reason" Title="Motivo" Width="200px" />
+            <!-- Ciudad -->
+            <RadzenDataGridColumn TItem="Employee" Property="City" Title="Ciudad" Width="130px" />
 
             <!-- Acciones -->
-            <RadzenDataGridColumn TItem="Appointment" Title="Acciones" Width="140px" Sortable="false">
-                <Template Context="cita">
+            <RadzenDataGridColumn TItem="Employee" Title="Acciones" Width="140px" Sortable="false">
+                <Template Context="employee">
                     <RadzenStack Orientation="Orientation.Horizontal" Gap="6">
+
                         <RadzenButton Icon="visibility"
                                       ButtonStyle="ButtonStyle.Light"
                                       Size="ButtonSize.Small"
-                                      Click="@(() => Nav.NavigateTo($"/AppointmentProfile/{cita.Id}"))" />
+                                      Click="@(() => Nav.NavigateTo($"/EmployeeProfile/{employee.Id}"))" />
+
                         <RadzenButton Icon="edit"
                                       ButtonStyle="ButtonStyle.Primary"
                                       Size="ButtonSize.Small"
-                                      Click="@(() => Nav.NavigateTo($"/EditAppointment/{cita.Id}"))" />
+                                      Click="@(() => Nav.NavigateTo($"/EditEmployee/{employee.Id}"))" />
+
                         <RadzenButton Icon="delete"
                                       ButtonStyle="ButtonStyle.Danger"
                                       Size="ButtonSize.Small"
-                                      Click="@(async () => await ConfirmDelete(cita))" />
+                                      Click="@(async () => await ConfirmDelete(employee))" />
+
                     </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
@@ -153,24 +159,25 @@
 
 @code {
 
-    protected override async Task OnInitializedAsync() => await VM.LoadAsync();
+    protected override async Task OnInitializedAsync()
+        => await VM.LoadAsync();
 
-    async Task ConfirmDelete(Appointment cita)
+    async Task ConfirmDelete(Employee employee)
     {
         var result = await DialogService.Confirm(
-            $"¿Eliminar la cita de {cita.PetName}? Esta acción no se puede deshacer.",
+            $"¿Eliminar a {employee.FirstName} {employee.LastName}? Esta acción no se puede deshacer.",
             "Confirmar eliminación",
             new ConfirmOptions { OkButtonText = "Eliminar", CancelButtonText = "Cancelar" });
 
         if (result == true)
         {
-            await VM.DeleteAsync(cita.Id);
+            await VM.DeleteAsync(employee.Id);
 
             NotificationService.Notify(new NotificationMessage
             {
                 Severity = NotificationSeverity.Success,
                 Summary = "Eliminado",
-                Detail = $"La cita de {cita.PetName} fue eliminada correctamente.",
+                Detail = $"{employee.FirstName} {employee.LastName} fue eliminado correctamente.",
                 Duration = 3000
             });
         }

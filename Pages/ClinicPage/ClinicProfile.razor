@@ -1,0 +1,346 @@
+﻿@page "/PerfilClinica"
+@using SocioWeb.ViewModels.Clinic
+@inject ClinicprofileViewModel VM
+
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+}
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage"/>
+}
+
+<RadzenCard Style="
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(78,115,223,0.35);
+    margin-bottom: 1.5rem;
+    padding: 0;
+    overflow: hidden;">
+
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 Style="padding: 28px 32px;">
+
+        <!-- Logo + nombre -->
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center" Gap="20">
+
+            <RadzenCard Style="
+                width: 80px; height: 80px;
+                border-radius: 16px;
+                background: rgba(255,255,255,0.18);
+                display: flex; align-items: center; justify-content: center;
+                font-size: 36px;
+                border: 2px solid rgba(255,255,255,0.35);">
+                🏥
+            </RadzenCard>
+
+            <RadzenStack Gap="4">
+                <RadzenText Text="@VM.Name"
+                            Style="font-size: 26px; font-weight: 700; margin:0;"/>
+                <RadzenText Text="@VM.LegalName"
+                            Style="font-size: 14px; margin:0;"/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Success"
+                             Text="@VM.SubState"
+                             Style="font-size:11px; padding: 2px 10px; margin-top:4px;"/>
+            </RadzenStack>
+        </RadzenStack>
+
+     
+        @if (!VM.IsEditing)
+        {
+            <RadzenButton Text="Editar clínica" Icon="edit"
+                          ButtonStyle="ButtonStyle.Light"
+                          Style="border-radius: 10px; background: rgba(255,255,255,0.18);
+                                  border: 1.5px solid rgba(255,255,255,0.4);
+                                 font-weight: 600;"
+                          Click="@(() => VM.IsEditing = true)"/>
+        }
+        else
+        {
+            <RadzenButton Text="Cancelar" Icon="close"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Style="border-radius: 10px;"
+                          Click="@VM.Cancel"/>
+        }
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard Style="border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 1.25rem;">
+
+    <SectionTitle Text="Información de la clínica" Icon="store"/>
+
+    <RadzenRow Gap="20">
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("Nombre comercial", "storefront", VM.Name, v => VM.Name = v)
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("Razón social", "business_center", VM.LegalName, v => VM.LegalName = v)
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("CIF / NIF", "badge", VM.CifNif, v => VM.CifNif = v)
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("Horario de atención", "schedule", VM.AttentionTime, v => VM.AttentionTime = v)
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenCard Style="border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 1.25rem;">
+
+    <SectionTitle Text="Contacto y ubicación" Icon="location_on"/>
+
+    <RadzenRow Gap="20">
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("Dirección", "home", VM.Address, v => VM.Address = v)
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("Ciudad", "location_city", VM.City, v => VM.City = v)
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("Código postal", "markunread_mailbox", VM.PostalCode, v => VM.PostalCode = v)
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            @Campo("Teléfono", "phone", VM.Phone, v => VM.Phone = v)
+        </RadzenColumn>
+        <RadzenColumn Size="12">
+            @Campo("Email de contacto", "email", VM.ContactMail, v => VM.ContactMail = v)
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenCard Style="border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 1.25rem;">
+
+    <SectionTitle Text="Imagen y marca" Icon="image"/>
+
+    <RadzenRow Gap="20">
+        <RadzenColumn Size="12">
+            <RadzenStack Gap="10">
+
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="6">
+                    <RadzenIcon Icon="insert_photo" Style="font-size:16px; color:#4e73df;"/>
+                    <RadzenText Text="Logotipo de la clínica" Style="font-size:13px;"/>
+                </RadzenStack>
+
+                @if (!VM.IsEditing)
+                {
+                    <!-- Modo visualización -->
+                    @if (!string.IsNullOrWhiteSpace(VM.LogoUrl))
+                    {
+                        <img src="@VM.LogoUrl"
+                             alt="Logo clínica"
+                             style="max-height:110px; border-radius:10px;
+                                    border:1px solid #e5e7eb; padding:6px; object-fit:contain;"/>
+                    }
+                    else
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10"
+                                     Style="padding:16px; border-radius:10px; border:1px dashed #d1d5db;
+                                            background:#fafafa; width:fit-content;">
+                            <RadzenIcon Icon="image_not_supported" Style="color:#aaa; font-size:22px;"/>
+                            <RadzenText Text="Sin logotipo" Style="color:#aaa; font-size:14px;"/>
+                        </RadzenStack>
+                    }
+                }
+                else
+                {
+                    <!-- Modo edición: zona de drop + preview -->
+                    <RadzenStack Gap="14">
+
+                        <!-- Preview actual o placeholder -->
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="16">
+                            <div style="width:90px; height:90px; border-radius:12px;
+                                        border:2px solid #e5e7eb; background:#f9fafb;
+                                        display:flex; align-items:center; justify-content:center;
+                                        overflow:hidden; flex-shrink:0;">
+                                @if (!string.IsNullOrWhiteSpace(VM.LogoUrl))
+                                {
+                                    <img src="@VM.LogoUrl" alt="preview"
+                                         style="width:100%; height:100%; object-fit:contain; padding:4px;"/>
+                                }
+                                else
+                                {
+                                    <RadzenIcon Icon="add_photo_alternate"
+                                                Style=" font-size:32px;"/>
+                                }
+                            </div>
+
+                            <RadzenStack Gap="6">
+                                <RadzenText Text="@(string.IsNullOrWhiteSpace(VM.LogoUrl) ? "Sin imagen cargada" : "Imagen actual")"
+                                            Style="font-size:14px; font-weight:600;"/>
+                                <RadzenText Text="PNG, JPG o SVG · Máx. 2 MB · Recomendado 512×512px"
+                                            Style="font-size:12px;"/>
+                            </RadzenStack>
+                        </RadzenStack>
+
+                        <!-- InputFile de Blazor -->
+                        <label style="
+                            display:flex; flex-direction:column; align-items:center;
+                            justify-content:center; gap:10px;
+                            padding:28px 20px;
+                            border:2px dashed #93aee8;
+                            border-radius:12px;
+                            background:linear-gradient(135deg,#eef2ff 0%,#f5f7ff 100%);
+                            cursor:pointer;
+                            transition:border-color .2s, background .2s;"
+                            @onmouseover="@(() => _hoverUpload = true)"
+                            @onmouseout="@(() => _hoverUpload = false)">
+
+                            <RadzenIcon Icon="cloud_upload"
+                                        Style="@($"font-size:36px; color:{(_hoverUpload ? "#4e73df" : "#7b9de0")}; transition:color .2s;")"/>
+
+                            <RadzenStack Gap="2" Style="text-align:center;">
+                                <RadzenText Text="Arrastra tu imagen aquí o haz clic para seleccionar"
+                                            Style="font-size:14px; font-weight:600; color:#4e73df;"/>
+                                <RadzenText Text="PNG, JPG o SVG · Máx. 2 MB"
+                                            Style="font-size:12px; color:#9ca3af;"/>
+                            </RadzenStack>
+
+                            <InputFile OnChange="@OnImageSelected"
+                                       accept="image/png,image/jpeg,image/svg+xml"
+                                       style="display:none;"/>
+                        </label>
+
+                        <!-- Mensaje de error de validación -->
+                        @if (!string.IsNullOrWhiteSpace(_uploadError))
+                        {
+                            <RadzenAlert AlertStyle="AlertStyle.Danger"
+                                         Text="@_uploadError"
+                                         Style="border-radius:8px;"/>
+                        }
+
+                        <!-- Botón para quitar imagen -->
+                        @if (!string.IsNullOrWhiteSpace(VM.LogoUrl))
+                        {
+                            <RadzenButton Text="Quitar imagen" Icon="delete_outline"
+                                          ButtonStyle="ButtonStyle.Light"
+                                          Style="border-radius:8px; color:#e74a3b;
+                                                 border:1px solid #e74a3b; width:fit-content;"
+                                          Click="@(() => { VM.LogoUrl = string.Empty; _uploadError = string.Empty; })"/>
+                        }
+
+                    </RadzenStack>
+                }
+
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+
+<RadzenCard Style="border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 1.5rem;">
+
+    <SectionTitle Text="Suscripción" Icon="workspace_premium"/>
+
+    <RadzenRow Gap="20">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Gap="5">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="8">
+                    <RadzenIcon Icon="circle" Style="color: #1cc88a; font-size:14px;"/>
+                    <RadzenText Text="Estado" Style=" font-size:13px;"/>
+                </RadzenStack>
+                <RadzenText Text="@VM.SubState"
+                            Style="font-size:17px; font-weight:600;"/>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+
+@if (VM.IsEditing)
+{
+    <RadzenStack AlignItems="AlignItems.End" Style="margin-bottom: 2rem;">
+        <RadzenButton Text="Guardar cambios" Icon="save"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Style="background: #4e73df; color: white; border-radius: 10px;
+                             padding: 0.6rem 2rem; font-weight: 600;
+                             box-shadow: 0 4px 14px rgba(78,115,223,0.4);"
+                      Click="@(async () => await VM.SaveAsync())"/>
+    </RadzenStack>
+}
+
+@code {
+
+    private bool   _hoverUpload = false;
+    private string _uploadError = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+        => await VM.LoadAsync("clinic-001");
+
+    private async Task OnImageSelected(InputFileChangeEventArgs e)
+    {
+        _uploadError = string.Empty;
+        var file = e.File;
+
+        // Validaciones
+        var allowed = new[] { "image/png", "image/jpeg", "image/svg+xml" };
+        if (!allowed.Contains(file.ContentType))
+        {
+            _uploadError = "Formato no permitido. Usa PNG, JPG o SVG.";
+            return;
+        }
+
+        const long maxBytes = 2 * 1024 * 1024; // 2 MB
+        if (file.Size > maxBytes)
+        {
+            _uploadError = "El archivo supera el límite de 2 MB.";
+            return;
+        }
+
+        // Convertir a base64 para previsualizar sin servidor
+        using var stream = file.OpenReadStream(maxBytes);
+        using var ms     = new System.IO.MemoryStream();
+        await stream.CopyToAsync(ms);
+        var base64 = Convert.ToBase64String(ms.ToArray());
+        VM.LogoUrl = $"data:{file.ContentType};base64,{base64}";
+        // TODO: subir ms.ToArray() al servidor y guardar la URL real en VM.LogoUrl
+    }
+
+ 
+    RenderFragment Campo(string label, string icon, string? valor, Action<string>? onChange)
+        => __builder =>
+    {
+        <RadzenStack Gap="4">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="6">
+                <RadzenIcon Icon="@icon" Style="font-size:16px; color:#4e73df;"/>
+                <RadzenText Text="@label" Style=" font-size:13px;"/>
+            </RadzenStack>
+
+            @if (!VM.IsEditing)
+            {
+                <RadzenText Text="@(string.IsNullOrWhiteSpace(valor) ? "—" : valor)"
+                            Style="font-size:16px; font-weight:500;"/>
+            }
+            else if (onChange != null)
+            {
+                <RadzenTextBox Value="@valor"
+                               Change="@(e => onChange(e?.ToString() ?? string.Empty))"
+                               Style="width:100%; border-radius:8px;"/>
+            }
+            else
+            {
+                <RadzenText Text="@(string.IsNullOrWhiteSpace(valor) ? "—" : valor)"
+                            Style="font-size:16px; font-weight:500;"/>
+            }
+        </RadzenStack>;
+    };
+
+ 
+    RenderFragment SectionTitle(string text, string icon) => __builder =>
+    {
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10"
+                     Style="margin-bottom: 18px; padding-bottom: 12px;
+                            border-bottom: 1.5px solid #f0f0f4;">
+            <RadzenCard Style="width:36px; height:36px; border-radius:8px;
+                                background:#eef2ff; display:flex;
+                                align-items:center; justify-content:center;">
+                <RadzenIcon Icon="@icon" Style="color:#4e73df; font-size:19px;"/>
+            </RadzenCard>
+            <RadzenText Text="@text"
+                        Style="font-size:17px; font-weight:700; margin:0;"/>
+        </RadzenStack>;
+    };
+}

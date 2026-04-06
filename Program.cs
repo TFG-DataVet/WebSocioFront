@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Radzen;
 using SocioWeb;
 using SocioWeb.Entities.Models.Auth;
 using SocioWeb.Services.AppointmentService;
+using SocioWeb.Services.Exceptions.EmployeeService;
 using SocioWeb.ViewModels;
 using SocioWeb.ViewModels.Appointments;
+using SocioWeb.ViewModels.Clinic;
+using SocioWeb.ViewModels.Clinic;
+using SocioWeb.ViewModels.Employee;
 using SocioWeb.ViewModels.Auth;
 using SocioWeb.ViewModels.Medical;
 using SocioWeb.ViewModels.Owners;
@@ -31,6 +34,10 @@ builder.Services.AddScoped<IAuthService, AuthApiService>();
 
 builder.Services.AddRadzenComponents(); // O los servicios individuales como NotificationService
 
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddTransient<ClinicprofileViewModel>();
+
 // ViewModels
 builder.Services.AddScoped<OwnerPageVM>();
 builder.Services.AddScoped<OwnerProfileVM>();
@@ -51,6 +58,12 @@ builder.Services.AddTransient<OwnerProfileViewModel>();
 builder.Services.AddTransient<ProductListViewModel>();
 builder.Services.AddTransient<ProductProfileViewModel>();
 builder.Services.AddTransient<MedicalRegisterViewModel>();
+builder.Services.AddScoped<IEmployeeService, EmployeesApiService>();
+builder.Services.AddTransient<EmployeeListViewModel>();
+builder.Services.AddScoped<IEmployeeService, EmployeesApiService>();
+builder.Services.AddTransient<EmployeeFormVM>();
+builder.Services.AddTransient<EmployeeProfileVM>();
+builder.Services.AddTransient<EmployeeListViewModel>();
 builder.Services.AddScoped<RegisterClinicVM>(); 
 builder.Services.AddScoped<VerifyEmailVM>();
 builder.Services.AddScoped<CompleteProfileVM>();

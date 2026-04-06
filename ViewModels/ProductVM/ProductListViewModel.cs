@@ -8,8 +8,11 @@ public class ProductListViewModel : BaseViewModel
 {
     private readonly IProductService _service;
 
+    // ─── LISTAS ───────────────────────────────────────────────────────────────
     public List<Product> Products { get; private set; } = new();
     public List<Product> FilteredProducts { get; private set; } = new();
+
+    // ─── FILTROS ─────────────────────────────────────────────────────────────
     public DateTime? DateSince { get; set; }
     public DateTime? DateTo { get; set; }
     public string CategoryFilter { get; set; } = "";
@@ -18,6 +21,9 @@ public class ProductListViewModel : BaseViewModel
 
     public ProductListViewModel(IProductService service) => _service = service;
 
+    // ─── CRUD ─────────────────────────────────────────────────────────────────
+
+    /// <summary>GET /products — carga todos los productos.</summary>
     public async Task LoadAsync()
     {
         IsLoading = true;
@@ -26,7 +32,7 @@ public class ProductListViewModel : BaseViewModel
         {
             Products = await _service.GetAllAsync();
             Products = Products.OrderBy(p => p.CreatedAt).ToList();
-            FilteredProducts = Products;
+            FilteredProducts = new List<Product>(Products);
         }
         catch (Exception ex)
         {
@@ -38,6 +44,29 @@ public class ProductListViewModel : BaseViewModel
         }
     }
 
+    /// <summary>DELETE /products/{id} — elimina un producto por ID.</summary>
+    public async Task DeleteAsync(string id)
+    {
+        IsLoading = true;
+        ClearError();
+        try
+        {
+            await _service.DeleteAsync(id);
+            Products.RemoveAll(p => p.Id == id);
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            SetError($"Error al eliminar el producto: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    // ─── FILTROS ──────────────────────────────────────────────────────────────
+
     public void ApplyFilters()
     {
         FilteredProducts = Products
@@ -45,10 +74,20 @@ public class ProductListViewModel : BaseViewModel
                 (!DateSince.HasValue || p.CreatedAt >= DateSince) &&
                 (!DateTo.HasValue   || p.CreatedAt <= DateTo) &&
                 (string.IsNullOrEmpty(CategoryFilter) ||
-                 p.Category.Contains(CategoryFilter, StringComparison.OrdinalIgnoreCase)) &&
+                 (p.Category ?? "").Contains(CategoryFilter, StringComparison.OrdinalIgnoreCase)) &&
                 (string.IsNullOrEmpty(BrandFilter) ||
-                 p.Brand.Contains(BrandFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (!MinimumStock.HasValue || p.Stock >= MinimumStock))
+                 (p.Brand ?? "").Contains(BrandFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (!MinimumStock.HasValue || int.Parse(p.Stock) >= MinimumStock))
             .ToList();
+    }
+
+    public void ClearFilters()
+    {
+        DateSince      = null;
+        DateTo         = null;
+        CategoryFilter = "";
+        BrandFilter    = "";
+        MinimumStock   = null;
+        FilteredProducts = new List<Product>(Products);
     }
 }
