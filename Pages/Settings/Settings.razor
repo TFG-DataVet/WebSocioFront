@@ -1,0 +1,153 @@
+﻿@page "/settings"
+@inject IJSRuntime JS
+
+<RadzenStack Gap="30" Style="max-width:900px; margin:0 auto; padding:20px;">
+
+    <!-- HEADER -->
+    <RadzenStack Gap="5">
+        <RadzenText Text="Centro de Ajustes" Style="font-size:28px; font-weight:600; color:#3C3489;" />
+        <RadzenText Text="Configura tu aplicación y tu perfil" Style="color:rgba(60,52,137,0.6);" />
+    </RadzenStack>
+
+    <!-- PERFIL -->
+    <div id="perfil">
+        <RadzenCard Style="padding:20px; border-radius:16px;">
+            <RadzenStack Gap="15">
+                <RadzenText Text="👤 Perfil" Style="font-size:20px; font-weight:600;" />
+
+                <RadzenTextBox @bind-Value="nombre" Placeholder="Nombre" Style="width:100%;" />
+                <RadzenTextBox @bind-Value="email" Placeholder="Email" Style="width:100%;" />
+                <RadzenTextBox @bind-Value="telefono" Placeholder="Teléfono" Style="width:100%;" />
+
+                <RadzenButton Text="Guardar cambios" Click="GuardarPerfil" Style="width:200px;" />
+            </RadzenStack>
+        </RadzenCard>
+    </div>
+
+    <!-- PREFERENCIAS -->
+    <div id="preferencias">
+        <RadzenCard Style="padding:20px; border-radius:16px;">
+            <RadzenStack Gap="15">
+                <RadzenText Text="⚙ Preferencias" Style="font-size:20px; font-weight:600;" />
+
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10">
+                    <RadzenSwitch @bind-Value="modoOscuro" Change="OnThemeChanged" />
+                    <RadzenText Text="Modo oscuro" />
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10">
+                    <RadzenSwitch @bind-Value="notificaciones" />
+                    <RadzenText Text="Notificaciones activas" />
+                </RadzenStack>
+                
+            </RadzenStack>
+        </RadzenCard>
+    </div>
+
+    <!-- AYUDA -->
+    <div id="ayuda">
+        <RadzenCard Style="padding:20px; border-radius:16px;">
+            <RadzenStack Gap="15">
+                <RadzenText Text="❓ Ayuda" Style="font-size:20px; font-weight:600;" />
+
+                <RadzenText Text="¿Necesitas ayuda? Aquí tienes recursos útiles." />
+
+                <RadzenButton Text="Contactar soporte" Icon="support_agent" Click="ContactarSoporte" />
+                <RadzenButton Text="Documentación" Icon="menu_book" Variant="Variant.Outlined" Click="AbrirDocs" />
+            </RadzenStack>
+        </RadzenCard>
+    </div>
+
+    <!-- CENTRO -->
+    <div id="centro">
+        <RadzenCard Style="padding:20px; border-radius:16px;">
+            <RadzenStack Gap="15">
+                <RadzenText Text="🧩 Centro de Ajustes" Style="font-size:20px; font-weight:600;" />
+
+                <RadzenText Text="Resumen general de tu configuración." />
+
+                <RadzenProgressBar Value="@ProgresoPerfil()" ShowValue="true" />
+                <RadzenText Text="@($"Tu perfil está {ProgresoPerfil()}% completo")" />
+
+            </RadzenStack>
+        </RadzenCard>
+    </div>
+
+</RadzenStack>
+
+@code {
+    // PERFIL
+    string nombre;
+    string email;
+    string telefono;
+
+    // PREFERENCIAS
+    bool modoOscuro;
+    bool notificaciones;
+    string idiomaSeleccionado;
+    List<string> idiomas = new() { "Español", "Inglés"};
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar datos guardados
+        nombre = await JS.InvokeAsync<string>("localStorage.getItem", "nombre") ?? "";
+        email = await JS.InvokeAsync<string>("localStorage.getItem", "email") ?? "";
+        telefono = await JS.InvokeAsync<string>("localStorage.getItem", "telefono") ?? "";
+
+        idiomaSeleccionado = await JS.InvokeAsync<string>("localStorage.getItem", "idioma") ?? "Español";
+
+        modoOscuro = (await JS.InvokeAsync<string>("localStorage.getItem", "dark")) == "true";
+        notificaciones = (await JS.InvokeAsync<string>("localStorage.getItem", "notificaciones")) == "true";
+    }
+
+    async Task GuardarPerfil()
+    {
+        await JS.InvokeVoidAsync("localStorage.setItem", "nombre", nombre);
+        await JS.InvokeVoidAsync("localStorage.setItem", "email", email);
+        await JS.InvokeVoidAsync("localStorage.setItem", "telefono", telefono);
+    }
+
+    async Task GuardarPreferencias(object value = null)
+    {
+        await JS.InvokeVoidAsync("localStorage.setItem", "idioma", idiomaSeleccionado);
+        await JS.InvokeVoidAsync("localStorage.setItem", "notificaciones", notificaciones.ToString());
+    }
+
+    async Task OnThemeChanged(bool value)
+    {
+        modoOscuro = value;
+
+        var theme = modoOscuro ? "dark" : "light";
+        await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", theme);
+        await JS.InvokeVoidAsync("localStorage.setItem", "dark", modoOscuro.ToString());
+    }
+
+    int ProgresoPerfil()
+    {
+        int progreso = 0;
+        if (!string.IsNullOrWhiteSpace(nombre)) progreso += 30;
+        if (!string.IsNullOrWhiteSpace(email)) progreso += 30;
+        if (!string.IsNullOrWhiteSpace(telefono)) progreso += 40;
+        return progreso;
+    }
+
+    async Task ContactarSoporte()
+    {
+        var emailDestino = "soporte@petcare.com";
+
+        var subject = Uri.EscapeDataString("Solicitud de soporte - DataVet");
+
+        var body = Uri.EscapeDataString(
+            $"Nombre: {nombre}\nEmail: {email}\n\nDescribe tu problema aquí:\n"
+        );
+
+        var url = $"mailto:{emailDestino}?subject={subject}&body={body}";
+
+        await JS.InvokeVoidAsync("open", url, "_self");
+    }
+
+    async Task AbrirDocs()
+    {
+        await JS.InvokeVoidAsync("open", "https://learn.microsoft.com", "_blank");
+    }
+}

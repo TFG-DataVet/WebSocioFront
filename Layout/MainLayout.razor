@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 
 
@@ -31,20 +32,34 @@
                     Style="font-size:16px; font-weight:500; color:#3C3489; margin-left:-6px;"/>
             </RadzenStack>
 
-            <RadzenText Text="Clínica PetCare · Dr. Pérez"
+            <RadzenText Text="Clínica PetCare Dr. Pérez"
                 Style="font-size:13px; color:rgba(80,60,180,0.6); position:absolute; left:50%; transform:translateX(-50%);"/>
 
-            <RadzenButton
-                Text="@(isDarkMode ? "☀ Claro" : "☾ Oscuro")"
-                Click="@ToggleTheme"
-                Variant="Variant.Outlined"
-                Style="
-                    background: rgba(127,119,221,0.10);
-                    border: 0.5px solid rgba(127,119,221,0.25);
-                    border-radius: 20px;
-                    color: #7F77DD;
-                    font-size: 12px;
-                    padding: 6px 14px;"/>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="8">
+                
+                <RadzenMenu>
+                    <RadzenMenuItem Text="⚙" Icon="settings" Style="border: 0.5px solid rgba(127,119,221,0.25); border-radius: 8px; padding: 6px 10px;">
+                        <RadzenMenuItem Text="Perfil" Icon="person" Click="@OnSettingsCenterClick"/>
+                        <RadzenMenuItem Text="Preferencias" Icon="tune" Click="@OnSettingsCenterClick"/>
+                        <RadzenMenuItemSeparator/>
+                        <RadzenMenuItem Text="Ayuda" Icon="help" Click="@OnSettingsCenterClick"/>
+                        <RadzenMenuItem Text="Centro de Ajustes" Icon="settings" Click="@OnSettingsCenterClick"/>
+                    </RadzenMenuItem>
+                </RadzenMenu>
+                
+                <RadzenButton
+                    Text="@(isDarkMode ? "☀ Claro" : "☾ Oscuro")"
+                    Click="@ToggleTheme"
+                    Variant="Variant.Outlined"
+                    Style="
+                        background: rgba(127,119,221,0.10);
+                        border: 0.5px solid rgba(127,119,221,0.25);
+                        border-radius: 20px;
+                        color: #7F77DD;
+                        font-size: 12px;
+                        padding: 6px 14px;"/>
+
+            </RadzenStack>
         </RadzenStack>
     </RadzenHeader>
 
@@ -88,5 +103,8 @@
         await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", theme);
     }
 
+    void OnSettingsCenterClick()
+    {
+        Navigation.NavigateTo("/settings");
+    }
 }
-
