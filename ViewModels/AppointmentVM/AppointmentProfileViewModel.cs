@@ -38,7 +38,7 @@ public class AppointmentProfileViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar la cita: {ex.Message}");
+            SetError($"Error al cargar la cita");
         }
         finally
         {

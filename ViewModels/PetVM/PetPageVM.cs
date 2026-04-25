@@ -118,7 +118,7 @@ public class PetPageVM : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al actualizar la mascota: {ex.Message}");
+            SetError($"Error al actualizar la mascota");
         }
         finally
         {

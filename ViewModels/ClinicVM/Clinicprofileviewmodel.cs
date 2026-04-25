@@ -45,7 +45,7 @@ public class ClinicprofileViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar la clínica: {ex.Message}");
+            SetError($"Error al cargar la clínica");
         }
         finally
         {

@@ -26,7 +26,7 @@ public class ProductProfileViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar el producto: {ex.Message}");
+            SetError($"Error al cargar el producto");
         }
         finally
         {

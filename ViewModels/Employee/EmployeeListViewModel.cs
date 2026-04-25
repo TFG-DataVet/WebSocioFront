@@ -37,7 +37,7 @@ public class EmployeeListViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar empleados: {ex.Message}");
+            SetError($"Error al cargar empleados");
         }
         finally
         {

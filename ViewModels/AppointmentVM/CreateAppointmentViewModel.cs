@@ -28,7 +28,7 @@ public class CreateAppointmentViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al crear la cita: {ex.Message}");
+            SetError($"Error al crear la cita");
         }
         finally
         {

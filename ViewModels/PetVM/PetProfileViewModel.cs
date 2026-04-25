@@ -27,7 +27,7 @@ public class PetProfileViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar la mascota: {ex.Message}");
+            SetError($"Error al cargar la mascota");
         }
         finally
         {

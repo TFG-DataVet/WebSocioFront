@@ -47,7 +47,7 @@ public class OwnerFormularyVM : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar datos: {ex.Message}");
+            SetError($"Error al cargar datos");
         }
         finally
         {
