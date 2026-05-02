@@ -68,10 +68,27 @@
 
                     <RadzenColumn Size="12" SizeMD="6">
                         <div style="display:flex; flex-direction:column; gap:6px;">
-                            <label style="font-size:13px; font-weight:500;">Número de identificación <span style="color:#E24B4A;">*</span></label>
-                            <RadzenTextBox Name="IdentificationNumber" @bind-Value="VM.FormData.IdentificationNumber"
-                                           Placeholder="DNI / NIE / Pasaporte" Style="width:75%;" />
-                            <RadzenRequiredValidator Component="IdentificationNumber" Text="La identificación es obligatoria." />
+                            <label style="font-size:13px; font-weight:500;">
+                                Tipo de documento <span style="color:#E24B4A;">*</span>
+                            </label>
+                            <RadzenDropDown Name="DocumentType"
+                                            @bind-Value="VM.FormData.DocumentType"
+                                            Data="@(new[] { "DNI", "NIE", "NIF", "PASAPORTE" })"
+                                            Style="width:75%;" />
+                            <RadzenRequiredValidator Component="DocumentType" Text="El tipo es obligatorio." />
+                        </div>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">
+                                Número de documento <span style="color:#E24B4A;">*</span>
+                            </label>
+                            <RadzenTextBox Name="DocumentNumber"
+                                           @bind-Value="VM.FormData.DocumentNumber"
+                                           Placeholder="12345678Z"
+                                           Style="width:75%;" />
+                            <RadzenRequiredValidator Component="DocumentNumber" Text="El número es obligatorio." />
                         </div>
                     </RadzenColumn>
 

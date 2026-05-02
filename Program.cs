@@ -4,6 +4,7 @@ using Radzen;
 using SocioWeb;
 using SocioWeb.Services.AppointmentService;
 using SocioWeb.Services.Exceptions.EmployeeService;
+using SocioWeb.Services.PetService;
 using SocioWeb.ViewModels;
 using SocioWeb.ViewModels.Appointments;
 using SocioWeb.ViewModels.Clinic;
@@ -59,5 +60,6 @@ builder.Services.AddScoped<IEmployeeService, EmployeesApiService>();
 builder.Services.AddTransient<EmployeeFormVM>();
 builder.Services.AddTransient<EmployeeProfileVM>();
 builder.Services.AddTransient<EmployeeListViewModel>();
+
 
 await builder.Build().RunAsync();

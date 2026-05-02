@@ -159,9 +159,14 @@
 
 @code {
 
-    protected override async Task OnInitializedAsync()
-        => await VM.LoadAsync();
-
+    //protected override async Task OnInitializedAsync()
+       // => await VM.LoadAsync();
+       
+       
+       
+       protected override async Task OnInitializedAsync()
+           => await VM.LoadAsync("2393ff87-3959-4096-9b31-0d8b6d718f10");
+       
     async Task ConfirmDelete(Employee employee)
     {
         var result = await DialogService.Confirm(

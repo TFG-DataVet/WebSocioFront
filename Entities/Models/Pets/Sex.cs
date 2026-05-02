@@ -1,8 +1,11 @@
-﻿namespace SocioWeb.Domain.Entities;
+﻿using System.Text.Json.Serialization;
 
+namespace SocioWeb.Domain.Entities;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Sex
 {
-    Male,
-    Female,
-    Other
+    MALE,
+    FEMALE,
+    UNKNOWN
 }

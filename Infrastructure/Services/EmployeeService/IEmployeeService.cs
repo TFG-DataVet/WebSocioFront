@@ -6,7 +6,7 @@ namespace SocioWeb.Services.Exceptions.EmployeeService;
 public interface IEmployeeService
 {
     /// <summary>GET /employee — devuelve todos los empleados.</summary>
-    Task<List<Employee>> GetAllAsync();
+    Task<List<Employee>> GetAllAsync(string? clinicId = null);
 
     /// <summary>GET /employee/{id} — devuelve un empleado por ID.</summary>
     Task<Employee?> GetByIdAsync(string id);

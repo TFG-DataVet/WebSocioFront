@@ -51,10 +51,15 @@ using System.ComponentModel.DataAnnotations;
         public string? LicenseNumber { get; set; }
 
         [Required(ErrorMessage = "La fecha de contratación es obligatoria")]
-        public DateTime HireDate { get; set; }
+        // Cambia HireDate de DateTime a string para compatibilidad con el backend
+        public string? HireDate { get; set; }
 
         [Required(ErrorMessage = "El rol es obligatorio")]
         public string Role { get; set; } = string.Empty;
         
         public string id { get; set; } = string.Empty;
+        
+        public string? ClinicId { get; set; }
+        // Cambia HireDate de DateTime a string para compatibilidad con el backend
+        
     }
