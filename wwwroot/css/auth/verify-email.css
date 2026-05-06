@@ -1,0 +1,126 @@
+/* ============================================================
+   VERIFY EMAIL PAGE — estilos específicos
+   Hereda toda la estructura de login.css (.login-page,
+   .login-card, .login-image-panel, .login-form-panel, etc.)
+   Solo se definen aquí los elementos exclusivos de esta página.
+   ============================================================ */
+
+/* ── Indicador de paso (ej: "Paso 2 de 3") ── */
+.verify-step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+    background: rgba(136, 182, 242, 0.15);
+    border: 1px solid rgba(136, 182, 242, 0.35);
+    border-radius: 999px;
+    padding: 0.2rem 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ── Bloque de carga centrado ── */
+.verify-loading-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+.verify-loading-text {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* ── Spinner de pulso (heartbeat SVG heredado) ── */
+.heartbeatloader {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.svgdraw {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90px;
+    height: 48px;
+}
+
+.path {
+    stroke-dasharray: 500;
+    stroke-dashoffset: 500;
+    animation: draw 2s ease-in-out infinite;
+}
+
+@keyframes draw {
+    0%   { stroke-dashoffset: 500; opacity: 0; }
+    20%  { opacity: 1; }
+    70%  { stroke-dashoffset: 0; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+.innercircle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-primary, #88B6F2);
+    animation: pulse-inner 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.outercircle {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(136, 182, 242, 0.45);
+    animation: pulse-outer 2s ease-in-out infinite;
+}
+
+@keyframes pulse-inner {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.25); opacity: 0.7; }
+}
+
+@keyframes pulse-outer {
+    0%, 100% { transform: scale(1); opacity: 0.45; }
+    50%       { transform: scale(1.5); opacity: 0; }
+}
+
+/* ── Bloque de error con formulario de reenvío ── */
+.verify-error-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+}
+
+.verify-error-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.verify-error-icon img {
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: contain;
+}
+
+.verify-resend-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+}

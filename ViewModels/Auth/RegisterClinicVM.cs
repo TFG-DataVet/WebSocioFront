@@ -27,8 +27,7 @@ public class RegisterClinicVM
             ErrorMessage = null;
 
             var result = await _authService.RegisterInitialAsync(Model);
-            
-            Console.Write(result);
+
             if (result != null)
             {
                 _nav.NavigateTo("/registro_exitoso");

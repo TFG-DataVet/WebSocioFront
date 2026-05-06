@@ -1,8 +1,9 @@
 namespace SocioWeb.Entities.Models.Enums;
 
-public enum DocumentEnum
+public enum DocumentType
 {
     DNI, 
     NIE, 
-    PASSPORT
+    NIF,
+    PASAPORTE
 }

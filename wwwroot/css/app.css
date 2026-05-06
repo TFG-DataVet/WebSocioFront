@@ -1,4 +1,9 @@
 @import "./loading.css";
+@import "./auth/login.css";
+@import "./auth/forgot-password.css";
+@import "./auth/register.css";
+@import "./auth/verify-email.css";
+@import "./auth/complete-setup.css";
 
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
@@ -91,22 +96,21 @@ code {
 
 
 :root[data-theme='light'] {
-   
-    --color-primary: #88B6F2;
-    --color-background: #f2f2f2;
-    --color-primary-hover: #88ABF2;
+    --color-primary: #6366F1;
+    --color-primary-hover: #4F46E5;
+    --color-background: #EEF2FF;
     --color-surface: #FFFFFF;
     --color-text: #1F2937;
-    --color-border: #E5E7EB;
+    --color-border: #E0E7FF;
 }
 
 :root[data-theme='dark'] {
-    --color-primary: #A7C7E7;
-    --color-background: #1E1E2F;
-    --color-primary-hover: #8FB6DC;
-    --color-surface: #2C2C3A;
+    --color-primary: #818CF8;
+    --color-primary-hover: #6366F1;
+    --color-background: #0F0B2D;
+    --color-surface: #1A1535;
     --color-text: #F9FAFB;
-    --color-border: #444455;
+    --color-border: #312E6A;
 }
 
 

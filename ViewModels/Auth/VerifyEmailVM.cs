@@ -11,7 +11,7 @@ public class VerifyEmailVM
     private readonly OnboardingState _state;
 
     public string? EmailToResend { get; set; }
-    
+
     public bool IsLoading { get; private set; } = true;
     public bool HasError { get; private set; } = false;
     public string? ErrorMessage { get; private set; }
@@ -38,9 +38,8 @@ public class VerifyEmailVM
 
             if (result != null)
             {
-                _state.AccessToken = result.Access_token;
-                _state.ClinicId = result.User.ClinicId;
-
+                // El token temporal ya lo guarda VerifyEmailAsync en OnboardingState
+                // Aquí solo navegamos — no tocamos tokens
                 _nav.NavigateTo($"/clinic/{_state.ClinicId}/complete-setup");
             }
         }
@@ -54,22 +53,24 @@ public class VerifyEmailVM
             IsLoading = false;
         }
     }
-    
+
     public async Task ResendEmailAsync()
     {
         if (string.IsNullOrEmpty(EmailToResend))
         {
             HasError = true;
+            return;
         }
-        
+
         try
         {
             IsLoading = true;
             ErrorMessage = null;
+            HasError = false;
+
             await _authService.ResendEmailToVerify(EmailToResend);
-            
+
             _nav.NavigateTo("registro-exitoso");
-            
         }
         catch (Exception ex)
         {

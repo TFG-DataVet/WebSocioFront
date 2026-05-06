@@ -1,116 +1,364 @@
-@page "/clinic/{clinicId:guid}/complete-setup"
+@page "/clinic/{ClinicId:guid}/complete-setup"
+@attribute [AllowAnonymous]
+@layout AuthLayout
 @using SocioWeb.Entities.Models.Auth
 @using SocioWeb.Entities.Models.Enums
+@using SocioWeb.ViewModels.Auth
+@using SocioWeb.Components
 @inject CompleteProfileVM VM
 
-<RadzenRow>
-    <RadzenColumn Size="12">
-        <RadzenText
-            TextStyle="TextStyle.Subtitle1"
-            Text="Finaliza el registro de mi clinica"/>
-        <RadzenText
-            TextStyle="TextStyle.Body1"
-            Text="Para poder dar de alta tu clinica, necesitamos que completes los siguientes datos de la clinica y el responsable."/>
-    </RadzenColumn>
+<div class="login-page">
+    <div class="login-card setup-card">
 
-    <RadzenTemplateForm TItem="FullClinicData" Data="@VM.Model" class="rz-w-100">
-        @* Poner el Submit *@
-        <RadzenRow class="rz-w-100">
-            <RadzenColumn Size="12">
-                <RadzenText
-                    TextStyle="TextStyle.Subtitle1"
-                    Text="Datos legales de la clinca"/>
-            </RadzenColumn>
-            
-            <RadzenColumn Size="12" SizeMD="4">
-                <RadzenCard class="rz-w-100" Style="height: 500px">
-                    <RadzenFileInput
-                        @bind-Value=@VM.Model.Url
-                        TValue="string"
-                        Style="width: 100%"/>
+        @* Panel izquierdo: carrusel (solo tablet/desktop) *@
+        <div class="login-image-panel">
+            <ImageCarousel Images="@_carouselImages" AutoPlayIntervalMs="5000" />
+        </div>
 
-                </RadzenCard>
-            </RadzenColumn>
+        @* Panel derecho: formulario scrolleable con glassmorphism *@
+        <div class="login-form-panel setup-form-panel">
 
-            <RadzenColumn Size="12" SizeMD="8">
-                <RadzenCard>
-                    <RadzenRow>
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <RadzenFormField Text="Nombre Legal" class="rz-w-100">
-                                <RadzenTextBox
-                                    Name="clinicName"
-                                    @bind-Value="@VM.Model.LegalName"
-                                    Placeholder="Mis mascotas"/>
-                                <RadzenRequiredValidator Component="clinicName" Text="Requerido"/>
-                            </RadzenFormField>
-                        </RadzenColumn>
-                        
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <RadzenFormField Text="Numero legal" class="rz-w-100">
-                                <RadzenTextBox
-                                    Name="clinicNumberLegal"
-                                    @bind-Value="@VM.Model.LegalNumber"
-                                    Placeholder="XX-XXXXXXXX"/>
-                                <RadzenRequiredValidator Component="clinicNumberLegal" Text="Requerido"/>
-                            </RadzenFormField>
-                        </RadzenColumn>
-                    </RadzenRow>
-                    
-                    <RadzenRow>
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <RadzenFormField Text="Tipo de corporación" Class="rz-w-100">
-                                <RadzenDropDown TValue="LegalType?" 
-                                                Data="@VM.Model.LegalTypes" 
-                                                TextProperty="Name" 
-                                                ValueProperty="Value" 
-                                                @bind-Value="VM.Model.LegalType" 
-                                                AllowClear="true"
-                                                Name="legalType" 
-                                                Placeholder="Tipo legal de persona"
-                                                Class="rz-w-100" />
-                                <RadzenRequiredValidator Component="legalType" Text="Requerido" />
-                            </RadzenFormField>
-                        </RadzenColumn>
-                        
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <RadzenFormField Text="Numero de contacto" class="rz-w-100">
-                                <RadzenTextBox
-                                    Name="phone"
-                                    @bind-Value="@VM.Model.Phone"/>
-                                <RadzenRequiredValidator Component="phone" Text="Requerido"/>
-                            </RadzenFormField>
-                        </RadzenColumn>
-                    </RadzenRow>
-                    
-                    <RadzenRow>
-                        <RadzenColumn Size="12">
-                            <RadzenFormField Text="Correo del responsable" class="rz-w-100">
-                                <RadzenTextBox
-                                    Name="email"
-                                    @bind-Value="@VM.Model.Email"/>
-                                <RadzenRequiredValidator Component="email" Text="Requerido"/>
-                            </RadzenFormField>
-                        </RadzenColumn>
-                    </RadzenRow>
+            <div class="login-logo">
+                <img src="/Images/logos/cropped_task-design-a-premium-ultra-minimalist__2_-removebg-preview.png"
+                     alt="DataVet" />
+            </div>
 
-                </RadzenCard>
-            </RadzenColumn>
+            @* Indicador de pasos *@
+            <p class="step-label">Paso 3 de 3</p>
+            <div class="step-indicator" aria-label="Paso 3 de 3">
+                <div class="step-dot completed" title="Registro"></div>
+                <div class="step-dot completed" title="Verificar email"></div>
+                <div class="step-dot active" title="Completar perfil"></div>
+            </div>
 
-        </RadzenRow>
-        
-    </RadzenTemplateForm>
+            <h1 class="login-title">Completa tu perfil</h1>
+            <p class="login-subtitle">Información de tu clínica veterinaria</p>
 
-</RadzenRow>
+            <RadzenTemplateForm TItem="FullClinicData" Data="@VM.Model" Submit="@VM.OnSubmit">
 
+                @* ── SECCIÓN 1: Datos legales de la clínica ── *@
+                <div class="setup-section">
+                    <p class="setup-section-title">
+                        <RadzenIcon Icon="business" />
+                        Datos legales de la clínica
+                    </p>
 
+                    @* Logo / imagen de la clínica *@
+                    <div class="setup-field setup-field--full">
+                        <label class="login-label">Logo de la clínica</label>
+                        <div class="setup-upload-box">
+                            <RadzenFileInput
+                                @bind-Value="@VM.Model.Url"
+                                TValue="string"
+                                Style="width: 100%" />
+                            <span class="setup-upload-label">Sube el logotipo de tu clínica</span>
+                        </div>
+                    </div>
+
+                    <div class="setup-fields-grid">
+                        <div class="setup-field">
+                            <RadzenLabel Text="Nombre de la clínica" Component="clinicName" class="login-label" />
+                            <RadzenTextBox
+                                Name="clinicName"
+                                @bind-Value="@VM.Model.LegalName"
+                                Placeholder="Mis mascotas"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="clinicName" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Número legal" Component="clinicNumberLegal" class="login-label" />
+                            <RadzenTextBox
+                                Name="clinicNumberLegal"
+                                @bind-Value="@VM.Model.LegalNumber"
+                                Placeholder="XX-XXXXXXXX"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="clinicNumberLegal" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Tipo de corporación" Component="legalType" class="login-label" />
+                            <RadzenDropDown
+                                TValue="LegalType?"
+                                Data="@VM.Model.LegalTypes"
+                                TextProperty="Name"
+                                ValueProperty="Value"
+                                @bind-Value="VM.Model.LegalType"
+                                AllowClear="true"
+                                Name="legalType"
+                                Placeholder="Tipo legal de persona"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="legalType" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Número de contacto" Component="phone" class="login-label" />
+                            <RadzenNumeric
+                                Name="phone"
+                                @bind-Value="@VM.Model.Phone"
+                                ShowUpDown="false"
+                                TValue="string?"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="phone" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field setup-field--full">
+                            <RadzenLabel Text="Correo de la clínica" Component="email" class="login-label" />
+                            <RadzenTextBox
+                                Name="email"
+                                @bind-Value="@VM.Model.Email"
+                                Placeholder="contacto@miClinica.com"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="email" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+                    </div>
+                </div>
+
+                @* ── SECCIÓN 2: Dirección de la clínica ── *@
+                <div class="setup-section">
+                    <p class="setup-section-title">
+                        <RadzenIcon Icon="location_on" />
+                        Dirección de la clínica
+                    </p>
+
+                    <div class="setup-fields-grid">
+                        <div class="setup-field setup-field--full">
+                            <RadzenLabel Text="Dirección" Component="address" class="login-label" />
+                            <RadzenTextBox
+                                Name="address"
+                                @bind-Value="@VM.Model.Address"
+                                Placeholder="Av. Independencia 56"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="address" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Ciudad" Component="city" class="login-label" />
+                            <RadzenTextBox
+                                Name="city"
+                                @bind-Value="@VM.Model.City"
+                                Placeholder="Madrid"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="city" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Código postal" Component="codePostal" class="login-label" />
+                            <RadzenNumeric
+                                ShowUpDown="false"
+                                Name="codePostal"
+                                @bind-Value="@VM.Model.CodePostal"
+                                TValue="string?"
+                                Placeholder="13468"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="codePostal" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+                    </div>
+                </div>
+
+                @* ── SECCIÓN 3: Horario de la clínica ── *@
+                <div class="setup-section">
+                    <p class="setup-section-title">
+                        <RadzenIcon Icon="schedule" />
+                        Horario de la clínica
+                    </p>
+
+                    <div class="setup-fields-grid">
+                        <div class="setup-field setup-field--full">
+                            <RadzenLabel Text="Días de apertura" Component="openDays" class="login-label" />
+                            <RadzenDropDown
+                                Name="openDays"
+                                Multiple="true"
+                                AllowClear="true"
+                                Placeholder="Lunes, Martes, Miercoles ..."
+                                Data="@days"
+                                @bind-Value="@VM.Model.ScheduleOpenDays"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="openDays" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Horario de apertura" Component="scheduleOpen" class="login-label" />
+                            <RadzenDatePicker
+                                ShowTime="true"
+                                TimeOnly="true"
+                                DateFormat="HH:mm"
+                                Name="scheduleOpen"
+                                Placeholder="09:00"
+                                @bind-Value="@VM.Model.ScheduleOpenTime"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="scheduleOpen" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Horario de cierre" Component="scheduleClose" class="login-label" />
+                            <RadzenDatePicker
+                                ShowTime="true"
+                                TimeOnly="true"
+                                DateFormat="HH:mm"
+                                Name="scheduleClose"
+                                Placeholder="18:00"
+                                @bind-Value="@VM.Model.ScheduleCloseTime"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="scheduleClose" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field setup-field--full">
+                            <RadzenLabel Text="Notas de horario" Component="scheduleNote" class="login-label" />
+                            <RadzenTextArea
+                                @bind-Value="@VM.Model.ScheduleNotes"
+                                Placeholder="Se atienden emergencias llamando al número (+34) 987 456 321"
+                                Name="scheduleNote"
+                                oninput="event.target.style.height = Math.max(event.target.clientHeight, event.target.scrollHeight) + 'px';"
+                                Style="width: 100%"
+                                aria-label="Auto-resize" />
+                        </div>
+                    </div>
+                </div>
+
+                @* ── SECCIÓN 4: Datos del responsable ── *@
+                <div class="setup-section">
+                    <p class="setup-section-title">
+                        <RadzenIcon Icon="person" />
+                        Datos del responsable de la clínica
+                    </p>
+
+                    @* Avatar del responsable *@
+                    <div class="setup-field setup-field--full">
+                        <label class="login-label">Foto del responsable</label>
+                        <div class="setup-upload-box">
+                            <RadzenFileInput
+                                @bind-Value="@VM.Model.OwnerAvatarUrl"
+                                TValue="string"
+                                Style="width: 100%" />
+                            <span class="setup-upload-label">Sube una foto del responsable legal</span>
+                        </div>
+                    </div>
+
+                    <div class="setup-fields-grid">
+                        <div class="setup-field">
+                            <RadzenLabel Text="Tipo de documento" Component="documentType" class="login-label" />
+                            <RadzenDropDown
+                                TValue="DocumentType?"
+                                Data="@VM.Model.DocumentTypes"
+                                TextProperty="Name"
+                                ValueProperty="Value"
+                                @bind-Value="VM.Model.OwnerDocumentType"
+                                AllowClear="true"
+                                Name="documentType"
+                                Placeholder="Seleccione el tipo de documento"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="documentType" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Número de documento" Component="documentNumber" class="login-label" />
+                            <RadzenTextBox
+                                @bind-Value="@VM.Model.OwnerDocumentNumber"
+                                Name="documentNumber"
+                                Placeholder="Documento"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="documentNumber" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field setup-field--full">
+                            <RadzenLabel Text="Dirección del responsable" Component="ownerAddress" class="login-label" />
+                            <RadzenTextBox
+                                Name="ownerAddress"
+                                @bind-Value="@VM.Model.OwnerAddress"
+                                Placeholder="Av. Carabello 23"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="ownerAddress" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Ciudad" Component="ownerCity" class="login-label" />
+                            <RadzenTextBox
+                                Name="ownerCity"
+                                @bind-Value="@VM.Model.OwnerCity"
+                                Placeholder="Madrid"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="ownerCity" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+
+                        <div class="setup-field">
+                            <RadzenLabel Text="Código postal del responsable" Component="ownerCodePostal" class="login-label" />
+                            <RadzenNumeric
+                                ShowUpDown="false"
+                                Name="ownerCodePostal"
+                                @bind-Value="@VM.Model.OwnerCodePostal"
+                                Placeholder="13975"
+                                TValue="string?"
+                                Style="width: 100%" />
+                            <RadzenRequiredValidator Component="ownerCodePostal" Text="Requerido"
+                                                     Style="display: block; margin-top: 0.25rem;" />
+                        </div>
+                    </div>
+                </div>
+
+                @* ── Error del ViewModel ── *@
+                @if (!string.IsNullOrEmpty(VM.ErrorMessage))
+                {
+                    <div class="login-error" role="alert">@VM.ErrorMessage</div>
+                }
+
+                @* ── Aviso legal ── *@
+                <div class="setup-legal-notice">
+                    <RadzenIcon Icon="shield_locked" IconColor="var(--color-primary, #88B6F2)" />
+                    <p class="setup-legal-notice-text">
+                        Al completar este registro, confirmas que toda la información facilitada es
+                        legalmente veraz y que estás facultado para representar a esta clínica.
+                    </p>
+                </div>
+
+                @* ── Botón de envío ── *@
+                <RadzenButton
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="check_circle"
+                    Text="Finalizar registro"
+                    ButtonType="ButtonType.Submit"
+                    Style="width: 100%; margin-top: 0.25rem;" />
+
+            </RadzenTemplateForm>
+
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter]
-    public Guid clinicId { get; set; } // Blazor llena esto automáticamente desde la URL
+    public Guid ClinicId { get; set; }
+
+    public IEnumerable<string?> days = new[]
+    {
+        "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado", "Domingo"
+    };
+
+    private readonly List<string> _carouselImages = new()
+    {
+        "/Images/carrusel/pexels-jonathanborba-11933172.jpg",
+        "/Images/carrusel/pexels-rdne-7348941.jpg",
+        "/Images/carrusel/pexels-viktoriia-kondratiuk-458099300-30617476.jpg",
+        "/Images/carrusel/pexels-viktoriia-kondratiuk-458099300-30617487.jpg"
+    };
 
     protected override void OnInitialized()
     {
-        VM.ClinicId = clinicId;
+        VM.Model.ClinicId = ClinicId;
     }
-    
 }
