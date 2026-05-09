@@ -1,49 +1,88 @@
-﻿@page "/login"
+@page "/login"
+@using SocioWeb.Entities.Dtos.AuthDto
+@using SocioWeb.Infrastructure.Services
+@using SocioWeb.Infrastructure.Services.Auth
 
-<RadzenStack Orientation="Orientation.Vertical" Gap="1rem" 
+@inject IAuthService     AuthService
+@inject AuthStateService AuthState
+@inject NavigationManager Navigation
+
+<RadzenStack Orientation="Orientation.Vertical" Gap="1rem"
              JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center"
              Wrap="FlexWrap.Wrap" Style="min-height: 100vh;">
 
-    <RadzenText 
-        TextStyle="TextStyle.DisplayH1"
-        Style="color: var(--color-primary); text-align:center; font-weight:bold;">
+    <RadzenText TextStyle="TextStyle.DisplayH1"
+                Style="color: var(--color-primary); text-align:center; font-weight:bold;">
         Bienvenido a DataVet
     </RadzenText>
 
     <h2 style="text-align:center;">Inicia sesión</h2>
 
-    <input placeholder="Usuario" @bind="username"/>
-    <input type="password" placeholder="Contraseña" @bind="password"/>
-    <RadzenButton
-        ButtonStyle="ButtonStyle.Primary"
-        Text="Entrar"
-        Style="width:150px; margin-top:1rem;"
-        class="login-button"
-        Click="LoginUser"
-    />
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@_error" Style="max-width:300px;"/>
+    }
 
-    <img src="\Imagenes\mascotas4.png"
-         alt="Veterinaria"
-         class="login-bottom-image"/>
+    <input type="email" placeholder="Email" @bind="_email"
+           style="width:250px; padding:8px; border-radius:6px; border:1px solid #ccc;"/>
+    <input type="password" placeholder="Contraseña" @bind="_password"
+           style="width:250px; padding:8px; border-radius:6px; border:1px solid #ccc;"/>
 
-    <img src="\Imagenes\mascotas5.png"
-         alt="Veterinaria"
-         class="login-top-image"/>
+    <RadzenButton ButtonStyle="ButtonStyle.Primary"
+                  Text="@(_loading ? "Entrando..." : "Entrar")"
+                  Style="width:150px; margin-top:1rem;"
+                  class="login-button"
+                  Disabled="@_loading"
+                  Click="LoginUser"/>
+
+    <RadzenText Style="font-size:13px;">
+        ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
+    </RadzenText>
+
+    <img src="\Imagenes\mascotas4.png" alt="Veterinaria" class="login-bottom-image"/>
+    <img src="\Imagenes\mascotas5.png" alt="Veterinaria" class="login-top-image"/>
 
 </RadzenStack>
 
 @code {
-    string username;
-    string password;
+    string _email    = string.Empty;
+    string _password = string.Empty;
+    string _error    = string.Empty;
+    bool   _loading  = false;
 
-    [Inject] NavigationManager Navigation { get; set; }
-
-    void LoginUser()
+    async Task LoginUser()
     {
-        if (username?.Trim().ToLower() == "admin" && password?.Trim() == "1234")
+        _error   = string.Empty;
+        _loading = true;
+        try
         {
-            Navigation.NavigateTo("/home");
+            var result = await AuthService.LoginAsync(new LoginRequestDto
+            {
+                Email    = _email,
+                Password = _password
+            });
+
+            if (result?.User != null)
+                AuthState.SetSession(result.User.ClinicId, result.User.UserId,
+                                     result.User.Email, result.User.Role);
+
+            if (result?.NextStep == "COMPLETE_SETUP" && result.AccessToken != null)
+            {
+                AuthState.OnboardingToken = result.AccessToken;
+                Navigation.NavigateTo("/complete-setup");
+            }
+            else
+            {
+                Navigation.NavigateTo("/");
+            }
+        }
+        catch
+        {
+            _error = "Email o contraseña incorrectos.";
+        }
+        finally
+        {
+            _loading = false;
         }
     }
-
 }

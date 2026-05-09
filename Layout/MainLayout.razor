@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
+@inject SocioWeb.Infrastructure.Services.AuthStateService AuthState
+@inject SocioWeb.Infrastructure.Services.Auth.IAuthService AuthService
 
 
 
@@ -93,6 +95,21 @@
         if (firstRender)
         {
             await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", "light");
+
+            // Restore session from cookie if not already set
+            if (!AuthState.SessionChecked)
+            {
+                AuthState.SessionChecked = true;
+                try
+                {
+                    var me = await AuthService.GetMeAsync();
+                    if (me?.User != null)
+                        AuthState.SetSession(me.User.ClinicId, me.User.UserId,
+                                             me.User.Email, me.User.Role);
+                }
+                catch { /* cookie missing or expired — user stays unauthenticated */ }
+                StateHasChanged();
+            }
         }
     }
 

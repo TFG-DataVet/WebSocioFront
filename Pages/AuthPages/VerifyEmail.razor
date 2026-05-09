@@ -1,0 +1,72 @@
+@page "/verify-email"
+@using SocioWeb.Infrastructure.Services
+@using SocioWeb.Infrastructure.Services.Auth
+
+@inject IAuthService      AuthService
+@inject AuthStateService  AuthState
+@inject NavigationManager Navigation
+
+<RadzenStack Orientation="Orientation.Vertical" Gap="1.5rem"
+             JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center"
+             Style="min-height: 100vh;">
+
+    @if (_loading)
+    {
+        <RadzenProgressBar Value="100" ShowValue="false"
+                           Mode="ProgressBarMode.Indeterminate"
+                           Style="width:300px;"/>
+        <RadzenText Text="Verificando tu email..." Style="font-size:18px;"/>
+    }
+    else if (!string.IsNullOrEmpty(_error))
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@_error" Style="max-width:450px;"/>
+        <RadzenButton Text="Volver al inicio de sesión"
+                      Click="@(() => Navigation.NavigateTo("/login"))"/>
+    }
+    else
+    {
+        <RadzenText Text="✅ Email verificado"
+                    Style="font-size:28px; font-weight:700; color:#1cc88a;"/>
+        <RadzenText Text="Redirigiendo para completar tu perfil..."
+                    Style="font-size:16px; color:#666;"/>
+    }
+
+</RadzenStack>
+
+@code {
+    [SupplyParameterFromQuery(Name = "token")]
+    public string? Token { get; set; }
+
+    bool   _loading = true;
+    string _error   = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(Token))
+        {
+            _error   = "Token de verificación no encontrado.";
+            _loading = false;
+            return;
+        }
+
+        try
+        {
+            var result = await AuthService.VerifyEmailAsync(Token);
+
+            if (result.AccessToken != null)
+                AuthState.OnboardingToken = result.AccessToken;
+
+            if (result.User != null)
+                AuthState.SetSession(result.User.ClinicId, result.User.UserId,
+                                     result.User.Email, result.User.Role);
+
+            _loading = false;
+            Navigation.NavigateTo("/complete-setup");
+        }
+        catch
+        {
+            _error   = "El enlace de verificación no es válido o ha expirado.";
+            _loading = false;
+        }
+    }
+}
