@@ -31,7 +31,7 @@ public class PetService : IPetService
 
     public async Task<List<Pet>> GetAllAsync()
     {
-        var response = await _http.GetAsync(BaseEndpoint);
+        var response = await _http.GetAsync($"{BaseEndpoint}/clinic");
         await HandleError(response);
 
         return await response.Content.ReadFromJsonAsync<List<Pet>>()

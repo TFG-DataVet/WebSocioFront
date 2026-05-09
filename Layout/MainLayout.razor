@@ -3,6 +3,7 @@
 @inject NavigationManager Navigation
 @inject SocioWeb.Infrastructure.Services.AuthStateService AuthState
 @inject SocioWeb.Infrastructure.Services.Auth.IAuthService AuthService
+@inject ClinicprofileViewModel VM
 
 
 
@@ -34,7 +35,7 @@
                     Style="font-size:16px; font-weight:500; color:#3C3489; margin-left:-6px;"/>
             </RadzenStack>
 
-            <RadzenText Text="Clínica PetCare Dr. Pérez"
+            <RadzenText Text="@(string.IsNullOrEmpty(VM.Name) ? "" : VM.Name)"
                 Style="font-size:13px; color:rgba(80,60,180,0.6); position:absolute; left:50%; transform:translateX(-50%);"/>
 
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="8">
@@ -108,8 +109,15 @@
                                              me.User.Email, me.User.Role);
                 }
                 catch { /* cookie missing or expired — user stays unauthenticated */ }
-                StateHasChanged();
             }
+
+            if (!string.IsNullOrEmpty(AuthState.ClinicId) && string.IsNullOrEmpty(VM.Name))
+            {
+                try { await VM.LoadAsync(); }
+                catch { /* silencioso si no hay sesión */ }
+            }
+
+            StateHasChanged();
         }
     }
 

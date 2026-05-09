@@ -29,11 +29,7 @@ public class EmployeesApiService : IEmployeeService
     // ─── GET ALL ────────────────────────────────────────────────
     public async Task<List<Employee>> GetAllAsync(string? clinicId = null)
     {
-        var url = string.IsNullOrEmpty(clinicId)
-            ? BaseEndpoint
-            : $"{BaseEndpoint}?clinicId={clinicId}";
-
-        var response = await _http.GetAsync(url);
+        var response = await _http.GetAsync(BaseEndpoint);
         await HandleError(response);
 
         return await response.Content.ReadFromJsonAsync<List<Employee>>()
