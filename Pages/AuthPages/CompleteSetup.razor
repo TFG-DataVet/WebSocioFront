@@ -1,10 +1,10 @@
 @page "/complete-setup"
 @using SocioWeb.Entities.Dtos.ClinicApiDto
-@using SocioWeb.Infrastructure.Services
+@using SocioWeb.Entities.Models.Auth
 @using SocioWeb.Infrastructure.Services.ClinicService
 
 @inject IClinicService    ClinicService
-@inject AuthStateService  AuthState
+@inject OnboardingState   OnboardingState
 @inject NavigationManager Navigation
 
 <RadzenStack Orientation="Orientation.Vertical" Gap="1.5rem"
@@ -181,8 +181,8 @@
             return;
         }
 
-        var clinicId = AuthState.ClinicId;
-        var token    = AuthState.OnboardingToken;
+        var clinicId = OnboardingState.ClinicId;
+        var token    = OnboardingState.OnboardingToken;
 
         if (string.IsNullOrEmpty(clinicId) || string.IsNullOrEmpty(token))
         {
@@ -193,13 +193,9 @@
         _loading = true;
         try
         {
-            var result = await ClinicService.CompleteSetupAsync(clinicId, _dto, token);
+            await ClinicService.CompleteSetupAsync(clinicId, _dto, token);
 
-            AuthState.OnboardingToken = null;
-
-            if (result.User != null)
-                AuthState.SetSession(result.User.ClinicId, result.User.UserId,
-                                     result.User.Email, result.User.Role);
+            OnboardingState.Clear();
 
             Navigation.NavigateTo("/");
         }
