@@ -1,46 +1,43 @@
-﻿using SocioWeb.Domain.Entities;
+﻿using System.Text.Json.Serialization;
 
 namespace SocioWeb.Entities.Dtos;
-using System.ComponentModel.DataAnnotations;
 
 public class OwnerDto
 {
-    
-    public string Id { get; set; }
-    
-    [Required(ErrorMessage = "El nombre es obligatorio")]
-    [MaxLength(50, ErrorMessage = "El nombre no puede exceder 50 caracteres")]
+    [JsonPropertyName("clinicId")]
+    public string ClinicId { get; set; } = string.Empty;
+
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "El apellido es obligatorio")]
-    [MaxLength(50, ErrorMessage = "El apellido no puede exceder 50 caracteres")]
+    [JsonPropertyName("lastName")]
     public string LastName { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "El DNI es obligatorio")]
-    [MaxLength(10, ErrorMessage = "El DNI no puede exceder 10 caracteres")]
-    public string Dni { get; set; } = string.Empty;
+    // El backend espera "documentId" para el tipo (DNI, NIE...)
+    [JsonPropertyName("documentId")]
+    public string DocumentId { get; set; } = "DNI";
 
-    [RegularExpression(@"^[+]?[0-9\s\-\(\)]{7,15}$", ErrorMessage = "Formato de teléfono inválido")]
+    [JsonPropertyName("documentNumber")]
+    public string DocumentNumber { get; set; } = string.Empty;
+
+    [JsonPropertyName("phone")]
     public string? Phone { get; set; }
 
-    [Required(ErrorMessage = "El email es obligatorio")]
-    [EmailAddress(ErrorMessage = "Formato de email inválido")]
-    [MaxLength(100, ErrorMessage = "El email no puede exceder 100 caracteres")]
+    [JsonPropertyName("email")]
     public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "La dirección es obligatoria")]
-    [MaxLength(200, ErrorMessage = "La dirección no puede exceder 200 caracteres")]
+    [JsonPropertyName("address")]
     public string Address { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "La ciudad es obligatoria")]
-    [MaxLength(50, ErrorMessage = "La ciudad no puede exceder 50 caracteres")]
+    [JsonPropertyName("city")]
     public string City { get; set; } = string.Empty;
 
-    [MaxLength(10, ErrorMessage = "El código postal no puede exceder 10 caracteres")]
+    [JsonPropertyName("postalCode")]
     public string? PostalCode { get; set; }
 
+    [JsonPropertyName("url")]
     public string? Url { get; set; }
+
+    [JsonPropertyName("acceptTermsAndCond")]
+    public bool AcceptTermsAndCond { get; set; } = true;
 }
-
-
-

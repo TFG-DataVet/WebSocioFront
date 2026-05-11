@@ -1,82 +1,64 @@
-﻿using System.Net.Http.Json;
-using System.Net;
+﻿using System.Net;
+using System.Net.Http.Json;
 using SocioWeb.Entities;
 using SocioWeb.Entities.Dtos.PetDto;
+using SocioWeb.Domain.Entities;
 using SocioWeb.Services.AppointmentService;
+
+namespace SocioWeb.Services.PetService;
 
 public class PetsApiService : IPetService
 {
     private readonly HttpClient _http;
-    private const string BaseEndpoint = "pet"; // 👈 igual que owner
+    private const string BaseEndpoint = "pet";
 
-    public PetsApiService(HttpClient http)
-    {
-        _http = http;
-    }
+    public PetsApiService(HttpClient http) => _http = http;
 
-    // ─── MANEJO DE ERRORES ─────────────────────────────
-
+    // ─── ERRORES ────────────────────────────────────────────────
     private async Task HandleError(HttpResponseMessage response)
     {
         if (response.IsSuccessStatusCode) return;
-
         var body = await response.Content.ReadAsStringAsync();
-
-        // Igual que Owner
-        throw new Exception(body);
+        throw new Exception($"[{(int)response.StatusCode}] {body}");
     }
 
-    // ─── GET ALL ──────────────────────────────────────
-
+    // ─── GET ALL ────────────────────────────────────────────────
     public async Task<List<Pet>> GetAllAsync()
     {
-        var response = await _http.GetAsync(BaseEndpoint);
+        var response = await _http.GetAsync($"{BaseEndpoint}/clinic");
         await HandleError(response);
-
-        return await response.Content.ReadFromJsonAsync<List<Pet>>()
-               ?? new List<Pet>();
+        return await response.Content.ReadFromJsonAsync<List<Pet>>() ?? new();
     }
 
-    // ─── GET BY ID ────────────────────────────────────
-
+    // ─── GET BY ID ──────────────────────────────────────────────
     public async Task<Pet?> GetByIdAsync(string id)
     {
         var response = await _http.GetAsync($"{BaseEndpoint}/{id}");
-
-        if (response.StatusCode == HttpStatusCode.NotFound)
-            return null;
-
+        if (response.StatusCode == HttpStatusCode.NotFound) return null;
         await HandleError(response);
-
         return await response.Content.ReadFromJsonAsync<Pet>();
     }
 
-    // ─── CREATE ───────────────────────────────────────
-
+    // ─── CREATE ─────────────────────────────────────────────────
     public async Task CreateAsync(PetDto dto)
     {
-        var response = await _http.PostAsync(
-            BaseEndpoint,
-            JsonContent.Create(dto)
-        );
-
+        var response = await _http.PostAsync(BaseEndpoint, JsonContent.Create(dto));
         await HandleError(response);
     }
 
-    // ─── UPDATE ───────────────────────────────────────
-
+    // ─── UPDATE ─────────────────────────────────────────────────
+    // El backend PUT /pet/{id} solo acepta name y avatarUrl
     public async Task UpdateAsync(string id, PetDto dto)
     {
+        var updateRequest = new { name = dto.Name, avatarUrl = dto.AvatarUrl };
         var response = await _http.PutAsync(
             $"{BaseEndpoint}/{id}",
-            JsonContent.Create(dto)
+            JsonContent.Create(updateRequest)
         );
-
         await HandleError(response);
     }
 
-    // ─── DELETE ───────────────────────────────────────
-
+    // ─── DELETE ─────────────────────────────────────────────────
     public async Task DeleteAsync(string id)
     {
         var response = await _http.DeleteAsync($"{BaseEndpoint}/{id}");

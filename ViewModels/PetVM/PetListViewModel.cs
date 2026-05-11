@@ -43,7 +43,7 @@ public class PetListViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar mascotas: {ex.Message}");
+            SetError($"Error al cargar mascotas");
         }
         finally
         {

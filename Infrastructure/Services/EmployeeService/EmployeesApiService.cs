@@ -8,7 +8,7 @@ namespace SocioWeb.Services.Exceptions.EmployeeService;
 public class EmployeesApiService : IEmployeeService
 {
     private readonly HttpClient _http;
-    private const string BaseEndpoint = "employee";
+    private const string BaseEndpoint = "employees";
 
     public EmployeesApiService(HttpClient http)
     {
@@ -27,12 +27,12 @@ public class EmployeesApiService : IEmployeeService
     }
 
     // ─── GET ALL ────────────────────────────────────────────────
-    public async Task<List<Employee>> GetAllAsync()
+    public async Task<List<Employee>> GetAllAsync(string? clinicId = null)
     {
         var response = await _http.GetAsync(BaseEndpoint);
         await HandleError(response);
 
-        return await response.Content.ReadFromJsonAsync<List<Employee>>() 
+        return await response.Content.ReadFromJsonAsync<List<Employee>>()
                ?? new List<Employee>();
     }
 
@@ -74,7 +74,10 @@ public class EmployeesApiService : IEmployeeService
     // ─── DELETE ─────────────────────────────────────────────────
     public async Task DeleteAsync(string id)
     {
-        var response = await _http.DeleteAsync($"{BaseEndpoint}/{id}");
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"{BaseEndpoint}/{id}");
+        request.Content = JsonContent.Create(new { reason = "Eliminado desde el panel" });
+        var response = await _http.SendAsync(request);
         await HandleError(response);
     }
+
 }

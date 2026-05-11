@@ -1,0 +1,236 @@
+@page "/complete-setup"
+@using SocioWeb.Entities.Dtos.ClinicApiDto
+@using SocioWeb.Entities.Models.Auth
+@using SocioWeb.Infrastructure.Services.ClinicService
+
+@inject IClinicService    ClinicService
+@inject OnboardingState   OnboardingState
+@inject NavigationManager Navigation
+
+<RadzenStack Orientation="Orientation.Vertical" Gap="1.5rem"
+             Style="max-width:700px; margin:2rem auto; padding:0 1rem;">
+
+    <RadzenCard Style="
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        border-radius: 16px;
+        padding: 24px 28px;
+        color: white;">
+        <RadzenStack Gap="4">
+            <RadzenText Text="🏥 Completa el perfil de tu clínica"
+                        Style="font-size:22px; font-weight:700; color:white;"/>
+            <RadzenText Text="Necesitamos algunos datos más para terminar de configurar tu cuenta."
+                        Style="font-size:14px; color:rgba(255,255,255,0.85);"/>
+        </RadzenStack>
+    </RadzenCard>
+
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@_error"/>
+    }
+
+    <!-- DATOS LEGALES -->
+    <RadzenCard Style="border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+        <SectionTitle Text="Datos legales de la clínica" Icon="business_center"/>
+        <RadzenRow Gap="20">
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Razón social *", _dto.LegalName, v => _dto.LegalName = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("CIF / NIF *", _dto.LegalNumber, v => _dto.LegalNumber = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Tipo jurídico *" Style="font-size:13px; font-weight:600;"/>
+                    <RadzenDropDown @bind-Value="_dto.LegalType"
+                                    Data="@_legalTypes"
+                                    Style="width:100%; border-radius:8px;"/>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <!-- CONTACTO Y UBICACIÓN -->
+    <RadzenCard Style="border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+        <SectionTitle Text="Contacto y ubicación" Icon="location_on"/>
+        <RadzenRow Gap="20">
+            <RadzenColumn Size="12">
+                @Field("Dirección *", _dto.Address, v => _dto.Address = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Ciudad *", _dto.City, v => _dto.City = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Código postal", _dto.CodePostal ?? "", v => _dto.CodePostal = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Teléfono *", _dto.Phone, v => _dto.Phone = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Email de la clínica *", _dto.Email, v => _dto.Email = v)
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <!-- HORARIO -->
+    <RadzenCard Style="border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+        <SectionTitle Text="Horario de atención" Icon="schedule"/>
+        <RadzenRow Gap="20">
+            <RadzenColumn Size="12">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Días de apertura *" Style="font-size:13px; font-weight:600;"/>
+                    <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap" Gap="12">
+                        @foreach (var day in _allDays)
+                        {
+                            var d = day;
+                            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px;">
+                                <input type="checkbox"
+                                       checked="@_dto.ScheduleOpenDays.Contains(d)"
+                                       @onchange="@(e => ToggleDay(d, (bool)e.Value!))"/>
+                                @d
+                            </label>
+                        }
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Hora apertura * (ej: 09:00:00)", _dto.ScheduleOpenTime, v => _dto.ScheduleOpenTime = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Hora cierre * (ej: 20:00:00)", _dto.ScheduleCloseTime, v => _dto.ScheduleCloseTime = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12">
+                @Field("Notas de horario (opcional)", _dto.ScheduleNotes ?? "", v => _dto.ScheduleNotes = v)
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <!-- RESPONSABLE -->
+    <RadzenCard Style="border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+        <SectionTitle Text="Datos del responsable" Icon="person"/>
+        <RadzenRow Gap="20">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Tipo de documento *" Style="font-size:13px; font-weight:600;"/>
+                    <RadzenDropDown @bind-Value="_dto.OwnerDocumentType"
+                                    Data="@_docTypes"
+                                    Style="width:100%; border-radius:8px;"/>
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Número de documento *", _dto.OwnerDocumentNumber, v => _dto.OwnerDocumentNumber = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12">
+                @Field("Dirección del responsable *", _dto.OwnerAddress, v => _dto.OwnerAddress = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Ciudad *", _dto.OwnerCity, v => _dto.OwnerCity = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Código postal", _dto.OwnerPostalCode ?? "", v => _dto.OwnerPostalCode = v)
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                @Field("Especialidad (opcional)", _dto.OwnerSpeciality ?? "", v => _dto.OwnerSpeciality = v)
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenButton Text="@(_loading ? "Guardando..." : "Completar configuración")"
+                  Icon="check_circle"
+                  ButtonStyle="ButtonStyle.Primary"
+                  Disabled="@_loading"
+                  Style="width:100%; border-radius:10px; padding:0.8rem;
+                         font-size:16px; font-weight:600;
+                         background:#4e73df;
+                         box-shadow:0 4px 14px rgba(78,115,223,0.4);"
+                  Click="SubmitSetup"/>
+
+</RadzenStack>
+
+@code {
+    CompleteSetupDto _dto = new() { ScheduleOpenDays = new List<string>() };
+
+    bool   _loading = false;
+    string _error   = string.Empty;
+
+    readonly List<string> _legalTypes = new()
+        { "AUTONOMO", "SOCIEDAD_LIMITADA", "SOCIEDAD_ANONIMA", "SOCIEDAD_CIVIL", "COMUNIDAD_DE_BIENES", "OTHER" };
+
+    readonly List<string> _docTypes = new()
+        { "DNI", "NIE", "PASAPORTE", "CIF" };
+
+    readonly List<string> _allDays = new()
+        { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+
+    void ToggleDay(string day, bool isChecked)
+    {
+        if (isChecked) { if (!_dto.ScheduleOpenDays.Contains(day)) _dto.ScheduleOpenDays.Add(day); }
+        else _dto.ScheduleOpenDays.Remove(day);
+    }
+
+    async Task SubmitSetup()
+    {
+        _error = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(_dto.LegalName)         || string.IsNullOrWhiteSpace(_dto.LegalNumber)      ||
+            string.IsNullOrWhiteSpace(_dto.Address)           || string.IsNullOrWhiteSpace(_dto.City)             ||
+            string.IsNullOrWhiteSpace(_dto.Phone)             || string.IsNullOrWhiteSpace(_dto.Email)            ||
+            _dto.ScheduleOpenDays.Count == 0                  || string.IsNullOrWhiteSpace(_dto.OwnerDocumentNumber) ||
+            string.IsNullOrWhiteSpace(_dto.OwnerAddress)      || string.IsNullOrWhiteSpace(_dto.OwnerCity))
+        {
+            _error = "Por favor, completa todos los campos obligatorios.";
+            return;
+        }
+
+        var clinicId = OnboardingState.ClinicId;
+        var token    = OnboardingState.OnboardingToken;
+
+        if (string.IsNullOrEmpty(clinicId) || string.IsNullOrEmpty(token))
+        {
+            _error = "Sesión expirada. Por favor, vuelve a iniciar sesión.";
+            return;
+        }
+
+        _loading = true;
+        try
+        {
+            await ClinicService.CompleteSetupAsync(clinicId, _dto, token);
+
+            OnboardingState.Clear();
+
+            Navigation.NavigateTo("/");
+        }
+        catch
+        {
+            _error = "Error al completar la configuración. Revisa los datos e inténtalo de nuevo.";
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    RenderFragment Field(string label, string value, Action<string> onChange) => __builder =>
+    {
+        <RadzenStack Gap="4">
+            <RadzenText Text="@label" Style="font-size:13px; font-weight:600;"/>
+            <input value="@value"
+                   @oninput="@(e => onChange(e.Value?.ToString() ?? string.Empty))"
+                   style="width:100%; padding:8px; border-radius:6px; border:1px solid #d1d5db;
+                          box-sizing:border-box; font-size:14px;"/>
+        </RadzenStack>;
+    };
+
+    RenderFragment SectionTitle(string text, string icon) => __builder =>
+    {
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10"
+                     Style="margin-bottom:18px; padding-bottom:12px;
+                            border-bottom:1.5px solid #f0f0f4;">
+            <RadzenCard Style="width:36px; height:36px; border-radius:8px;
+                                background:#eef2ff; display:flex;
+                                align-items:center; justify-content:center;">
+                <RadzenIcon Icon="@icon" Style="color:#4e73df; font-size:19px;"/>
+            </RadzenCard>
+            <RadzenText Text="@text" Style="font-size:17px; font-weight:700; margin:0;"/>
+        </RadzenStack>;
+    };
+}

@@ -1,70 +1,70 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Text.Json.Serialization;
 using SocioWeb.Domain.Entities;
 
 namespace SocioWeb.Entities;
 
 public class Pet
 {
-    
-    public string Id { get; set; }
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = string.Empty;
 
-    // Relaciones
-    [Required]
-    public string IdOwner { get; set; }
-    
-    public Owner? Owner { get; set; }
+    [JsonPropertyName("clinicId")]
+    public string IdClinic { get; set; } = string.Empty;
 
-    [Required] 
-    public string IdClinic { get; set; }
-    
-    public Clinic? Clinic { get; set; }
-
-    // Información básica
-    [Required]  
-    [StringLength(100)]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
-    public string? AvatarUrl { get; set; } // Para integrar con mobile
-
+    [JsonPropertyName("species")]
     public string? Specie { get; set; }
+
+    [JsonPropertyName("breed")]
+    public string? Breed { get; set; }
+
+    [JsonPropertyName("sex")]
+    public Sex Sex { get; set; } = Sex.UNKNOWN;
+
+    [JsonPropertyName("dateOfBirth")]
+    public string? BirthDate { get; set; }   // string para evitar problemas con LocalDate
+
+    [JsonPropertyName("ageInYears")]
+    public int Age { get; set; }
+
+    [JsonPropertyName("chipNumber")]
     public string? Chip { get; set; }
 
-    // Raza, Edad, Sexo, Fecha de nacimiento
-    public string? Breed { get; set; }
-    public int Age { get; set; }
-    public DateTime BirthDate { get; set; } = DateTime.UtcNow;
-    public Sex Sex { get; set; } = Sex.Other;
+    [JsonPropertyName("avatarUrl")]
+    public string? AvatarUrl { get; set; }
 
-    // Datos clínicos
-    public bool Vacines { get; set; } = false;
-    public string? WhichVacines { get; set; }
+    [JsonPropertyName("owner")]
+    public PetOwnerInfo? Owner { get; set; }
 
-    public bool Operations { get; set; } = false;
-    public string? WhichOperations { get; set; }
+    // Helpers para acceder al owner fácilmente
+    public string IdOwner => Owner?.OwnerId ?? string.Empty;
 
-    public bool Diseases { get; set; } = false;
-    public string? WhichDiseases { get; set; }
+    [JsonPropertyName("active")]
+    public bool IsActive { get; set; } = true;
 
-    public bool Food { get; set; } = false;
+    [JsonPropertyName("createdAt")]
+    public DateTime? CreatedAt { get; set; }
 
-    public double? Weight { get; set; } // Peso en kg
-
-    public string? ClinicalInfo { get; set; } // Información libre: sangre, etc.
-
-    public bool Allergies { get; set; } = false;
-    public string? WhichAllergies { get; set; }
-
-    // Consultas y Citas
-    public List<Inquiry>? Inquiry { get; set; } = new List<Inquiry>();
-    public List<Appointment>? Appointments { get; set; } = new List<Appointment>();
-
-    // Información de seguro
-    public string? Insurance { get; set; }
-    public DateTime? DateLastContact { get; set; }
-
-    // Auditoría
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    [JsonPropertyName("updatedAt")]
     public DateTime? UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
+}
+
+public class PetOwnerInfo
+{
+    [JsonPropertyName("ownerId")]
+    public string OwnerId { get; set; } = string.Empty;
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("lastName")]
+    public string LastName { get; set; } = string.Empty;
+
+    [JsonPropertyName("phone")]
+    public string Phone { get; set; } = string.Empty;
+
+    [JsonPropertyName("fullName")]
+    public string FullName { get; set; } = string.Empty;
 }

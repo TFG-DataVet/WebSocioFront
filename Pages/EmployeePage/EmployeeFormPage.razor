@@ -206,7 +206,7 @@
 
     bool IsEditing => !string.IsNullOrEmpty(Id);
 
-    List<string> roles = new() { "ADMIN", "RECEPTIONIST", "CLINIC_VETERINARIAN" };
+    List<string> roles = new() { "CLINIC_OWNER","CLINIC_ADMIN","CLINIC_VETERINARIAN","CLINIC_STAFF" };
 
     protected override async Task OnInitializedAsync()
     {

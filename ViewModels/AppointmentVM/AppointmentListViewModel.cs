@@ -35,7 +35,7 @@ public class AppointmentListViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar citas: {ex.Message}");
+            SetError($"Error al cargar citas");
         }
         finally
         {
@@ -55,7 +55,7 @@ public class AppointmentListViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al eliminar la cita: {ex.Message}");
+            SetError($"Error al eliminar la cita");
         }
         finally
         {

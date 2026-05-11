@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace SocioWeb.ViewModels.Owners;
+﻿namespace SocioWeb.ViewModels.Owners;
 
 using SocioWeb.ViewModels.Shared;
 using SocioWeb.Services.AppointmentService;
@@ -15,8 +13,6 @@ public class OwnerFormularyVM : BaseViewModel
 
     public OwnerFormularyVM(IOwnerService service) => _service = service;
 
-    // ─── GET /owner/{id} — carga datos para edición ───────────────────────────
-
     public async Task LoadForEditAsync(string id)
     {
         IsLoading = true;
@@ -30,7 +26,8 @@ public class OwnerFormularyVM : BaseViewModel
                 {
                     Name                 = owner.Name,
                     LastName             = owner.LastName,
-                    IdentificationNumber = owner.IdentificationNumber,
+                    DocumentType         = owner.IdentificationType,
+                    DocumentNumber       = owner.IdentificationNumber,
                     Email                = owner.Email,
                     Phone                = owner.Phone,
                     Street               = owner.Street,
@@ -55,8 +52,6 @@ public class OwnerFormularyVM : BaseViewModel
         }
     }
 
-    // ─── POST /owner — crea un nuevo dueño ────────────────────────────────────
-
     public async Task CreateAsync()
     {
         IsSaving = true;
@@ -75,8 +70,6 @@ public class OwnerFormularyVM : BaseViewModel
             IsSaving = false;
         }
     }
-
-    // ─── PUT /owner/{id} — actualiza un dueño existente ───────────────────────
 
     public async Task UpdateAsync(string id)
     {
@@ -97,36 +90,37 @@ public class OwnerFormularyVM : BaseViewModel
         }
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
-
     private OwnerDto MapToDto() => new OwnerDto
     {
-        Name = FormData.Name ?? string.Empty,
-        LastName = FormData.LastName ?? string.Empty,
-        Dni = FormData.IdentificationNumber ?? string.Empty, // Mapeo de ID a DNI
-        Phone = FormData.Phone,
-        Email = FormData.Email ?? string.Empty,
-        Address = FormData.Street ?? string.Empty, // Ojo aquí con la estructura
-        City = FormData.City ?? string.Empty,
-        PostalCode = FormData.PostalCode
+        // ⚠️ Necesitas el clinicId real — de momento hardcode hasta tener auth
+        ClinicId       = FormData.ClinicId ?? "clinic-default",
+        Name           = FormData.Name ?? string.Empty,
+        LastName       = FormData.LastName ?? string.Empty,
+        DocumentId     = FormData.DocumentType ?? "DNI",
+        DocumentNumber = FormData.DocumentNumber ?? string.Empty,
+        Phone          = FormData.Phone,
+        Email          = FormData.Email ?? string.Empty,
+        Address        = FormData.Street ?? string.Empty,
+        City           = FormData.City ?? string.Empty,
+        PostalCode     = FormData.PostalCode,
+        Url            = null,
+        AcceptTermsAndCond = true
     };
-
-    // ─── Form model ───────────────────────────────────────────────────────────
 
     public class OwnerFormModel
     {
-        public string? Name                 { get; set; }
-        public string? LastName             { get; set; }
-        public string? IdentificationNumber { get; set; }
-        public string? Email                { get; set; }
-        public string? Phone                { get; set; }
-        public string? Password             { get; set; }
-        public string? Street               { get; set; }
-        public string? City                 { get; set; }
-        public string? PostalCode           { get; set; }
-        public string? Coments              { get; set; }
-        public string  Notifications        { get; set; } = "Ninguna";
+        public string? ClinicId          { get; set; }
+        public string? Name              { get; set; }
+        public string? LastName          { get; set; }
+        // Tipo documento: DNI, NIE, NIF, PASAPORTE
+        public string  DocumentType      { get; set; } = "DNI";
+        public string? DocumentNumber    { get; set; }
+        public string? Email             { get; set; }
+        public string? Phone             { get; set; }
+        public string? Street            { get; set; }
+        public string? City              { get; set; }
+        public string? PostalCode        { get; set; }
+        public string? Coments           { get; set; }
+        public string  Notifications     { get; set; } = "Ninguna";
     }
-    
-    
 }

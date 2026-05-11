@@ -1,91 +1,93 @@
-﻿using SocioWeb.Domain.Entities;
+﻿using System.Net;
+using System.Net.Http.Json;
+using SocioWeb.Domain.Entities;
 using SocioWeb.Entities;
 using SocioWeb.Entities.Dtos.PetDto;
 
 namespace SocioWeb.Services.AppointmentService;
 
-
-
 public class PetService : IPetService
 {
-    private readonly List<Pet> _pets = new();
+    private readonly HttpClient _http;
+    private const string BaseEndpoint = "pet";
 
-    public PetService()
+    public PetService(HttpClient http)
     {
-        // Datos de ejemplo
-        _pets.Add(new Pet
+        _http = http;
+    }
+
+    // ─── MÉTODO CENTRAL DE ERRORES ───────────────────────────────
+
+    private async Task HandleError(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode) return;
+
+        var body = await response.Content.ReadAsStringAsync();
+
+        throw new Exception(body);
+    }
+
+    // ─── GET ALL ────────────────────────────────────────────────
+
+    public async Task<List<Pet>> GetAllAsync()
+    {
+        var response = await _http.GetAsync($"{BaseEndpoint}/clinic");
+        await HandleError(response);
+
+        return await response.Content.ReadFromJsonAsync<List<Pet>>()
+               ?? new List<Pet>();
+    }
+
+    // ─── GET BY ID ──────────────────────────────────────────────
+
+    public async Task<Pet?> GetByIdAsync(string id)
+    {
+        var response = await _http.GetAsync($"{BaseEndpoint}/{id}");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return null;
+
+        await HandleError(response);
+
+        return await response.Content.ReadFromJsonAsync<Pet>();
+    }
+
+    // ─── CREATE ─────────────────────────────────────────────────
+
+    public async Task CreateAsync(PetDto dto)
+    {
+        var response = await _http.PostAsync(
+            BaseEndpoint,
+            JsonContent.Create(dto)
+        );
+
+        await HandleError(response);
+    }
+
+    // ─── UPDATE ─────────────────────────────────────────────────
+
+    public async Task UpdateAsync(string id, PetDto dto)
+    {
+        // Si tu backend solo acepta name + avatarUrl:
+        var updateRequest = new
         {
-            Id = "M1",
-            Name = "Toby",
-            Specie = "Perro",
-            Breed = "Labrador",
-            Sex = Sex.Male,
-            BirthDate = new DateTime(2021, 5, 20),
-            Weight = 24,
-            Chip = "CHIP123456789",
-            WhichDiseases = "Ninguna",
-            WhichOperations = "Castrado",
-            WhichVacines = "Rabia\nParvovirus",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            Owner = new Owner
-            {
-                Id = "1",
-                Name = "Juan Pérez",
-                Email = "juan@email.com",
-                Phone = "123456789"
-            }
-        });
-    }
-
-    public Task<List<Pet>> GetAllAsync()
-    {
-        return Task.FromResult(_pets.ToList());
-    }
-
-    public Task<Pet?> GetByIdAsync(string id)
-    {
-        var pet = _pets.FirstOrDefault(p => p.Id == id);
-        return Task.FromResult(pet);
-    }
-
-    public Task CreateAsync(PetDto dto)
-    {
-        var pet = new Pet
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = dto.Name,
-            Specie = dto.Species,
-            Breed = dto.Breed,
-            Sex = dto.Sex,
-            BirthDate = dto.DateOfBirth.Value,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            name = dto.Name,
+            avatarUrl = dto.AvatarUrl
         };
-        _pets.Add(pet);
-        return Task.CompletedTask;
+
+        var response = await _http.PutAsync(
+            $"{BaseEndpoint}/{id}",
+            JsonContent.Create(updateRequest)
+        );
+
+        await HandleError(response);
     }
 
-    public Task UpdateAsync(string id, PetDto dto)
-    {
-        var pet = _pets.FirstOrDefault(p => p.Id == id);
-        if (pet != null)
-        {
-            pet.Name = dto.Name;
-            pet.Specie = dto.Species;
-            pet.Breed = dto.Breed;
-            pet.Sex = dto.Sex;
-            pet.BirthDate = dto.DateOfBirth.Value;
-            pet.UpdatedAt = DateTime.UtcNow;
-        }
-        return Task.CompletedTask;
-    }
+    // ─── DELETE ─────────────────────────────────────────────────
 
-    public Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id)
     {
-        var pet = _pets.FirstOrDefault(p => p.Id == id);
-        if (pet != null)
-            _pets.Remove(pet);
-        return Task.CompletedTask;
+        var response = await _http.DeleteAsync($"{BaseEndpoint}/{id}");
+        await HandleError(response);
     }
 }

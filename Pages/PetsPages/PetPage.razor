@@ -146,6 +146,18 @@
                 </div>
 
                 <RadzenRow Gap="20">
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <label style="font-size:13px; font-weight:500;">
+                                ID Clínica <span style="color:#E24B4A;">*</span>
+                            </label>
+                            <RadzenTextBox Name="ClinicId"
+                                           @bind-Value="VM.FormData.ClinicId"
+                                           Placeholder="ID de la clínica"
+                                           Style="width:75%;" />
+                            <RadzenRequiredValidator Component="ClinicId" Text="El ID de la clínica es obligatorio." />
+                        </div>
+                    </RadzenColumn>
 
                     <RadzenColumn Size="12" SizeMD="6">
                         <div style="display:flex; flex-direction:column; gap:6px;">
@@ -153,8 +165,8 @@
                                 ID del dueño <span style="color:#E24B4A;">*</span>
                             </label>
                             <RadzenTextBox Name="OwnerId" @bind-Value="VM.FormData.Owner.OwnerId"
-                                           Placeholder="Identificador único" Style="width:100%;" />
-                            <RadzenRequiredValidator Component="OwnerId" Text="El ID del dueño es obligatorio." />
+                                           Placeholder="Identificador único" Style="width:100%;"/>
+                            <RadzenRequiredValidator Component="OwnerId" Text="El ID del dueño es obligatorio."/>
                         </div>
                     </RadzenColumn>
 
@@ -164,8 +176,8 @@
                                 Nombre <span style="color:#E24B4A;">*</span>
                             </label>
                             <RadzenTextBox Name="OwnerName" @bind-Value="VM.FormData.Owner.OwnerName"
-                                           Placeholder="Nombre del dueño" Style="width:75%;" />
-                            <RadzenRequiredValidator Component="OwnerName" Text="El nombre es obligatorio." />
+                                           Placeholder="Nombre del dueño" Style="width:75%;"/>
+                            <RadzenRequiredValidator Component="OwnerName" Text="El nombre es obligatorio."/>
                         </div>
                     </RadzenColumn>
 
@@ -175,8 +187,8 @@
                                 Apellidos <span style="color:#E24B4A;">*</span>
                             </label>
                             <RadzenTextBox Name="OwnerLastName" @bind-Value="VM.FormData.Owner.OwnerLastName"
-                                           Placeholder="Apellidos del dueño" Style="width:75%;" />
-                            <RadzenRequiredValidator Component="OwnerLastName" Text="Los apellidos son obligatorios." />
+                                           Placeholder="Apellidos del dueño" Style="width:75%;"/>
+                            <RadzenRequiredValidator Component="OwnerLastName" Text="Los apellidos son obligatorios."/>
                         </div>
                     </RadzenColumn>
 
@@ -186,8 +198,8 @@
                                 Teléfono <span style="color:#E24B4A;">*</span>
                             </label>
                             <RadzenTextBox Name="OwnerPhone" @bind-Value="VM.FormData.Owner.OwnerPhone"
-                                           Placeholder="+34 600 000 000" Style="width:75%;" />
-                            <RadzenRequiredValidator Component="OwnerPhone" Text="El teléfono es obligatorio." />
+                                           Placeholder="+34 600 000 000" Style="width:75%;"/>
+                            <RadzenRequiredValidator Component="OwnerPhone" Text="El teléfono es obligatorio."/>
                         </div>
                     </RadzenColumn>
 

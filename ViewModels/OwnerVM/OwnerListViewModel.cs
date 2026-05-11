@@ -36,7 +36,7 @@ public class OwnerListViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar dueños: {ex.Message}");
+            SetError($"Error al cargar dueños");
         }
         finally
         {

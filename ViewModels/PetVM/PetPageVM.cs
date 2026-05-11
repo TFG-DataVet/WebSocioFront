@@ -53,16 +53,18 @@ public class PetPageVM : BaseViewModel
                     Species     = pet.Specie,
                     Breed       = pet.Breed,
                     Sex         = pet.Sex,
-                    DateOfBirth = pet.BirthDate,
+                 
+                    DateOfBirth = DateTime.TryParse(pet.BirthDate, out var d) ? d : (DateTime?)null,
                     ChipNumber  = pet.Chip,
                     AvatarUrl   = pet.AvatarUrl,
 
                     Owner = new OwnerModel
                     {
-                        OwnerId       = pet.Owner?.Id ?? pet.IdOwner ?? string.Empty,
-                        OwnerName     = pet.Owner?.Name ?? string.Empty,
+                    
+                        OwnerId       = pet.Owner?.OwnerId ?? string.Empty,
+                        OwnerName     = pet.Owner?.Name    ?? string.Empty,
                         OwnerLastName = pet.Owner?.LastName ?? string.Empty,
-                        OwnerPhone    = pet.Owner?.Phone ?? string.Empty
+                        OwnerPhone    = pet.Owner?.Phone   ?? string.Empty
                     }
                 };
 
@@ -117,7 +119,7 @@ public class PetPageVM : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al actualizar la mascota: {ex.Message}");
+            SetError($"Error al actualizar la mascota");
         }
         finally
         {
@@ -132,16 +134,19 @@ public class PetPageVM : BaseViewModel
         Name        = FormData.Name ?? string.Empty,
         Species     = FormData.Species ?? string.Empty,
         Breed       = FormData.Breed ?? string.Empty,
-        Sex = FormData.Sex ?? Sex.Other,
-        DateOfBirth = FormData.DateOfBirth ?? DateTime.UtcNow,
+        Sex         = FormData.Sex ?? Sex.UNKNOWN,
+        // 👇 Formato yyyy-MM-dd para que Java lo parsee como LocalDate
+        DateOfBirth = FormData.DateOfBirth.HasValue
+            ? FormData.DateOfBirth.Value.ToString("yyyy-MM-dd")
+            : null,
         ChipNumber  = FormData.ChipNumber,
         AvatarUrl   = FormData.AvatarUrl,
-        Owner       = new OwnerDto
+        Owner = new PetOwnerDto          // 👈 Antes usaba OwnerDto (incorrecto)
         {
-            Id        = FormData.Owner.OwnerId ?? string.Empty,
-            Name      = FormData.Owner.OwnerName ?? string.Empty,
-            LastName  = FormData.Owner.OwnerLastName ?? string.Empty,
-            Phone     = FormData.Owner.OwnerPhone ?? string.Empty
+            OwnerId       = FormData.Owner.OwnerId ?? string.Empty,
+            OwnerName     = FormData.Owner.OwnerName ?? string.Empty,
+            OwnerLastName = FormData.Owner.OwnerLastName ?? string.Empty,
+            OwnerPhone    = FormData.Owner.OwnerPhone ?? string.Empty
         }
     };
 
