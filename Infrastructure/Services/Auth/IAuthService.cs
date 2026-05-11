@@ -1,12 +1,30 @@
-using SocioWeb.Entities.Dtos.AuthDto;
+using SocioWeb.Entities.Dtos.Auth;
+using SocioWeb.Entities.Models.Auth;
 
-namespace SocioWeb.Infrastructure.Services.Auth;
+namespace SocioWeb.Services.AppointmentService;
 
 public interface IAuthService
 {
-    Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto dto);
-    Task<TokenResponseDto>    LoginAsync(LoginRequestDto dto);
-    Task<TokenResponseDto>    VerifyEmailAsync(string token);
-    Task                      LogoutAsync();
-    Task<TokenResponseDto?>   GetMeAsync();
+    // Paso 1 
+    Task<RegisterClinic>  RegisterInitialAsync(RegisterClinic clinic);
+    
+    // Paso 2
+    Task<AuthResponse> VerifyEmailAsync( string token);
+    
+    // Paso 3
+    Task<bool> CompleteClinicProfileAsync(Guid clinicId, FullClinicData clinic);
+    
+    Task ResendEmailToVerify(string email);
+    
+    Task<AuthResponse> LoginAsync(LoginRequest loginRequest);
+    
+    Task LogoutAsync();
+    
+    Task<bool> RefreshTokenAsync();
+
+    Task<AuthResponse?> GetCurrentUserAsync();
+
+    Task ForgotPasswordAsync(string email);
+
+    Task ResetPasswordAsync(string token, string newPassword);
 }

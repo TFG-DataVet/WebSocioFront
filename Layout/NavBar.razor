@@ -1,4 +1,9 @@
 
+@using SocioWeb.Infrastructure.Auth
+@inject IAuthService _authService
+@inject AuthenticationStateProvider _authStateProvider
+@inject NavigationManager _nav
+
 <RadzenPanelMenu>
     <RadzenPanelMenuItem Text="Home"        Icon="home"         Path="/"/>
     <RadzenPanelMenuItem Text="Dueño"       Icon="account_box"  Path="/Duenos"/>
@@ -6,10 +11,18 @@
     <RadzenPanelMenuItem Text="Citas"       Icon="event_note"   Path="/Citas"/>
     <RadzenPanelMenuItem Text="productos"   Icon="store"        Path="/Productos"/>
     <RadzenPanelMenuItem Text="Calendario"  Icon="event"        Path="/Calendario"/>
-    <RadzenPanelMenuItem Text="Login"       Icon="login"        Path="/Login"/>
+    @* <RadzenPanelMenuItem Text="Login"       Icon="login"        Path="/Login"/> *@
     <RadzenPanelMenuItem Text="Empleados"   Icon="account_box"  Path="/Employee"/>
     <RadzenPanelMenuItem Text="Clínica"     Icon="store" Path="/PerfilClinica"/>
+    @* <RadzenPanelMenuItem Text="Register"    Icon="person"       Path="/registro"/> *@
+    <RadzenPanelMenuItem Text="Cerrar Sesión" Icon="logout" Click="HandleLogout"/>
 </RadzenPanelMenu>
 @code {
-    
+
+    private async Task HandleLogout()
+    {
+        await _authService.LogoutAsync();
+        ((AuthStateProvider)_authStateProvider).NotifyAuthChanged();
+        _nav.NavigateTo("/login");
+    }
 }

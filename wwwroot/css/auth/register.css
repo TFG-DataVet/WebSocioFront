@@ -1,0 +1,83 @@
+/* ============================================================
+   REGISTER PAGE — Extiende el sistema visual de login.css
+   ============================================================ */
+
+/* El panel de formulario de registro necesita scroll cuando
+   el contenido supera la altura de la ventana */
+.register-form-panel {
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    /* Scrollbar sutil para no romper el efecto glass */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 80, 200, 0.25) transparent;
+}
+
+.register-form-panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+.register-form-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.register-form-panel::-webkit-scrollbar-thumb {
+    background: rgba(100, 80, 200, 0.25);
+    border-radius: 2px;
+}
+
+/* Fila de nombre + apellido en dos columnas */
+.register-name-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0;
+}
+
+.register-name-field {
+    flex: 1;
+    min-width: 0; /* evita desbordamiento en flex */
+}
+
+/* ============================================================
+   MOBILE (< 768px) — columna única, ambos campos apilados
+   ============================================================ */
+@media (max-width: 767px) {
+    .register-form-panel {
+        /* En mobile el panel ocupa toda la tarjeta;
+           permite scroll si el formulario es muy largo */
+        max-height: 100vh;
+        border-radius: 20px;
+    }
+
+    .register-name-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+/* ============================================================
+   TABLET Y DESKTOP (>= 768px) — ajuste de altura
+   ============================================================ */
+@media (min-width: 768px) {
+    .register-form-panel {
+        /* La tarjeta login-card tiene min-height 580px;
+           el panel de registro puede necesitar más espacio */
+        max-height: 90vh;
+    }
+
+    /* Asegura que la tarjeta tenga suficiente alto para el formulario */
+    .login-card:has(.register-form-panel) {
+        min-height: 680px;
+    }
+}
+
+/* ============================================================
+   DESKTOP GRANDE (>= 1200px)
+   ============================================================ */
+@media (min-width: 1200px) {
+    .register-form-panel {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+    }
+}

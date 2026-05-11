@@ -1,88 +1,85 @@
 @page "/login"
-@using SocioWeb.Entities.Dtos.AuthDto
-@using SocioWeb.Infrastructure.Services
-@using SocioWeb.Infrastructure.Services.Auth
+@attribute [AllowAnonymous]
+@layout AuthLayout
+@using SocioWeb.Entities.Dtos.Auth
+@using SocioWeb.ViewModels.LoginVM
+@using SocioWeb.Components
+@inject LoginVM VM
 
-@inject IAuthService     AuthService
-@inject AuthStateService AuthState
-@inject NavigationManager Navigation
+<div class="login-page">
+    <div class="login-card">
 
-<RadzenStack Orientation="Orientation.Vertical" Gap="1rem"
-             JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center"
-             Wrap="FlexWrap.Wrap" Style="min-height: 100vh;">
+        @* Panel izquierdo: carrusel (solo tablet/desktop) *@
+        <div class="login-image-panel">
+            <ImageCarousel Images="@_carouselImages" AutoPlayIntervalMs="5000" />
+        </div>
 
-    <RadzenText TextStyle="TextStyle.DisplayH1"
-                Style="color: var(--color-primary); text-align:center; font-weight:bold;">
-        Bienvenido a DataVet
-    </RadzenText>
+        @* Panel derecho: formulario con glassmorphism *@
+        <div class="login-form-panel">
 
-    <h2 style="text-align:center;">Inicia sesión</h2>
+            <div class="login-logo">
+                <img src="/Images/logos/cropped_task-design-a-premium-ultra-minimalist__2_-removebg-preview.png"
+                     alt="DataVet" />
+            </div>
 
-    @if (!string.IsNullOrEmpty(_error))
-    {
-        <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@_error" Style="max-width:300px;"/>
-    }
+            <h1 class="login-title">Bienvenido</h1>
+            <p class="login-subtitle">Inicia sesión en tu cuenta</p>
 
-    <input type="email" placeholder="Email" @bind="_email"
-           style="width:250px; padding:8px; border-radius:6px; border:1px solid #ccc;"/>
-    <input type="password" placeholder="Contraseña" @bind="_password"
-           style="width:250px; padding:8px; border-radius:6px; border:1px solid #ccc;"/>
+            <RadzenTemplateForm TItem="LoginRequest" Data="@VM.Model" Submit="@VM.OnSubmit">
 
-    <RadzenButton ButtonStyle="ButtonStyle.Primary"
-                  Text="@(_loading ? "Entrando..." : "Entrar")"
-                  Style="width:150px; margin-top:1rem;"
-                  class="login-button"
-                  Disabled="@_loading"
-                  Click="LoginUser"/>
+                <div class="login-field">
+                    <RadzenLabel Text="Correo electrónico" Component="Email" class="login-label" />
+                    <RadzenTextBox Name="Email"
+                                   @bind-Value="@VM.Model.Email"
+                                   Placeholder="tucorreo@ejemplo.com"
+                                   Style="display: block; width: 100%;" />
+                    <RadzenEmailValidator Component="Email"
+                                         Text="Ingresa un correo electrónico válido."
+                                         Style="display: block; margin-top: 0.25rem;" />
+                </div>
 
-    <RadzenText Style="font-size:13px;">
-        ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
-    </RadzenText>
+                <div class="login-field">
+                    <RadzenLabel Text="Contraseña" Component="Password" class="login-label" />
+                    <RadzenPassword Name="Password"
+                                    @bind-Value="@VM.Model.Password"
+                                    Placeholder="••••••••"
+                                    Style="display: block; width: 100%;" />
+                    <RadzenRequiredValidator Component="Password"
+                                            Text="La contraseña es requerida."
+                                            Style="display: block; margin-top: 0.25rem;" />
+                </div>
 
-    <img src="\Imagenes\mascotas4.png" alt="Veterinaria" class="login-bottom-image"/>
-    <img src="\Imagenes\mascotas5.png" alt="Veterinaria" class="login-top-image"/>
+                @if (!string.IsNullOrEmpty(VM.ErrorMessage))
+                {
+                    <div class="login-error" role="alert">@VM.ErrorMessage</div>
+                }
 
-</RadzenStack>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary"
+                              Text="Iniciar sesión"
+                              ButtonType="ButtonType.Submit"
+                              Style="width: 100%; margin-top: 0.5rem;" />
+
+            </RadzenTemplateForm>
+
+            <div class="login-links">
+                <RadzenLink Path="/forgot-password" Text="¿Olvidaste tu contraseña?" />
+            </div>
+
+            <div class="login-register">
+                <span class="login-register-text">¿No tienes cuenta?</span>
+                <RadzenLink Path="/registro" Text="Regístrate" />
+            </div>
+
+        </div>
+    </div>
+</div>
 
 @code {
-    string _email    = string.Empty;
-    string _password = string.Empty;
-    string _error    = string.Empty;
-    bool   _loading  = false;
-
-    async Task LoginUser()
+    private readonly List<string> _carouselImages = new()
     {
-        _error   = string.Empty;
-        _loading = true;
-        try
-        {
-            var result = await AuthService.LoginAsync(new LoginRequestDto
-            {
-                Email    = _email,
-                Password = _password
-            });
-
-            if (result?.User != null)
-                AuthState.SetSession(result.User.ClinicId, result.User.UserId,
-                                     result.User.Email, result.User.Role);
-
-            if (result?.NextStep == "COMPLETE_SETUP" && result.AccessToken != null)
-            {
-                AuthState.OnboardingToken = result.AccessToken;
-                Navigation.NavigateTo("/complete-setup");
-            }
-            else
-            {
-                Navigation.NavigateTo("/");
-            }
-        }
-        catch
-        {
-            _error = "Email o contraseña incorrectos.";
-        }
-        finally
-        {
-            _loading = false;
-        }
-    }
+        "/Images/carrusel/pexels-jonathanborba-11933172.jpg",
+        "/Images/carrusel/pexels-rdne-7348941.jpg",
+        "/Images/carrusel/pexels-viktoriia-kondratiuk-458099300-30617476.jpg",
+        "/Images/carrusel/pexels-viktoriia-kondratiuk-458099300-30617487.jpg"
+    };
 }

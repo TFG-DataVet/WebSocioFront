@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using SocioWeb.ViewModels.Shared;
 using SocioWeb.Services.AppointmentService;
 using SocioWeb.Domain.Entities;
