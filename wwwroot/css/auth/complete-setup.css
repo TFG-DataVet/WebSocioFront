@@ -1,0 +1,193 @@
+/* ============================================================
+   COMPLETE SETUP PAGE — Estilos específicos para el paso 3 de onboarding
+   Extiende las clases base de login.css
+   ============================================================ */
+
+/* Tarjeta ampliada para formulario largo */
+.setup-card {
+    width: 95vw;
+    max-width: 1200px;
+    min-height: 100vh;
+}
+
+/* Panel del formulario scrolleable (sobreescribe justify-content: center) */
+.setup-form-panel {
+    justify-content: flex-start;
+    overflow-y: auto;
+    max-height: 100vh;
+    padding: 2rem 2rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(136, 182, 242, 0.4) transparent;
+}
+
+.setup-form-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.setup-form-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.setup-form-panel::-webkit-scrollbar-thumb {
+    background-color: rgba(136, 182, 242, 0.4);
+    border-radius: 3px;
+}
+
+/* ============================================================
+   INDICADOR DE PASOS
+   ============================================================ */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(136, 182, 242, 0.35);
+    transition: all 0.3s ease;
+}
+
+.step-dot.completed {
+    background: rgba(136, 182, 242, 0.6);
+    width: 20px;
+    border-radius: 4px;
+}
+
+.step-dot.active {
+    background: var(--color-primary, #88B6F2);
+    width: 28px;
+    border-radius: 4px;
+}
+
+.step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary, #88B6F2);
+    text-align: center;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   SECCIONES DEL FORMULARIO
+   ============================================================ */
+.setup-section {
+    margin-bottom: 1.75rem;
+}
+
+.setup-section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-primary, #88B6F2);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(136, 182, 242, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* ============================================================
+   GRID DE DOS COLUMNAS PARA CAMPOS (desktop)
+   ============================================================ */
+.setup-fields-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 1.25rem;
+}
+
+/* Campo de formulario — hereda .login-field pero reutilizable */
+.setup-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.setup-field--full {
+    grid-column: 1 / -1;
+}
+
+/* ============================================================
+   ZONA DE SUBIDA DE IMAGEN (logo clínica / avatar responsable)
+   ============================================================ */
+.setup-upload-box {
+    border: 2px dashed rgba(136, 182, 242, 0.45);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    margin-bottom: 1rem;
+    min-height: 100px;
+    transition: border-color 0.2s ease;
+}
+
+.setup-upload-box:hover {
+    border-color: rgba(136, 182, 242, 0.7);
+}
+
+.setup-upload-label {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+/* ============================================================
+   AVISO LEGAL ANTES DEL BOTÓN
+   ============================================================ */
+.setup-legal-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: rgba(136, 182, 242, 0.08);
+    border: 1px solid rgba(136, 182, 242, 0.2);
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.setup-legal-notice-text {
+    font-size: 0.8rem;
+    color: #6b7280;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ============================================================
+   TABLET Y DESKTOP (>= 768px)
+   ============================================================ */
+@media (min-width: 768px) {
+    .setup-card {
+        width: 88%;
+        max-width: 1200px;
+        min-height: 580px;
+    }
+
+    .setup-form-panel {
+        padding: 2.5rem 2.5rem;
+    }
+
+    .setup-fields-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ============================================================
+   DESKTOP GRANDE (>= 1200px)
+   ============================================================ */
+@media (min-width: 1200px) {
+    .setup-form-panel {
+        padding: 2.5rem 3rem;
+    }
+}

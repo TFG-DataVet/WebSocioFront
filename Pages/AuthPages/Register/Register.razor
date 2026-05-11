@@ -1,0 +1,138 @@
+@page "/registro"
+@attribute [AllowAnonymous]
+@layout AuthLayout
+@using SocioWeb.Entities.Models.Auth
+@using SocioWeb.ViewModels
+@inject RegisterClinicVM VM
+
+<div class="login-page">
+    <div class="login-card">
+
+        @* Panel izquierdo: carrusel (solo tablet/desktop) *@
+        <div class="login-image-panel">
+            <ImageCarousel Images="@_carouselImages" AutoPlayIntervalMs="5000" />
+        </div>
+
+        @* Panel derecho: formulario con glassmorphism *@
+        <div class="login-form-panel register-form-panel">
+
+            <div class="login-logo">
+                <img src="/Images/logos/cropped_task-design-a-premium-ultra-minimalist__2_-removebg-preview.png"
+                     alt="DataVet" />
+            </div>
+
+            <h1 class="login-title">Crear cuenta</h1>
+            <p class="login-subtitle">Comienza el registro de tu clínica</p>
+
+            <RadzenTemplateForm TItem="RegisterClinic" Data="@VM.Model" Submit="@VM.SaveAsync">
+
+                <div class="login-field">
+                    <RadzenLabel Text="Nombre de la clínica" Component="ClinicName" class="login-label" />
+                    <RadzenTextBox Name="ClinicName"
+                                   @bind-Value="@VM.Model.ClinicName"
+                                   Placeholder="Ej: Clínica Veterinaria San José"
+                                   Style="display: block; width: 100%;" />
+                    <RadzenRequiredValidator Component="ClinicName"
+                                            Text="El nombre de la clínica es obligatorio."
+                                            Style="display: block; margin-top: 0.25rem;" />
+                </div>
+
+                <div class="register-name-row">
+                    <div class="login-field register-name-field">
+                        <RadzenLabel Text="Nombre" Component="FirstName" class="login-label" />
+                        <RadzenTextBox Name="FirstName"
+                                       @bind-Value="@VM.Model.FirstName"
+                                       Placeholder="Tu nombre"
+                                       Style="display: block; width: 100%;" />
+                        <RadzenRequiredValidator Component="FirstName"
+                                                Text="Requerido."
+                                                Style="display: block; margin-top: 0.25rem;" />
+                    </div>
+
+                    <div class="login-field register-name-field">
+                        <RadzenLabel Text="Apellido" Component="LastName" class="login-label" />
+                        <RadzenTextBox Name="LastName"
+                                       @bind-Value="@VM.Model.LastName"
+                                       Placeholder="Tu apellido"
+                                       Style="display: block; width: 100%;" />
+                        <RadzenRequiredValidator Component="LastName"
+                                                Text="Requerido."
+                                                Style="display: block; margin-top: 0.25rem;" />
+                    </div>
+                </div>
+
+                <div class="login-field">
+                    <RadzenLabel Text="Teléfono" Component="Phone" class="login-label" />
+                    <RadzenTextBox Name="Phone"
+                                   @bind-Value="@VM.Model.Phone"
+                                   Placeholder="+34 600 000 000"
+                                   Style="display: block; width: 100%;" />
+                    <RadzenRequiredValidator Component="Phone"
+                                            Text="El número de teléfono es obligatorio."
+                                            Style="display: block; margin-top: 0.25rem;" />
+                </div>
+
+                <div class="login-field">
+                    <RadzenLabel Text="Correo electrónico" Component="Email" class="login-label" />
+                    <RadzenTextBox Name="Email"
+                                   @bind-Value="@VM.Model.Email"
+                                   Placeholder="tucorreo@ejemplo.com"
+                                   Style="display: block; width: 100%;" />
+                    <RadzenRequiredValidator Component="Email"
+                                            Text="El correo electrónico es obligatorio."
+                                            Style="display: block; margin-top: 0.25rem;" />
+                    <RadzenEmailValidator Component="Email"
+                                         Text="Ingresa un correo electrónico válido."
+                                         Style="display: block; margin-top: 0.25rem;" />
+                </div>
+
+                <div class="login-field">
+                    <RadzenLabel Text="Contraseña" Component="Password" class="login-label" />
+                    <RadzenPassword Name="Password"
+                                    @bind-Value="@VM.Model.Password"
+                                    Placeholder="Mínimo 8 caracteres"
+                                    Style="display: block; width: 100%;" />
+                    <RadzenRequiredValidator Component="Password"
+                                            Text="La contraseña es obligatoria."
+                                            Style="display: block; margin-top: 0.25rem;" />
+                    <RadzenLengthValidator Component="Password"
+                                          Min="8"
+                                          Text="La contraseña debe tener al menos 8 caracteres."
+                                          Style="display: block; margin-top: 0.25rem;" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(VM.ErrorMessage))
+                {
+                    <div class="login-error" role="alert">@VM.ErrorMessage</div>
+                }
+
+                <RadzenButton ButtonStyle="ButtonStyle.Primary"
+                              Text="Registrarse"
+                              ButtonType="ButtonType.Submit"
+                              Disabled="@VM.ISLoading"
+                              Style="width: 100%; margin-top: 0.5rem;" />
+
+            </RadzenTemplateForm>
+
+            <div class="login-links">
+                <RadzenLink Path="/login" Text="← Volver al inicio de sesión" />
+            </div>
+
+            <div class="login-register">
+                <span class="login-register-text">¿Ya tienes cuenta?</span>
+                <RadzenLink Path="/login" Text="Inicia sesión" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private readonly List<string> _carouselImages = new()
+    {
+        "/Images/carrusel/pexels-jonathanborba-11933172.jpg",
+        "/Images/carrusel/pexels-rdne-7348941.jpg",
+        "/Images/carrusel/pexels-viktoriia-kondratiuk-458099300-30617476.jpg",
+        "/Images/carrusel/pexels-viktoriia-kondratiuk-458099300-30617487.jpg"
+    };
+}
