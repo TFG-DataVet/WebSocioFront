@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using SocioWeb.Entities.Dtos.ClinicApiDto;
-using SocioWeb.Infrastructure.Services;
 using SocioWeb.Infrastructure.Services.ClinicService;
 using SocioWeb.ViewModels.Shared;
 
@@ -7,8 +7,8 @@ namespace SocioWeb.ViewModels.Clinic;
 
 public class ClinicprofileViewModel : BaseViewModel
 {
-    private readonly IClinicService   _clinicService;
-    private readonly AuthStateService _authState;
+    private readonly IClinicService              _clinicService;
+    private readonly AuthenticationStateProvider _authStateProvider;
 
     public bool IsEditing { get; set; } = false;
 
@@ -32,15 +32,21 @@ public class ClinicprofileViewModel : BaseViewModel
     private string       _scheduleCloseTime = "18:00:00";
     private string?      _scheduleNotes;
 
-    public ClinicprofileViewModel(IClinicService clinicService, AuthStateService authState)
+    public ClinicprofileViewModel(IClinicService clinicService, AuthenticationStateProvider authStateProvider)
     {
-        _clinicService = clinicService;
-        _authState     = authState;
+        _clinicService     = clinicService;
+        _authStateProvider = authStateProvider;
     }
 
     public async Task LoadAsync(string? clinicId = null)
     {
-        var id = clinicId ?? _authState.ClinicId;
+        var id = clinicId;
+        if (string.IsNullOrEmpty(id))
+        {
+            var authState = await _authStateProvider.GetAuthenticationStateAsync();
+            id = authState.User.FindFirst("ClinicId")?.Value;
+        }
+
         if (string.IsNullOrEmpty(id))
         {
             SetError("No hay sesión activa. Por favor, inicia sesión.");

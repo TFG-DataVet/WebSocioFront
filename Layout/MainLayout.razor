@@ -1,8 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
-@inject SocioWeb.Infrastructure.Services.AuthStateService AuthState
-@inject SocioWeb.Infrastructure.Services.Auth.IAuthService AuthService
+@inject AuthenticationStateProvider AuthStateProvider
 @inject ClinicprofileViewModel VM
 
 <RadzenLayout>
@@ -96,24 +95,16 @@
         {
             await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", "light");
 
-            // Restore session from cookie if not already set
-            if (!AuthState.SessionChecked)
+            if (string.IsNullOrEmpty(VM.Name))
             {
-                AuthState.SessionChecked = true;
-                try
-                {
-                    var me = await AuthService.GetMeAsync();
-                    if (me?.User != null)
-                        AuthState.SetSession(me.User.ClinicId, me.User.UserId,
-                                             me.User.Email, me.User.Role);
-                }
-                catch { /* cookie missing or expired — user stays unauthenticated */ }
-            }
+                var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+                var clinicId  = authState.User.FindFirst("ClinicId")?.Value;
 
-            if (!string.IsNullOrEmpty(AuthState.ClinicId) && string.IsNullOrEmpty(VM.Name))
-            {
-                try { await VM.LoadAsync(); }
-                catch { /* silencioso si no hay sesión */ }
+                if (!string.IsNullOrEmpty(clinicId))
+                {
+                    try { await VM.LoadAsync(clinicId); }
+                    catch { /* silencioso si no hay sesión */ }
+                }
             }
 
             StateHasChanged();

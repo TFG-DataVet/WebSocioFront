@@ -20,6 +20,8 @@ using SocioWeb.ViewModels.Pets;
 using SocioWeb.ViewModels.Products;
 using Microsoft.AspNetCore.Components.Authorization;
 using SocioWeb.Infrastructure.Auth;
+using SocioWeb.Services.PetService;
+using SocioWeb.Infrastructure.Services.ClinicService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -55,6 +57,7 @@ builder.Services.AddRadzenComponents(); // O los servicios individuales como Not
 
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<IClinicService, ClinicApiService>();
 builder.Services.AddTransient<ClinicprofileViewModel>();
 
 // ViewModels
