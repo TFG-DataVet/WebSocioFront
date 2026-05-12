@@ -151,7 +151,7 @@
 
             <RadzenDataGridColumn TItem="Owner" Property="CreatedAt" Title="Registrado" Width="130px">
                 <Template Context="owner">
-                    <RadzenText Text="@owner.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")"
+                    <RadzenText Text="@(owner.CreatedAt?.ToLocalTime().ToString("dd/MM/yyyy") ?? "—")"
                                 Style="font-size:13px; color:#666;" />
                 </Template>
             </RadzenDataGridColumn>

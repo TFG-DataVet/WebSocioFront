@@ -52,8 +52,8 @@
                 Style="color:#4b3e48; font-size:20px; font-weight:600; margin-bottom:20px;"/>
 
     <RadzenRow Gap="25">
-        <RadzenColumn Size="6">@Campo("Creado el",            VM.Product.CreatedAt.ToLocalTime().ToString(),  null)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Última actualización", VM.Product.UpdatedAt?.ToLocalTime().ToString(), null)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Creado el",            VM.Product.CreatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—",  null)</RadzenColumn>
+        <RadzenColumn Size="6">@Campo("Última actualización", VM.Product.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—", null)</RadzenColumn>
     </RadzenRow>
 
     <RadzenDivider Style="margin:30px 0;"/>

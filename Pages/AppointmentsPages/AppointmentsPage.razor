@@ -1,4 +1,5 @@
-﻿@page "/Citas"
+@page "/Citas"
+@using SocioWeb.Entities.Models.Appointments
 @using SocioWeb.ViewModels.Appointments
 @inject NavigationManager Nav
 @inject AppointmentListViewModel VM
@@ -25,7 +26,7 @@
     box-shadow: 0 4px 20px rgba(102,126,234,0.35);
     margin-bottom: 1.5rem;
     padding: 1.5rem 2rem;">
-    
+
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.SpaceBetween"
@@ -54,32 +55,42 @@
                  Gap="12">
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Desde" Style="font-size:16px; font-weight:600;" />
-            <RadzenDatePicker @bind-Value="VM.DateSince" Style="width:155px" />
-        </RadzenStack>
-
-        <RadzenStack Gap="4">
-            <RadzenLabel Text="Hasta" Style="font-size:16px; font-weight:600;" />
-            <RadzenDatePicker @bind-Value="VM.DateTo" Style="width:155px" />
+            <RadzenLabel Text="Fecha" Style="font-size:16px; font-weight:600;" />
+            <RadzenDatePicker TValue="DateOnly?" @bind-Value="VM.DateFilter"
+                              DateFormat="dd/MM/yyyy" Style="width:155px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
             <RadzenLabel Text="Estado" Style="font-size:16px; font-weight:600;" />
-            <RadzenDropDown Data="@VM.States" @bind-Value="VM.StatusFilter" Style="width:140px" />
+            <RadzenDropDown TValue="AppointmentStatus?"
+                            Data="@_statuses"
+                            @bind-Value="VM.StatusFilter"
+                            Placeholder="Todos"
+                            Style="width:180px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Mascota o Dueño" Style="font-size:16px; font-weight:600;" />
-            <RadzenTextBox @bind-Value="VM.SearchFilter" Style="width:180px" />
+            <RadzenLabel Text="Tipo" Style="font-size:16px; font-weight:600;" />
+            <RadzenDropDown TValue="AppointmentType?"
+                            Data="@_types"
+                            @bind-Value="VM.TypeFilter"
+                            Placeholder="Todos"
+                            Style="width:140px" />
+        </RadzenStack>
+
+        <RadzenStack Gap="4">
+            <RadzenLabel Text="Búsqueda" Style="font-size:16px; font-weight:600;" />
+            <RadzenTextBox @bind-Value="VM.SearchFilter" Placeholder="Propietario o mascota…"
+                           Style="width:200px" />
         </RadzenStack>
 
         <RadzenStack Orientation="Orientation.Horizontal" Gap="8">
             <RadzenButton Icon="filter_alt" Text="Filtrar"
                           ButtonStyle="ButtonStyle.Primary"
-                          Click="@VM.ApplyFilters" />
+                          Click="@(async () => { await VM.LoadAsync(); VM.ApplyLocalFilter(); })" />
             <RadzenButton Icon="clear" Text="Limpiar"
                           ButtonStyle="ButtonStyle.Light"
-                          Click="@VM.ClearFilters" />
+                          Click="@(async () => { VM.ClearFilters(); await VM.LoadAsync(); })" />
         </RadzenStack>
     </RadzenStack>
 </RadzenCard>
@@ -98,51 +109,70 @@
 
         <Columns>
 
-            <!-- Mascota -->
-            <RadzenDataGridColumn TItem="Appointment" Title="Mascota" Width="180px">
+            <!-- Mascota / Propietario -->
+            <RadzenDataGridColumn TItem="Appointment" Title="Mascota" Width="200px">
                 <Template Context="cita">
-                    <RadzenStack Orientation="Orientation.Horizontal" Gap="10">
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="10" AlignItems="AlignItems.Center">
                         <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/194/194279.png" Size="38" />
                         <RadzenStack Gap="0">
-                            <RadzenText Text="@cita.PetName" Style="font-weight:600;" />
-                            <RadzenText Text="@cita.OwnerName" Style="font-size:12px; color:#888;" />
+                            <RadzenText Text="@(cita.Pet?.Name ?? "—")" Style="font-weight:600;" />
+                            <RadzenText Text="@(cita.OwnerName ?? "—")" Style="font-size:12px; color:#888;" />
                         </RadzenStack>
                     </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
 
             <!-- Estado -->
-            <RadzenDataGridColumn TItem="Appointment" Property="Status" Title="Estado" Width="120px" />
+            <RadzenDataGridColumn TItem="Appointment" Title="Estado" Width="160px">
+                <Template Context="cita">
+                    <span style="padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600;
+                                 background:@StatusColor(cita.Status); color:white;">
+                        @cita.Status.ToString().Replace("_", " ")
+                    </span>
+                </Template>
+            </RadzenDataGridColumn>
+
+            <!-- Tipo -->
+            <RadzenDataGridColumn TItem="Appointment" Title="Tipo" Width="110px">
+                <Template Context="cita">
+                    <RadzenText Text="@cita.Type.ToString()" Style="font-size:13px;" />
+                </Template>
+            </RadzenDataGridColumn>
 
             <!-- Fecha -->
             <RadzenDataGridColumn TItem="Appointment" Title="Fecha y Hora" Width="160px">
                 <Template Context="cita">
-                    <RadzenText Text="@cita.Date.ToString("dd/MM/yyyy HH:mm")" />
+                    <RadzenText Text="@cita.ScheduledAt.ToString("dd/MM/yyyy HH:mm")" />
                 </Template>
             </RadzenDataGridColumn>
 
             <!-- Contacto -->
-            <RadzenDataGridColumn TItem="Appointment" Property="Phone" Title="Contacto" Width="150px" />
+            <RadzenDataGridColumn TItem="Appointment" Title="Teléfono" Width="130px">
+                <Template Context="cita">
+                    <RadzenText Text="@(cita.OwnerPhone ?? "—")" />
+                </Template>
+            </RadzenDataGridColumn>
 
-            <!-- Motivo -->
-            <RadzenDataGridColumn TItem="Appointment" Property="Reason" Title="Motivo" Width="200px" />
+            <!-- Notas -->
+            <RadzenDataGridColumn TItem="Appointment" Title="Notas" Width="200px">
+                <Template Context="cita">
+                    <RadzenText Text="@(cita.Notes ?? "—")" Style="font-size:13px; color:#666;" />
+                </Template>
+            </RadzenDataGridColumn>
 
             <!-- Acciones -->
-            <RadzenDataGridColumn TItem="Appointment" Title="Acciones" Width="140px" Sortable="false">
+            <RadzenDataGridColumn TItem="Appointment" Title="Acciones" Width="120px" Sortable="false">
                 <Template Context="cita">
                     <RadzenStack Orientation="Orientation.Horizontal" Gap="6">
                         <RadzenButton Icon="visibility"
                                       ButtonStyle="ButtonStyle.Light"
                                       Size="ButtonSize.Small"
                                       Click="@(() => Nav.NavigateTo($"/AppointmentProfile/{cita.Id}"))" />
-                        <RadzenButton Icon="edit"
-                                      ButtonStyle="ButtonStyle.Primary"
-                                      Size="ButtonSize.Small"
-                                      Click="@(() => Nav.NavigateTo($"/EditAppointment/{cita.Id}"))" />
-                        <RadzenButton Icon="delete"
+                        <RadzenButton Icon="cancel"
                                       ButtonStyle="ButtonStyle.Danger"
                                       Size="ButtonSize.Small"
-                                      Click="@(async () => await ConfirmDelete(cita))" />
+                                      Disabled="@(cita.Status == AppointmentStatus.CANCELADA || cita.Status == AppointmentStatus.FINALIZADA)"
+                                      Click="@(async () => await ConfirmCancel(cita))" />
                     </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
@@ -153,24 +183,59 @@
 
 @code {
 
+    static readonly AppointmentStatus?[] _statuses = new AppointmentStatus?[]
+    {
+        null,
+        AppointmentStatus.RESERVADA,
+        AppointmentStatus.CLIENTE_LLEGADO,
+        AppointmentStatus.PROXIMO_A_ATENDER,
+        AppointmentStatus.EN_CONSULTA,
+        AppointmentStatus.FINALIZADA,
+        AppointmentStatus.REQUIERE_SEGUIMIENTO,
+        AppointmentStatus.CANCELADA
+    };
+
+    static readonly AppointmentType?[] _types = new AppointmentType?[]
+    {
+        null,
+        AppointmentType.RUTINA,
+        AppointmentType.EXAMEN,
+        AppointmentType.VACUNAS,
+        AppointmentType.EMERGENCIA,
+        AppointmentType.BAÑO,
+        AppointmentType.CIRUGIA,
+        AppointmentType.OTRO
+    };
+
     protected override async Task OnInitializedAsync() => await VM.LoadAsync();
 
-    async Task ConfirmDelete(Appointment cita)
+    static string StatusColor(AppointmentStatus s) => s switch
+    {
+        AppointmentStatus.RESERVADA           => "#4e73df",
+        AppointmentStatus.CLIENTE_LLEGADO     => "#1cc88a",
+        AppointmentStatus.PROXIMO_A_ATENDER   => "#36b9cc",
+        AppointmentStatus.EN_CONSULTA         => "#f6c23e",
+        AppointmentStatus.FINALIZADA          => "#858796",
+        AppointmentStatus.REQUIERE_SEGUIMIENTO=> "#e74a3b",
+        AppointmentStatus.CANCELADA           => "#e74a3b",
+        _                                     => "#aaa"
+    };
+
+    async Task ConfirmCancel(Appointment cita)
     {
         var result = await DialogService.Confirm(
-            $"¿Eliminar la cita de {cita.PetName}? Esta acción no se puede deshacer.",
-            "Confirmar eliminación",
-            new ConfirmOptions { OkButtonText = "Eliminar", CancelButtonText = "Cancelar" });
+            $"¿Cancelar la cita de {cita.Pet?.Name ?? cita.OwnerName ?? "esta mascota"}?",
+            "Confirmar cancelación",
+            new ConfirmOptions { OkButtonText = "Cancelar cita", CancelButtonText = "Volver" });
 
         if (result == true)
         {
-            await VM.DeleteAsync(cita.Id);
-
+            await VM.CancelAsync(cita.Id);
             NotificationService.Notify(new NotificationMessage
             {
                 Severity = NotificationSeverity.Success,
-                Summary = "Eliminado",
-                Detail = $"La cita de {cita.PetName} fue eliminada correctamente.",
+                Summary  = "Cita cancelada",
+                Detail   = "La cita fue cancelada correctamente.",
                 Duration = 3000
             });
         }

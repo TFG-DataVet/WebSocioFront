@@ -15,18 +15,18 @@ public class ProductsApiService : IProductService
     }
 
     public async Task<List<Product>> GetAllAsync()
-        => await _http.GetFromJsonAsync<List<Product>>("api/products")
+        => await _http.GetFromJsonAsync<List<Product>>("products")
            ?? new List<Product>();
 
     public async Task<Product?> GetByIdAsync(String id)
-        => await _http.GetFromJsonAsync<Product>($"api/products/{id}");
+        => await _http.GetFromJsonAsync<Product>($"products/{id}");
 
     public async Task CreateAsync(Product dto)
-        => await _http.PostAsJsonAsync("api/products", dto);
+        => await _http.PostAsJsonAsync("products", dto);
 
     public async Task UpdateAsync(String id, Product dto)
-        => await _http.PutAsJsonAsync($"api/products/{id}", dto);
+        => await _http.PutAsJsonAsync($"products/{id}", dto);
 
     public async Task DeleteAsync(String id)
-        => await _http.DeleteAsync($"api/products/{id}");
+        => await _http.DeleteAsync($"products/{id}");
 }

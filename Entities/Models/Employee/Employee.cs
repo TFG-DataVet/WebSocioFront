@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using SocioWeb.Infrastructure.Converters;
 
 namespace SocioWeb.Entities.Models.Employee;
 
@@ -57,13 +58,25 @@ public class Employee
     public string? Email { get; set; }
 
     [JsonPropertyName("createdAt")]
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
     public DateTime? CreatedAt { get; set; }
 
     [JsonPropertyName("updatedAt")]
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
     public DateTime? UpdatedAt { get; set; }
 
     [JsonPropertyName("fullName")]
     public string FullName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Propiedad calculada para el buscador del dropdown:
+    /// combina nombre completo + DNI para que el filtro funcione con cualquiera de los dos.
+    /// </summary>
+    [JsonIgnore]
+    public string SearchLabel =>
+        string.IsNullOrEmpty(DocumentNumberValue)
+            ? FullName
+            : $"{FullName} — {DocumentNumberValue}";
 }
 
 public class DocumentNumberDto

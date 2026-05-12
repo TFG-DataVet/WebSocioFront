@@ -1,105 +1,243 @@
-﻿@page "/CreateAppointment"
+@page "/CreateAppointment"
+@using SocioWeb.Domain.Entities
+@using SocioWeb.Entities
+@using SocioWeb.Entities.Models.Appointments
+@using SocioWeb.Entities.Models.Employee
+@using SocioWeb.Services.AppointmentService
+@using SocioWeb.Services.Exceptions.EmployeeService
 @using SocioWeb.ViewModels.Appointments
-
 @inject NavigationManager Nav
 @inject CreateAppointmentViewModel VM
+@inject IOwnerService   OwnerService
+@inject IPetService     PetService
+@inject IEmployeeService EmployeeService
+@inject NotificationService NotificationService
 
 @if (VM.IsLoading)
 {
     <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" />
+}
+@if (!string.IsNullOrEmpty(_validationError))
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@_validationError" AllowClose="true"
+                 Close="@(() => _validationError = null)" />
 }
 @if (VM.HasError)
 {
     <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" />
 }
 
-<RadzenCard Style="border-radius:14px; overflow:hidden;width:100%; margin:auto;">
+<RadzenCard Style="border-radius:14px; overflow:hidden; width:100%; margin:auto;">
 
-    <!-- HEADER BONITO -->
+    <!-- HEADER -->
     <div style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
                 padding:2rem; color:white;">
-
         <RadzenStack Orientation="Orientation.Horizontal"
                      AlignItems="AlignItems.Center"
                      JustifyContent="JustifyContent.SpaceBetween">
-
             <RadzenStack Orientation="Orientation.Horizontal" Gap="15" AlignItems="AlignItems.Center">
-                
                 <RadzenCard Style="width:70px; height:70px; border-radius:50%;
                                    background:rgba(255,255,255,0.25);
                                    display:flex; align-items:center; justify-content:center;
                                    font-size:32px;">
-                    🐶
+                    🐾
                 </RadzenCard>
-
                 <RadzenStack Gap="2">
-                    <RadzenText Text="Nueva cita veterinaria"
-                                Style="font-size:22px; font-weight:700;" />
-                    <RadzenText Text="Completa la información de la cita"
-                                Style="font-size:13px; opacity:0.85;" />
+                    <RadzenText Text="Nueva cita veterinaria" Style="font-size:22px; font-weight:700;" />
+                    <RadzenText Text="Completa la información de la cita" Style="font-size:13px; opacity:0.85;" />
                 </RadzenStack>
-
             </RadzenStack>
-
-            <RadzenButton Icon="close"
-                          ButtonStyle="ButtonStyle.Light"
-                          Style="border-radius:10px;"
-                          Click="@(() => Nav.NavigateTo("/Citas"))" />
+            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light"
+                          Style="border-radius:10px;" Click="@(() => Nav.NavigateTo("/Citas"))" />
         </RadzenStack>
     </div>
 
     <!-- CONTENIDO -->
     <div style="padding:2rem;">
 
-        <RadzenText Text="Información de la cita"
-                    Style=" font-size:18px; font-weight:600; margin-bottom:1.5rem;" />
+        <!-- ── PROPIETARIO ─────────────────────────────────────────── -->
+        @SectionHeader("Propietario", "#4e73df")
 
-        <RadzenRow Gap="20">
-
-            <RadzenColumn Size="12" SizeMD="6">
-                @Campo("Mascota", VM.Appointment.PetName, v => VM.Appointment.PetName = v)
+        <RadzenRow Gap="20" Style="margin-bottom:1.5rem;">
+            <RadzenColumn Size="12">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Buscar propietario *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenDropDown TValue="string"
+                                    Data="@_owners"
+                                    Value="@_selectedOwnerId"
+                                    ValueChanged="@OnOwnerSelected"
+                                    ValueProperty="Id"
+                                    TextProperty="SearchLabel"
+                                    AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    FilterOperator="StringFilterOperator.Contains"
+                                    Placeholder="@(_loadingOwners ? "Cargando…" : "Busca por nombre o DNI…")"
+                                    Disabled="@(_loadingOwners || _owners.Count == 0)"
+                                    Style="width:100%; border-radius:10px;">
+                        <Template Context="o">
+                            <RadzenStack Orientation="Orientation.Horizontal" Gap="10" AlignItems="AlignItems.Center">
+                                <RadzenAvatar Text="@o.Name[..1]"
+                                              Style="background:#4e73df; color:white; width:32px; height:32px; font-size:14px;" />
+                                <RadzenStack Gap="0">
+                                    <span style="font-weight:600; font-size:14px;">@o.FullName</span>
+                                    <span style="font-size:12px; color:#888;">
+                                        @(o.IdentificationNumber ?? "Sin DNI") · @(o.Phone ?? "—")
+                                    </span>
+                                </RadzenStack>
+                            </RadzenStack>
+                        </Template>
+                    </RadzenDropDown>
+                </RadzenStack>
             </RadzenColumn>
 
-            <RadzenColumn Size="12" SizeMD="6">
-                @Campo("Dueño", VM.Appointment.OwnerName, v => VM.Appointment.OwnerName = v)
+            @if (_selectedOwnerId is not null)
+            {
+                <RadzenColumn Size="12" SizeMD="4">@InfoField("Nombre",   VM.Form.OwnerName)</RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="4">@InfoField("Email",    VM.Form.OwnerEmail)</RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="4">@InfoField("Teléfono", VM.Form.OwnerPhone)</RadzenColumn>
+            }
+        </RadzenRow>
+
+        <!-- ── MASCOTA ─────────────────────────────────────────────── -->
+        @SectionHeader("Mascota", "#1cc88a")
+
+        <RadzenRow Gap="20" Style="margin-bottom:1.5rem;">
+            <RadzenColumn Size="12">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="@(_selectedOwnerId is null ? "Selecciona primero un propietario" : "Seleccionar mascota *")"
+                                Style="font-size:13px; font-weight:600;" />
+                    <RadzenDropDown TValue="string"
+                                    Data="@_ownerPets"
+                                    Value="@_selectedPetId"
+                                    ValueChanged="@OnPetSelected"
+                                    ValueProperty="Id"
+                                    TextProperty="Name"
+                                    AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    Placeholder="@(_loadingPets ? "Cargando mascotas…" : "Busca por nombre…")"
+                                    Disabled="@(_selectedOwnerId is null || _loadingPets)"
+                                    Style="width:100%; border-radius:10px;">
+                        <Template Context="p">
+                            <RadzenStack Orientation="Orientation.Horizontal" Gap="10" AlignItems="AlignItems.Center">
+                                <span style="font-size:22px;">🐾</span>
+                                <RadzenStack Gap="0">
+                                    <span style="font-weight:600; font-size:14px;">@p.Name</span>
+                                    <span style="font-size:12px; color:#888;">
+                                        @(p.Specie ?? "—") @(!string.IsNullOrEmpty(p.Breed) ? $"· {p.Breed}" : "")
+                                    </span>
+                                </RadzenStack>
+                            </RadzenStack>
+                        </Template>
+                    </RadzenDropDown>
+                    @if (_selectedOwnerId is not null && _ownerPets.Count == 0 && !_loadingPets)
+                    {
+                        <RadzenText Text="Este propietario no tiene mascotas registradas."
+                                    Style="font-size:12px; color:#e74a3b;" />
+                    }
+                </RadzenStack>
             </RadzenColumn>
 
-            <RadzenColumn Size="12" SizeMD="6">
-                @Campo("Teléfono", VM.Appointment.Phone, v => VM.Appointment.Phone = v)
-            </RadzenColumn>
+            @if (_selectedPetId is not null)
+            {
+                <RadzenColumn Size="12" SizeMD="4">@InfoField("Nombre",  VM.Form.PetName)</RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="4">@InfoField("Especie", VM.Form.PetSpecies)</RadzenColumn>
+            }
+        </RadzenRow>
+
+        <!-- ── DETALLES DE LA CITA ─────────────────────────────────── -->
+        @SectionHeader("Detalles de la cita", "#f6c23e")
+
+        <RadzenRow Gap="20" Style="margin-bottom:1.5rem;">
 
             <RadzenColumn Size="12" SizeMD="6">
-                <RadzenStack Gap="5">
-                    <RadzenText Text="Estado" />
-
-                    <RadzenDropDown Data="@states"
-                                    @bind-Value="VM.Appointment.Status"
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Tipo de cita *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenDropDown @bind-Value="VM.Form.Type"
+                                    Data="@_types"
                                     Style="width:100%; border-radius:10px;" />
                 </RadzenStack>
             </RadzenColumn>
 
             <RadzenColumn Size="12" SizeMD="6">
-                <RadzenStack Gap="5">
-                    <RadzenText Text="Fecha y hora" />
-
-                    <RadzenDatePicker @bind-Value="VM.Appointment.Date"
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Fecha y hora *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenDatePicker @bind-Value="VM.Form.ScheduledAt"
                                       ShowTime="true"
                                       Style="width:100%; border-radius:10px;" />
                 </RadzenStack>
             </RadzenColumn>
 
+            <!-- Empleado que crea -->
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Empleado que crea *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenDropDown TValue="string"
+                                    Data="@_employees"
+                                    Value="@VM.Form.CreationEmployeeId"
+                                    ValueChanged="@(id => VM.Form.CreationEmployeeId = id)"
+                                    ValueProperty="Id"
+                                    TextProperty="SearchLabel"
+                                    AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    FilterOperator="StringFilterOperator.Contains"
+                                    Placeholder="Busca por nombre o DNI…"
+                                    Disabled="@(_employees.Count == 0)"
+                                    Style="width:100%; border-radius:10px;">
+                        <Template Context="emp">
+                            @EmployeeItem(emp, "#4e73df")
+                        </Template>
+                    </RadzenDropDown>
+                </RadzenStack>
+            </RadzenColumn>
+
+            <!-- Veterinario / médico -->
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Veterinario/médico (opcional)" Style="font-size:13px; font-weight:600;" />
+                    <RadzenDropDown TValue="string?"
+                                    Data="@_employees"
+                                    Value="@VM.Form.MedicalEmployeeId"
+                                    ValueChanged="@(id => VM.Form.MedicalEmployeeId = id)"
+                                    ValueProperty="Id"
+                                    TextProperty="SearchLabel"
+                                    AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    FilterOperator="StringFilterOperator.Contains"
+                                    Placeholder="Busca por nombre o DNI…"
+                                    AllowClear="true"
+                                    Disabled="@(_employees.Count == 0)"
+                                    Style="width:100%; border-radius:10px;">
+                        <Template Context="emp">
+                            @EmployeeItem(emp, "#1cc88a")
+                        </Template>
+                    </RadzenDropDown>
+                </RadzenStack>
+            </RadzenColumn>
+
             <RadzenColumn Size="12">
-                @Campo("Motivo", VM.Appointment.Reason, v => VM.Appointment.Reason = v)
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Notas" Style="font-size:13px; font-weight:600;" />
+                    <RadzenTextArea @bind-Value="VM.Form.Notes" Rows="3"
+                                    Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="4" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                    <RadzenSwitch @bind-Value="VM.Form.Emergency" />
+                    <RadzenText Text="¿Emergencia?" Style="font-size:13px; font-weight:600;" />
+                </RadzenStack>
             </RadzenColumn>
 
         </RadzenRow>
 
-        <!-- BOTÓN -->
-        <RadzenStack AlignItems="AlignItems.End" Style="margin-top:2rem;">
+        <!-- ── BOTÓN ───────────────────────────────────────────────── -->
+        <RadzenStack AlignItems="AlignItems.End" Style="margin-top:1rem;">
             <RadzenButton Text="Crear cita"
                           Icon="save"
                           ButtonStyle="ButtonStyle.Primary"
-                          Style="background:#f7971e; border:none; border-radius:10px;"
+                          Disabled="@(VM.IsLoading || _loadingOwners || _loadingEmployees)"
+                          Style="background:#f7971e; border:none; border-radius:10px; padding:0.7rem 2.5rem; font-size:16px;"
                           Click="@OnSave" />
         </RadzenStack>
 
@@ -108,24 +246,143 @@
 
 @code {
 
-    List<string> states = new() { "Pendiente", "Confirmada", "Cancelada" };
+    static readonly AppointmentType[] _types = Enum.GetValues<AppointmentType>();
+
+    // Datos cargados de la API
+    List<Owner>    _owners    = new();
+    List<Pet>      _allPets   = new();
+    List<Pet>      _ownerPets = new();
+    List<Employee> _employees = new();
+
+    // Selecciones actuales
+    string? _selectedOwnerId  = null;
+    string? _selectedPetId    = null;
+    string? _validationError  = null;
+
+    // Estados de carga
+    bool _loadingOwners    = false;
+    bool _loadingPets      = false;
+    bool _loadingEmployees = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loadingOwners    = true;
+        _loadingEmployees = true;
+
+        var ownersTask    = OwnerService.GetAllAsync();
+        var petsTask      = PetService.GetAllAsync();
+        var employeesTask = EmployeeService.GetAllAsync();
+
+        try { _owners    = await ownersTask;    } catch { }
+        try { _allPets   = await petsTask;      } catch { }
+        try { _employees = await employeesTask; } catch { }
+
+        _loadingOwners    = false;
+        _loadingEmployees = false;
+    }
+
+    // ── Selección de propietario ───────────────────────────────────────────────
+
+    void OnOwnerSelected(string ownerId)
+    {
+        _selectedOwnerId = ownerId;
+        _selectedPetId   = null;
+        VM.Form.PetId      = null;
+        VM.Form.PetName    = null;
+        VM.Form.PetSpecies = null;
+
+        var owner = _owners.FirstOrDefault(o => o.Id == ownerId);
+        if (owner is not null)
+        {
+            VM.Form.OwnerId    = owner.Id;
+            VM.Form.OwnerName  = owner.FullName;
+            VM.Form.OwnerEmail = owner.Email;
+            VM.Form.OwnerPhone = owner.Phone;
+        }
+
+        // Filtrar mascotas del propietario seleccionado
+        _ownerPets = _allPets.Where(p => p.IdOwner == ownerId).ToList();
+    }
+
+    // ── Selección de mascota ───────────────────────────────────────────────────
+
+    void OnPetSelected(string petId)
+    {
+        _selectedPetId = petId;
+
+        var pet = _ownerPets.FirstOrDefault(p => p.Id == petId);
+        if (pet is not null)
+        {
+            VM.Form.PetId      = pet.Id;
+            VM.Form.PetName    = pet.Name;
+            VM.Form.PetSpecies = pet.Specie;
+        }
+    }
+
+    // ── Guardar ───────────────────────────────────────────────────────────────
 
     async Task OnSave()
     {
-        await VM.SaveAsync();
+        // Validación mínima en cliente
+        _validationError = null;
 
-        if (!VM.HasError)
-            Nav.NavigateTo("/Calendario");
+        if (!VM.Form.Emergency &&
+            (string.IsNullOrEmpty(VM.Form.OwnerId) || string.IsNullOrEmpty(VM.Form.PetId)))
+        {
+            _validationError = "Selecciona un propietario y una mascota antes de crear la cita.";
+            return;
+        }
+        if (string.IsNullOrEmpty(VM.Form.CreationEmployeeId))
+        {
+            _validationError = "Selecciona el empleado que crea la cita.";
+            return;
+        }
+
+        var ok = await VM.SaveAsync();
+        if (ok)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary  = "Cita creada",
+                Detail   = "La cita fue registrada correctamente.",
+                Duration = 3000
+            });
+            Nav.NavigateTo("/Citas");
+        }
     }
 
-    RenderFragment Campo(string label, string? valor, Action<string>? onChange) => __builder =>
-    {
-        <RadzenStack Gap="5">
-            <RadzenText Text="@label" Style="color:#777;" />
+    // ── Helpers de UI ─────────────────────────────────────────────────────────
 
-            <RadzenTextBox Value="@valor"
-                           Change="@(e => onChange?.Invoke(e?.ToString() ?? ""))"
-                           Style="width:100%; border-radius:10px;" />
+    RenderFragment SectionHeader(string title, string color) => __builder =>
+    {
+        <div style="@($"border-left:4px solid {color}; padding-left:12px; margin-bottom:1rem;")">
+            <RadzenText Text="@title" Style="font-size:16px; font-weight:700; margin:0;" />
+        </div>;
+    };
+
+    RenderFragment InfoField(string label, string? value) => __builder =>
+    {
+        <RadzenStack Gap="2">
+            <RadzenText Text="@label" Style="font-size:11px; color:#999; font-weight:600; text-transform:uppercase;" />
+            <RadzenText Text="@(value ?? "—")" Style="font-size:14px;" />
+        </RadzenStack>;
+    };
+
+    RenderFragment EmployeeItem(Employee emp, string color) => __builder =>
+    {
+        var initial = !string.IsNullOrEmpty(emp.FirstName) ? emp.FirstName.Substring(0, 1) : "?";
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="10" AlignItems="AlignItems.Center">
+            <RadzenAvatar Text="@initial"
+                          Style="@($"background:{color}; color:white; width:32px; height:32px; font-size:14px;")" />
+            <RadzenStack Gap="0">
+                <span style="font-weight:600; font-size:14px;">@emp.FullName</span>
+                <span style="font-size:12px; color:#888;">
+                    @(emp.DocumentNumberValue ?? "Sin DNI")
+                    @if (!string.IsNullOrEmpty(emp.Speciality))
+                    { <span> · @emp.Speciality</span> }
+                </span>
+            </RadzenStack>
         </RadzenStack>;
     };
 }

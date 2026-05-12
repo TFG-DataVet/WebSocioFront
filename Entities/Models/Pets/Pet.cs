@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using SocioWeb.Domain.Entities;
+using SocioWeb.Infrastructure.Converters;
 
 namespace SocioWeb.Entities;
 
@@ -45,9 +46,11 @@ public class Pet
     public bool IsActive { get; set; } = true;
 
     [JsonPropertyName("createdAt")]
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
     public DateTime? CreatedAt { get; set; }
 
     [JsonPropertyName("updatedAt")]
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
     public DateTime? UpdatedAt { get; set; }
 }
 

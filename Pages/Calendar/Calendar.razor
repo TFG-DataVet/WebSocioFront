@@ -1,18 +1,19 @@
-﻿@page "/Calendario"
-@using SocioWeb.Domain.Entities
-@inject AppointmentService AppointmentService
+@page "/Calendario"
+@using SocioWeb.Entities.Models.Appointments
+@using SocioWeb.Services.AppointmentService
+@inject IAppointmentService AppointmentApi
 @inject NavigationManager Nav
 
 <RadzenStack Gap="10" Style="padding:20px">
-    
+
     <RadzenCard Style="
-    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-    color: white;
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    margin-bottom: 1.5rem;
-    padding: 1.5rem 2rem;">
-    
+        background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        color: white;
+        border-radius: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        margin-bottom: 1.5rem;
+        padding: 1.5rem 2rem;">
+
         <RadzenStack Orientation="Orientation.Horizontal"
                      AlignItems="AlignItems.Center"
                      JustifyContent="JustifyContent.SpaceBetween"
@@ -20,25 +21,32 @@
                      Gap="10">
 
             <RadzenStack Gap="2">
-                <RadzenText Text="Calendario de Citas"
-                            Style="font-size:28px; font-weight:700;" />
-                <RadzenText Text="@($"{appointments.Count} citas registradas")"
-                            Style="font-size:18px; opacity:0.85;" />
+                <RadzenText Text="Calendario de Citas" Style="font-size:28px; font-weight:700;" />
+                <RadzenText Text="@($"{_appointments.Count} citas cargadas")" Style="font-size:18px; opacity:0.85;" />
             </RadzenStack>
 
             <RadzenButton Text="Nueva Cita"
                           Icon="add_circle"
                           Style="background:white; color:#ff7e5f; font-weight:600; border-radius:10px;"
-                          Click="@CreateAppointment" />
+                          Click="@(() => Nav.NavigateTo("/CreateAppointment"))" />
         </RadzenStack>
     </RadzenCard>
 
+    @if (_loading)
+    {
+        <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+    }
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@_error" AllowClose="true" />
+    }
+
     <!-- CALENDARIO -->
     <RadzenScheduler TItem="Appointment"
-                     Data="@appointments"
+                     Data="@_appointments"
                      StartProperty="Start"
                      EndProperty="End"
-                     TextProperty="PetName"
+                     TextProperty="Text"
                      SlotSelect="@OnSlotSelect"
                      AppointmentSelect="@OnAppointmentSelect"
                      Style="height:800px">
@@ -54,26 +62,30 @@
 
 @code {
 
-    List<Appointment> appointments = new();
+    List<Appointment> _appointments = new();
+    bool   _loading = false;
+    string _error   = string.Empty;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Cargar citas desde el servicio
-        appointments = AppointmentService.Appointments.ToList();
+        _loading = true;
+        try
+        {
+            _appointments = await AppointmentApi.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = $"No se pudieron cargar las citas: {ex.Message}";
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
 
     void OnSlotSelect(SchedulerSlotSelectEventArgs args)
-    {
-        Nav.NavigateTo($"/CreateAppointment?date={args.Start:O}");
-    }
+        => Nav.NavigateTo($"/CreateAppointment?date={args.Start:O}");
 
     void OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
-    {
-        Nav.NavigateTo($"/AppointmentProfile/{args.Data.Id}");
-    }
-
-    void CreateAppointment()
-    {
-        Nav.NavigateTo("/CreateAppointment");
-    }
+        => Nav.NavigateTo($"/AppointmentProfile/{args.Data.Id}");
 }

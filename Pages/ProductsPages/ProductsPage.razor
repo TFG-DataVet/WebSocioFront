@@ -134,7 +134,7 @@
             <!-- Fecha creación -->
             <RadzenDataGridColumn TItem="Product" Property="CreatedAt" Title="Alta" Width="130px">
                 <Template Context="product">
-                    <RadzenText Text="@product.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")" 
+                    <RadzenText Text="@(product.CreatedAt?.ToLocalTime().ToString("dd/MM/yyyy") ?? "—")"
                                 Style="font-size:13px; color:#666;" />
                 </Template>
             </RadzenDataGridColumn>

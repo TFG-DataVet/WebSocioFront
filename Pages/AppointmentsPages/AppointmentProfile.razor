@@ -1,110 +1,170 @@
-﻿@page "/AppointmentProfile/{id}"
+@page "/AppointmentProfile/{id}"
+@using SocioWeb.Entities.Models.Appointments
 @using SocioWeb.ViewModels.Appointments
 @inject NavigationManager Nav
 @inject AppointmentProfileViewModel VM
+@inject NotificationService NotificationService
 
 @if (VM.IsLoading)
-                 {
-                     <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
-                 }
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+}
 @if (VM.HasError)
 {
     <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage"/>
 }
 
-<RadzenCard>
-    <RadzenStack Orientation="Orientation.Horizontal" Gap="25"
-                 AlignItems="AlignItems.Center" Style="margin-bottom:30px;">
+@if (VM.Appointment is null && !VM.IsLoading)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Warning" Text="Cita no encontrada."/>
+    return;
+}
 
-        <RadzenCard Style="width:120px; height:120px; border-radius:50%; background:#e0e7ff;
-                           display:flex; align-items:center; justify-content:center; font-size:50px;">
-            🐶
-        </RadzenCard>
+@if (VM.Appointment is not null)
+{
+    var cita = VM.Appointment;
 
-        <RadzenStack Gap="5">
-            <RadzenText Text="@VM.Appointment.PetName" TextStyle="TextStyle.H4"/>
-            <RadzenText Text="Cita veterinaria" Style="color:#777;"/>
+    <RadzenCard Style="border-radius:14px; box-shadow:0 2px 14px rgba(0,0,0,0.08);">
 
-            @if (!VM.IsEditing)
+        <!-- Cabecera -->
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="20"
+                     AlignItems="AlignItems.Center" Style="margin-bottom:24px;">
+            <RadzenCard Style="width:80px; height:80px; border-radius:50%; background:#e0e7ff;
+                               display:flex; align-items:center; justify-content:center; font-size:40px;">
+                🐾
+            </RadzenCard>
+            <RadzenStack Gap="4">
+                <RadzenText Text="@(cita.Pet?.Name ?? "Mascota no especificada")" TextStyle="TextStyle.H4"/>
+                <RadzenText Text="@($"{cita.Type} · {cita.ScheduledAt:dd/MM/yyyy HH:mm}")"
+                            Style="color:#777; font-size:14px;"/>
+                <span style="padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600;
+                             background:@StatusColor(cita.Status); color:white; display:inline-block;">
+                    @cita.Status.ToString().Replace("_", " ")
+                </span>
+            </RadzenStack>
+        </RadzenStack>
+
+        <RadzenDivider Style="margin-bottom:20px;"/>
+
+        <!-- Datos del propietario -->
+        <RadzenText Text="Propietario" TextStyle="TextStyle.H6" Style="margin-bottom:12px;"/>
+        <RadzenRow Gap="20" Style="margin-bottom:20px;">
+            <RadzenColumn Size="12" SizeMD="4">@Info("Nombre",    cita.OwnerName)</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">@Info("Email",     cita.OwnerEmail)</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">@Info("Teléfono",  cita.OwnerPhone)</RadzenColumn>
+        </RadzenRow>
+
+        <!-- Datos de la mascota -->
+        <RadzenText Text="Mascota" TextStyle="TextStyle.H6" Style="margin-bottom:12px;"/>
+        <RadzenRow Gap="20" Style="margin-bottom:20px;">
+            <RadzenColumn Size="12" SizeMD="4">@Info("Nombre",   cita.Pet?.Name)</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">@Info("Especie",  cita.Pet?.Species)</RadzenColumn>
+        </RadzenRow>
+
+        <!-- Datos de la cita -->
+        <RadzenText Text="Detalles de la cita" TextStyle="TextStyle.H6" Style="margin-bottom:12px;"/>
+        <RadzenRow Gap="20" Style="margin-bottom:20px;">
+            <RadzenColumn Size="12" SizeMD="4">@Info("Tipo",     cita.Type.ToString())</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">@Info("Fuente",   cita.Source.ToString())</RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">@Info("Emergencia", cita.Emergency ? "Sí" : "No")</RadzenColumn>
+            <RadzenColumn Size="12">@Info("Notas", cita.Notes)</RadzenColumn>
+        </RadzenRow>
+
+        <RadzenDivider Style="margin-bottom:20px;"/>
+
+        <!-- Cambiar estado -->
+        @if (cita.Status != AppointmentStatus.CANCELADA && cita.Status != AppointmentStatus.FINALIZADA)
+        {
+            <RadzenText Text="Actualizar estado" TextStyle="TextStyle.H6" Style="margin-bottom:12px;"/>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="8" Wrap="FlexWrap.Wrap" Style="margin-bottom:20px;">
+                @foreach (var s in _nextStatuses)
+                {
+                    var estado = s;
+                    <RadzenButton Text="@estado.ToString().Replace("_"," ")"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Size="ButtonSize.Small"
+                                  Style="@($"background:{StatusColor(estado)}; border:none;")"
+                                  Click="@(async () => await ChangeStatus(estado))"/>
+                }
+            </RadzenStack>
+        }
+
+        <!-- Acciones -->
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="10" JustifyContent="JustifyContent.End">
+            <RadzenButton Text="Volver" Icon="arrow_back"
+                          ButtonStyle="ButtonStyle.Light"
+                          Click="@(() => Nav.NavigateTo("/Citas"))"/>
+            @if (cita.Status != AppointmentStatus.CANCELADA && cita.Status != AppointmentStatus.FINALIZADA)
             {
-                <RadzenButton Text="Editar cita" Icon="edit"
-                              Style="border-radius:10px;"
-                              Click="@(() => VM.IsEditing = true)"/>
-            }
-            else
-            {
-                <RadzenButton Text="Cancelar" Icon="close"
+                <RadzenButton Text="Cancelar cita" Icon="cancel"
                               ButtonStyle="ButtonStyle.Danger"
-                              Style="border-radius:10px;"
-                              Click="@VM.Cancel"/>
+                              Click="@OnCancel"/>
             }
-            <RadzenButton Text="Eliminar cita" Icon="delete"
-                          ButtonStyle="ButtonStyle.Danger"
-                          Style="border-radius:10px; margin-left:10px;"
-                          Click="@OnDelete"/>
         </RadzenStack>
-    </RadzenStack>
 
-    <RadzenText Text="Información de la cita" TextStyle="TextStyle.H5" Style="margin-bottom:20px;"/>
-
-    <RadzenRow Gap="25">
-        <RadzenColumn Size="6">@Campo("Mascota",   VM.Appointment.PetName,   v => VM.Appointment.PetName   = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Dueño",     VM.Appointment.OwnerName, v => VM.Appointment.OwnerName = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Teléfono",  VM.Appointment.Phone,     v => VM.Appointment.Phone     = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Estado",    VM.Appointment.Status,    v => VM.Appointment.Status    = v)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Fecha y hora",
-            VM.Appointment.Date.ToString("dd/MM/yyyy HH:mm"),
-            v => VM.Appointment.Date = DateTime.Parse(v))</RadzenColumn>
-        <RadzenColumn Size="12">@Campo("Motivo", VM.Appointment.Reason, v => VM.Appointment.Reason = v)</RadzenColumn>
-    </RadzenRow>
-
-    <RadzenDivider Style="margin:30px 0;"/>
-
-    <RadzenText Text="Registro del sistema" TextStyle="TextStyle.H5" Style="margin-bottom:20px;"/>
-    <RadzenRow Gap="25">
-        <RadzenColumn Size="6">@Campo("Creado el", VM.Appointment.CreatedAt.ToLocalTime().ToString(), null)</RadzenColumn>
-        <RadzenColumn Size="6">@Campo("Última actualización", VM.Appointment.UpdatedAt?.ToLocalTime().ToString(), null)</RadzenColumn>
-    </RadzenRow>
-
-    @if (VM.IsEditing)
-    {
-        <RadzenStack AlignItems="AlignItems.End" Style="margin-top:30px;">
-            <RadzenButton Text="Guardar cambios" Icon="save"
-                          ButtonStyle="ButtonStyle.Primary"
-                          Style="background:#4b3e48; color:white; border-radius:10px;"
-                          Click="@(async () => await VM.SaveAsync())"/>
-        </RadzenStack>
-    }
-</RadzenCard>
+    </RadzenCard>
+}
 
 @code {
     [Parameter] public string id { get; set; } = "";
 
+    static readonly AppointmentStatus[] _nextStatuses =
+    {
+        AppointmentStatus.CLIENTE_LLEGADO,
+        AppointmentStatus.PROXIMO_A_ATENDER,
+        AppointmentStatus.EN_CONSULTA,
+        AppointmentStatus.FINALIZADA,
+        AppointmentStatus.REQUIERE_SEGUIMIENTO,
+    };
+
     protected override async Task OnInitializedAsync() => await VM.LoadAsync(id);
 
-    async Task OnDelete()
+    async Task ChangeStatus(AppointmentStatus newStatus)
     {
-        if (await VM.DeleteAsync()) Nav.NavigateTo("/Citas");
+        await VM.UpdateStatusAsync(newStatus);
+        if (!VM.HasError)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary  = "Estado actualizado",
+                Detail   = $"Estado cambiado a {newStatus.ToString().Replace("_", " ")}",
+                Duration = 3000
+            });
+        }
     }
 
-    RenderFragment Campo(string label, string? valor, Action<string>? onChange) => __builder =>
+    async Task OnCancel()
     {
-        <RadzenStack Gap="5">
-            <RadzenText Text="@label" Style="color:#777;"/>
-            @if (!VM.IsEditing)
+        if (await VM.CancelAsync())
+        {
+            NotificationService.Notify(new NotificationMessage
             {
-                <RadzenText Text="@valor" Style="font-size:18px; color:#333;"/>
-            }
-            else if (onChange != null)
-            {
-                <RadzenTextBox Value="@valor"
-                               Change="@(e => onChange(e.ToString()))"
-                               Style="width:100%; background:white; border-radius:10px;"/>
-            }
-            else
-            {
-                <RadzenText Text="@valor" Style="font-size:18px; color:#333;"/>
-            }
+                Severity = NotificationSeverity.Info,
+                Summary  = "Cita cancelada",
+                Duration = 3000
+            });
+            Nav.NavigateTo("/Citas");
+        }
+    }
+
+    static string StatusColor(AppointmentStatus s) => s switch
+    {
+        AppointmentStatus.RESERVADA            => "#4e73df",
+        AppointmentStatus.CLIENTE_LLEGADO      => "#1cc88a",
+        AppointmentStatus.PROXIMO_A_ATENDER    => "#36b9cc",
+        AppointmentStatus.EN_CONSULTA          => "#f6c23e",
+        AppointmentStatus.FINALIZADA           => "#858796",
+        AppointmentStatus.REQUIERE_SEGUIMIENTO => "#e74a3b",
+        AppointmentStatus.CANCELADA            => "#e74a3b",
+        _                                      => "#aaa"
+    };
+
+    RenderFragment Info(string label, string? valor) => __builder =>
+    {
+        <RadzenStack Gap="2">
+            <RadzenText Text="@label" Style="font-size:12px; color:#999; font-weight:600; text-transform:uppercase;"/>
+            <RadzenText Text="@(valor ?? "—")" Style="font-size:15px;"/>
         </RadzenStack>;
     };
 }

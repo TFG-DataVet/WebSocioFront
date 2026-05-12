@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using SocioWeb.Entities;
+using SocioWeb.Infrastructure.Converters;
 
 namespace SocioWeb.Domain.Entities;
 
@@ -58,9 +59,11 @@ public class Owner
     public StatusApp StatusApp => IsActive ? StatusApp.Active : StatusApp.Inactive;
 
     [JsonPropertyName("createdAt")]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
+    public DateTime? CreatedAt { get; set; }
 
     [JsonPropertyName("updateAt")]
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
     public DateTime? UpdatedAt { get; set; }
 
     // Listas anidadas
@@ -74,4 +77,13 @@ public class Owner
     [JsonPropertyName("acceptTermsAndCond")]
     [Required(ErrorMessage = "El número de documento es obligatorio.")]
     public bool acceptTermsAndCond {get; set;}
+
+    [JsonIgnore]
+    public string FullName => $"{Name} {LastName}".Trim();
+
+    [JsonIgnore]
+    public string SearchLabel =>
+        string.IsNullOrEmpty(IdentificationNumber)
+            ? FullName
+            : $"{FullName} — {IdentificationNumber}";
 }

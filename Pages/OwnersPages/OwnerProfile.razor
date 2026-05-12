@@ -114,7 +114,7 @@
                     Style="color:#4b3e48; font-size:18px; font-weight:600; margin-bottom:1.2rem;" />
         <RadzenRow Gap="20" Style="margin-bottom:2rem;">
             <RadzenColumn Size="12" SizeMD="6">
-                @Campo("Creado el", VM.Owner.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm"), null)
+                @Campo("Creado el", VM.Owner.CreatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—", null)
             </RadzenColumn>
             <RadzenColumn Size="12" SizeMD="6">
                 @Campo("Última actualización", VM.Owner.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm"), null)

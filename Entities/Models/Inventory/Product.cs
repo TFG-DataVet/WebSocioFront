@@ -1,4 +1,7 @@
-﻿namespace SocioWeb.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+using SocioWeb.Infrastructure.Converters;
+
+namespace SocioWeb.Domain.Entities;
 
 public class Product
 {
@@ -11,7 +14,9 @@ public class Product
     
     public bool Active { get; set; }
     public string Description { get; set; }
-    public DateTime CreatedAt { get; set; }
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
+    public DateTime? CreatedAt { get; set; }
+    [JsonConverter(typeof(FlexibleNullableDateTimeConverter))]
     public DateTime? UpdatedAt { get; set; }
     public List<LogEntry> Historical { get; set; }
     

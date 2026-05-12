@@ -1,42 +1,50 @@
-﻿@page "/EditCalendarAppointmen"
+@page "/EditCalendarAppointmen"
 
 @inject DialogService DialogService
 
-<RadzenTemplateForm TItem="Appointment" Data="@model" Submit=@OnSubmit>
+@* Diálogo para ajustar el slot de tiempo de una cita ya existente *@
+
+<RadzenTemplateForm TItem="EditSlot" Data="@_slot" Submit="@OnSubmit">
     <RadzenStack Gap="1rem">
+
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
-            <RadzenLabel Text="Title" Style="width: 6rem;" />
-            <RadzenTextBox @bind-Value="@model.Text" Name="Text" Style="width: 12rem;" />
-            <RadzenRequiredValidator Component="Text" Text="Title is required" />
+            <RadzenLabel Text="Inicio" Style="width:6rem;" />
+            <RadzenDatePicker @bind-Value="_slot.Start" Name="Start" ShowTime="true" Style="width:12rem." />
+            <RadzenRequiredValidator Component="Start" Text="La fecha de inicio es obligatoria" />
         </RadzenStack>
+
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
-            <RadzenLabel Text="Start" Style="width: 6rem;" />
-            <RadzenDatePicker @bind-Value="@model.Start" Name="Start" ShowTime="true" Style="width: 12rem;" />
-            <RadzenRequiredValidator Component="Start" Text="Start is required" />
+            <RadzenLabel Text="Fin" Style="width:6rem;" />
+            <RadzenDatePicker @bind-Value="_slot.End" Name="End" ShowTime="true" Style="width:12rem." />
+            <RadzenRequiredValidator Component="End" Text="La fecha de fin es obligatoria" />
         </RadzenStack>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
-            <RadzenLabel Text="End" Style="width: 6rem;" />
-            <RadzenDatePicker Name="End" @bind-Value="@model.End" ShowTime="true" Style="width: 12rem;" />
-            <RadzenRequiredValidator Component="End" Text="End is required" />
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Guardar" />
         </RadzenStack>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" >
-            <RadzenButton ButtonType="ButtonType.Submit" Text="Save" />
-        </RadzenStack>
+
     </RadzenStack>
 </RadzenTemplateForm>
-@code {
-    [Parameter]
-    public Appointment Appointment { get; set; }
 
-    Appointment model = new Appointment();
+@code {
+    [Parameter] public Appointment? Appointment { get; set; }
+
+    EditSlot _slot = new();
 
     protected override void OnParametersSet()
     {
-        model = Appointment;
+        if (Appointment is not null)
+        {
+            _slot.Start = Appointment.ScheduledAt;
+            _slot.End   = Appointment.ScheduledAt.AddMinutes(30);
+        }
     }
 
-    void OnSubmit(Appointment model)
+    void OnSubmit(EditSlot slot) => DialogService.Close(slot);
+
+    public class EditSlot
     {
-        DialogService.Close(model);
+        public DateTime Start { get; set; }
+        public DateTime End   { get; set; }
     }
 }

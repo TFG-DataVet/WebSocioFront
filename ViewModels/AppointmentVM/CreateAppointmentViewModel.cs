@@ -1,38 +1,55 @@
-﻿namespace SocioWeb.ViewModels.Appointments;
+namespace SocioWeb.ViewModels.Appointments;
 
-using SocioWeb.ViewModels.Shared;
-using SocioWeb.Services.AppointmentService;
 using SocioWeb.Entities.Dtos.MedicalDto.AppointmentDto;
+using SocioWeb.Entities.Models.Appointments;
+using SocioWeb.Services.AppointmentService;
+using SocioWeb.ViewModels.Shared;
 
 public class CreateAppointmentViewModel : BaseViewModel
 {
     private readonly IAppointmentService _service;
 
-    public Appointment Appointment { get; set; } = new()
+    public CreateAppointmentDto Form { get; set; } = new()
     {
-        Id = Guid.NewGuid().ToString(),
-        Date = DateTime.Now,
-        Status = "Pendiente",
-        CreatedAt = DateTime.UtcNow
+        ScheduledAt = DateTime.Now.AddHours(1),
+        Type        = AppointmentType.RUTINA,
+        Source      = AppointmentSource.PANEL
     };
+
+    /// <summary>Cita creada tras guardar con éxito</summary>
+    public Appointment? CreatedAppointment { get; private set; }
 
     public CreateAppointmentViewModel(IAppointmentService service) => _service = service;
 
-    public async Task SaveAsync()
+    public async Task<bool> SaveAsync()
     {
         IsLoading = true;
         ClearError();
         try
         {
-            await _service.CreateAsync(new AppointmentDto());
+            CreatedAppointment = await _service.CreateAsync(Form);
+            return true;
         }
         catch (Exception ex)
         {
-            SetError($"Error al crear la cita");
+            SetError($"Error al crear la cita: {ex.Message}");
+            return false;
         }
         finally
         {
             IsLoading = false;
         }
+    }
+
+    public void Reset()
+    {
+        Form = new CreateAppointmentDto
+        {
+            ScheduledAt = DateTime.Now.AddHours(1),
+            Type        = AppointmentType.RUTINA,
+            Source      = AppointmentSource.PANEL
+        };
+        CreatedAppointment = null;
+        ClearError();
     }
 }
