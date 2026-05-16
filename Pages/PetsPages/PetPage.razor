@@ -1,4 +1,4 @@
-﻿@page "/create-pet"
+@page "/create-pet"
 @page "/edit-pet/{Id}"
 @using SocioWeb.ViewModels.Pets
 @using SocioWeb.Domain.Entities
@@ -38,16 +38,9 @@
     <div style="padding:2rem;">
         <RadzenTemplateForm TItem="PetPageVM.PetFormModel" Data="@VM.FormData" Submit="@OnSubmit">
 
-            <!-- SECCIÓN: INFORMACIÓN GENERAL -->
+            <!-- ── INFORMACIÓN GENERAL ──────────────────────────── -->
             <div style="margin-bottom:2rem;">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
-                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(29,158,117,0.2);">
-                    <div style="width:3px; height:18px; background:#1D9E75; border-radius:2px;"></div>
-                    <span style="font-size:13px; font-weight:500; letter-spacing:0.05em;
-                                 text-transform:uppercase; color:#1D9E75;">
-                        Información general
-                    </span>
-                </div>
+                @SectionBar("#1D9E75", "Información general")
 
                 <RadzenRow Gap="20">
 
@@ -57,7 +50,7 @@
                                 Nombre <span style="color:#E24B4A;">*</span>
                             </label>
                             <RadzenTextBox Name="Name" @bind-Value="VM.FormData.Name"
-                                           Placeholder="Nombre de la mascota" Style="width:75%;" />
+                                           Placeholder="Nombre de la mascota" Style="width:100%;" />
                             <RadzenRequiredValidator Component="Name" Text="El nombre es obligatorio." />
                         </div>
                     </RadzenColumn>
@@ -72,7 +65,7 @@
                                             @bind-Value="VM.FormData.Species"
                                             Change="@VM.OnSpeciesChanged"
                                             Placeholder="Selecciona una especie"
-                                            Style="width:75%;" />
+                                            Style="width:100%;" />
                             <RadzenRequiredValidator Component="Species" Text="La especie es obligatoria." />
                         </div>
                     </RadzenColumn>
@@ -86,7 +79,7 @@
                                             Data="@VM.CurrentBreeds"
                                             @bind-Value="VM.FormData.Breed"
                                             Placeholder="Selecciona una raza"
-                                            Style="width:75%;" />
+                                            Style="width:100%;" />
                             <RadzenRequiredValidator Component="Breed" Text="La raza es obligatoria." />
                         </div>
                     </RadzenColumn>
@@ -98,7 +91,7 @@
                                             Data="@(Enum.GetValues(typeof(Sex)))"
                                             @bind-Value="VM.FormData.Sex"
                                             Placeholder="Selecciona el sexo"
-                                            Style="width:75%;" />
+                                            Style="width:100%;" />
                         </div>
                     </RadzenColumn>
 
@@ -109,7 +102,7 @@
                                               @bind-Value="VM.FormData.DateOfBirth"
                                               DateFormat="dd/MM/yyyy"
                                               Placeholder="dd/mm/aaaa"
-                                              Style="width:75%;" />
+                                              Style="width:100%;" />
                         </div>
                     </RadzenColumn>
 
@@ -118,7 +111,7 @@
                             <label style="font-size:13px; font-weight:500;">Número de chip</label>
                             <RadzenTextBox @bind-Value="VM.FormData.ChipNumber"
                                            Placeholder="Ej: 985112345678901"
-                                           Style="width:75%;" />
+                                           Style="width:100%;" />
                         </div>
                     </RadzenColumn>
 
@@ -127,86 +120,83 @@
                             <label style="font-size:13px; font-weight:500;">URL de avatar</label>
                             <RadzenTextBox @bind-Value="VM.FormData.AvatarUrl"
                                            Placeholder="https://ejemplo.com/imagen.jpg"
-                                           Style="width:75%;" />
+                                           Style="width:100%;" />
                         </div>
                     </RadzenColumn>
 
                 </RadzenRow>
             </div>
 
-            <!-- SECCIÓN: DATOS DEL DUEÑO -->
+            <!-- ── DUEÑO ─────────────────────────────────────────── -->
             <div style="margin-bottom:2rem;">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
-                            padding-bottom:0.75rem; border-bottom:0.5px solid rgba(127,119,221,0.2);">
-                    <div style="width:3px; height:18px; background:#7F77DD; border-radius:2px;"></div>
-                    <span style="font-size:13px; font-weight:500; letter-spacing:0.05em;
-                                 text-transform:uppercase; color:#7F77DD;">
-                        Datos del dueño
-                    </span>
-                </div>
+                @SectionBar("#7F77DD", "Dueño de la mascota")
 
                 <RadzenRow Gap="20">
-                    <RadzenColumn Size="12" SizeMD="6">
+
+                    <!-- Buscador por nombre / DNI -->
+                    <RadzenColumn Size="12">
                         <div style="display:flex; flex-direction:column; gap:6px;">
                             <label style="font-size:13px; font-weight:500;">
-                                ID Clínica <span style="color:#E24B4A;">*</span>
+                                Buscar dueño <span style="color:#E24B4A;">*</span>
                             </label>
-                            <RadzenTextBox Name="ClinicId"
-                                           @bind-Value="VM.FormData.ClinicId"
-                                           Placeholder="ID de la clínica"
-                                           Style="width:75%;" />
-                            <RadzenRequiredValidator Component="ClinicId" Text="El ID de la clínica es obligatorio." />
+                            <RadzenDropDown TValue="string"
+                                            Name="OwnerId"
+                                            Data="@VM.Owners"
+                                            Value="@VM.FormData.Owner.OwnerId"
+                                            ValueChanged="@VM.OnOwnerSelected"
+                                            ValueProperty="Id"
+                                            TextProperty="SearchLabel"
+                                            AllowFiltering="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            FilterOperator="StringFilterOperator.Contains"
+                                            Placeholder="@(VM.LoadingOwners ? "Cargando dueños…" : "Busca por nombre o DNI…")"
+                                            Disabled="@VM.LoadingOwners"
+                                            Style="width:100%;">
+                                <Template Context="o">
+                                    <RadzenStack Orientation="Orientation.Horizontal" Gap="10"
+                                                 AlignItems="AlignItems.Center">
+                                        <RadzenAvatar Text="@(o.Name.Length > 0 ? o.Name[..1] : "?")"
+                                                      Style="background:#7F77DD; color:white;
+                                                             width:32px; height:32px; font-size:14px;" />
+                                        <RadzenStack Gap="0">
+                                            <span style="font-weight:600; font-size:14px;">@o.FullName</span>
+                                            <span style="font-size:12px; color:#888;">
+                                                @(o.IdentificationNumber ?? "Sin DNI") · @(o.Phone ?? "—")
+                                            </span>
+                                        </RadzenStack>
+                                    </RadzenStack>
+                                </Template>
+                            </RadzenDropDown>
+                            <RadzenRequiredValidator Component="OwnerId" Text="Selecciona un dueño." />
                         </div>
                     </RadzenColumn>
 
-                    <RadzenColumn Size="12" SizeMD="6">
-                        <div style="display:flex; flex-direction:column; gap:6px;">
-                            <label style="font-size:13px; font-weight:500;">
-                                ID del dueño <span style="color:#E24B4A;">*</span>
-                            </label>
-                            <RadzenTextBox Name="OwnerId" @bind-Value="VM.FormData.Owner.OwnerId"
-                                           Placeholder="Identificador único" Style="width:100%;"/>
-                            <RadzenRequiredValidator Component="OwnerId" Text="El ID del dueño es obligatorio."/>
-                        </div>
-                    </RadzenColumn>
-
-                    <RadzenColumn Size="12" SizeMD="6">
-                        <div style="display:flex; flex-direction:column; gap:6px;">
-                            <label style="font-size:13px; font-weight:500;">
-                                Nombre <span style="color:#E24B4A;">*</span>
-                            </label>
-                            <RadzenTextBox Name="OwnerName" @bind-Value="VM.FormData.Owner.OwnerName"
-                                           Placeholder="Nombre del dueño" Style="width:75%;"/>
-                            <RadzenRequiredValidator Component="OwnerName" Text="El nombre es obligatorio."/>
-                        </div>
-                    </RadzenColumn>
-
-                    <RadzenColumn Size="12" SizeMD="6">
-                        <div style="display:flex; flex-direction:column; gap:6px;">
-                            <label style="font-size:13px; font-weight:500;">
-                                Apellidos <span style="color:#E24B4A;">*</span>
-                            </label>
-                            <RadzenTextBox Name="OwnerLastName" @bind-Value="VM.FormData.Owner.OwnerLastName"
-                                           Placeholder="Apellidos del dueño" Style="width:75%;"/>
-                            <RadzenRequiredValidator Component="OwnerLastName" Text="Los apellidos son obligatorios."/>
-                        </div>
-                    </RadzenColumn>
-
-                    <RadzenColumn Size="12" SizeMD="6">
-                        <div style="display:flex; flex-direction:column; gap:6px;">
-                            <label style="font-size:13px; font-weight:500;">
-                                Teléfono <span style="color:#E24B4A;">*</span>
-                            </label>
-                            <RadzenTextBox Name="OwnerPhone" @bind-Value="VM.FormData.Owner.OwnerPhone"
-                                           Placeholder="+34 600 000 000" Style="width:75%;"/>
-                            <RadzenRequiredValidator Component="OwnerPhone" Text="El teléfono es obligatorio."/>
-                        </div>
-                    </RadzenColumn>
+                    <!-- Resumen del dueño seleccionado -->
+                    @if (!string.IsNullOrEmpty(VM.FormData.Owner.OwnerId))
+                    {
+                        <RadzenColumn Size="12">
+                            <div style="background:#f5f4ff; border:1px solid #d0cdff;
+                                        border-radius:10px; padding:1rem;">
+                                <RadzenStack Orientation="Orientation.Horizontal" Gap="12"
+                                             AlignItems="AlignItems.Center">
+                                    <RadzenAvatar Text="@(VM.FormData.Owner.OwnerName?.Length > 0 ? VM.FormData.Owner.OwnerName[..1] : "?")"
+                                                  Style="background:#7F77DD; color:white;
+                                                         width:40px; height:40px; font-size:18px;" />
+                                    <RadzenStack Gap="2">
+                                        <RadzenText Text="@($"{VM.FormData.Owner.OwnerName} {VM.FormData.Owner.OwnerLastName}")"
+                                                    Style="font-weight:600; font-size:15px;" />
+                                        <RadzenText Text="@(VM.FormData.Owner.OwnerPhone ?? "—")"
+                                                    Style="font-size:13px; color:#666;" />
+                                    </RadzenStack>
+                                </RadzenStack>
+                            </div>
+                        </RadzenColumn>
+                    }
 
                 </RadzenRow>
             </div>
 
-            <!-- BOTONES -->
+            <!-- ── BOTONES ────────────────────────────────────────── -->
             <div style="padding-top:1rem; border-top:0.5px solid rgba(29,158,117,0.15);
                         display:flex; justify-content:flex-end; gap:10px;">
                 <RadzenButton Text="Cancelar" Icon="close"
@@ -235,6 +225,8 @@
     {
         if (IsEditing)
             await VM.LoadForEditAsync(Id!);
+        else
+            await VM.InitAsync();
     }
 
     async Task OnSubmit()
@@ -257,8 +249,17 @@
                     : "La mascota fue registrada correctamente.",
                 Duration = 3500
             });
-
             Nav.NavigateTo(IsEditing ? $"/PerfilMascota/{Id}" : "/Mascotas");
         }
     }
+
+    RenderFragment SectionBar(string color, string title) => __builder =>
+    {
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;
+                    padding-bottom:0.75rem; border-bottom:0.5px solid rgba(0,0,0,0.08);">
+            <div style="@($"width:3px; height:18px; background:{color}; border-radius:2px;")"></div>
+            <span style="@($"font-size:13px; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; color:{color};")"
+            >@title</span>
+        </div>;
+    };
 }

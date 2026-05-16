@@ -1,8 +1,9 @@
-﻿@page "/Productos"
+@page "/Productos"
 @inject NavigationManager Nav
 @inject ProductListViewModel VM
 @inject DialogService DialogService
 @inject NotificationService NotificationService
+@inject AuthenticationStateProvider AuthProvider
 
 @if (VM.IsLoading)
 {
@@ -24,7 +25,7 @@
     box-shadow: 0 4px 20px rgba(67,233,123,0.35);
     margin-bottom: 1.5rem;
     padding: 1.5rem 2rem;">
-    
+
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.SpaceBetween"
@@ -68,8 +69,8 @@
         </RadzenStack>
 
         <RadzenStack Gap="4">
-            <RadzenLabel Text="Marca" Style="font-size:16px; font-weight:600;" />
-            <RadzenTextBox @bind-Value="VM.BrandFilter" Style="width:140px" />
+            <RadzenLabel Text="SKU" Style="font-size:16px; font-weight:600;" />
+            <RadzenTextBox @bind-Value="VM.SkuFilter" Style="width:140px" />
         </RadzenStack>
 
         <RadzenStack Gap="4">
@@ -108,31 +109,44 @@
                         <RadzenAvatar Image="https://cdn-icons-png.flaticon.com/512/679/679720.png" Size="38" />
                         <RadzenStack Gap="0">
                             <RadzenText Text="@product.Name" Style="font-weight:600;" />
-                            <RadzenText Text="@product.Category" Style="font-size:12px; color:#888;" />
+                            <RadzenText Text="@(product.Category ?? "—")" Style="font-size:12px; color:#888;" />
                         </RadzenStack>
                     </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
 
-            <!-- Marca -->
-            <RadzenDataGridColumn TItem="Product" Property="Brand" Title="Marca" Width="130px" />
+            <!-- SKU -->
+            <RadzenDataGridColumn TItem="Product" Title="SKU" Width="130px">
+                <Template Context="product">
+                    <RadzenText Text="@(product.Sku ?? "—")" />
+                </Template>
+            </RadzenDataGridColumn>
 
             <!-- Stock -->
-            <RadzenDataGridColumn TItem="Product" Property="Stock" Title="Stock" Width="100px">
+            <RadzenDataGridColumn TItem="Product" Property="Stock" Title="Stock" Width="90px">
                 <Template Context="product">
-                    <RadzenText Text="@product.Stock" />
+                    <RadzenBadge BadgeStyle="@(product.Stock <= product.MinStock ? BadgeStyle.Danger : BadgeStyle.Success)"
+                                 Text="@product.Stock.ToString()" />
                 </Template>
             </RadzenDataGridColumn>
 
             <!-- Precio -->
-            <RadzenDataGridColumn TItem="Product" Property="Price" Title="Precio" Width="130px">
+            <RadzenDataGridColumn TItem="Product" Property="Price" Title="Precio" Width="120px">
                 <Template Context="product">
                     <RadzenText Text="@($"{product.Price:C}")" />
                 </Template>
             </RadzenDataGridColumn>
 
+            <!-- Estado -->
+            <RadzenDataGridColumn TItem="Product" Title="Estado" Width="100px">
+                <Template Context="product">
+                    <RadzenBadge BadgeStyle="@(product.IsActive ? BadgeStyle.Success : BadgeStyle.Secondary)"
+                                 Text="@(product.IsActive ? "Activo" : "Inactivo")" />
+                </Template>
+            </RadzenDataGridColumn>
+
             <!-- Fecha creación -->
-            <RadzenDataGridColumn TItem="Product" Property="CreatedAt" Title="Alta" Width="130px">
+            <RadzenDataGridColumn TItem="Product" Property="CreatedAt" Title="Alta" Width="120px">
                 <Template Context="product">
                     <RadzenText Text="@(product.CreatedAt?.ToLocalTime().ToString("dd/MM/yyyy") ?? "—")"
                                 Style="font-size:13px; color:#666;" />
@@ -164,12 +178,16 @@
 
 @code {
     protected override async Task OnInitializedAsync()
-        => await VM.LoadAsync();
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var clinicId  = authState.User.FindFirst("ClinicId")?.Value ?? "";
+        await VM.LoadAsync(clinicId);
+    }
 
     async Task ConfirmDelete(Product product)
     {
         var result = await DialogService.Confirm(
-            $"¿Eliminar a {product.Name}? Esta acción no se puede deshacer.",
+            $"¿Eliminar {product.Name}? Esta acción no se puede deshacer.",
             "Confirmar eliminación",
             new ConfirmOptions { OkButtonText = "Eliminar", CancelButtonText = "Cancelar" });
 
@@ -180,8 +198,8 @@
             NotificationService.Notify(new NotificationMessage
             {
                 Severity = NotificationSeverity.Success,
-                Summary = "Eliminado",
-                Detail = $"{product.Name} fue eliminado correctamente.",
+                Summary  = "Eliminado",
+                Detail   = $"{product.Name} fue eliminado correctamente.",
                 Duration = 3000
             });
         }

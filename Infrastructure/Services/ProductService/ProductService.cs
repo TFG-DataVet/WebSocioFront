@@ -1,75 +1,62 @@
-﻿using SocioWeb.Domain.Entities;
+using SocioWeb.Domain.Entities;
+using SocioWeb.Entities.Dtos.MedicalDto.ProductDto;
 
 namespace SocioWeb.Services.AppointmentService;
 
-
+// Mock de desarrollo — en producción se usa ProductsApiService
 public class ProductService : IProductService
 {
     private readonly List<Product> _products = new();
 
-    public ProductService()
+    public Task<List<Product>> GetAllByClinicAsync(string clinicId, string? category = null)
+        => Task.FromResult(_products.Where(p => p.ClinicId == clinicId).ToList());
+
+    public Task<Product?> GetByIdAsync(string id)
+        => Task.FromResult(_products.FirstOrDefault(p => p.Id == id));
+
+    public Task<Product> CreateAsync(string clinicId, CreateProductRequest dto)
     {
-        // Ejemplo hardcode de productos
-        _products.Add(new Product
+        var product = new Product
         {
-            Id = "P1",
-            Name = "Alimento Premium Perro",
-            Category = "Alimentos",
-            Brand = "DogPlus",
-            Price = 29.99m,
-            Stock = 15.ToString(),
-            Active = true,
-            Description = "Bolsa 10kg alimento balanceado",
-            CreatedAt = DateTime.UtcNow.AddMonths(-3),
+            Id        = Guid.NewGuid().ToString(),
+            ClinicId  = clinicId,
+            Name      = dto.Name,
+            Description = dto.Description,
+            Sku       = dto.Sku,
+            Barcode   = dto.Barcode,
+            Price     = dto.Price,
+            TaxRate   = dto.TaxRate,
+            Stock     = dto.Stock,
+            MinStock  = dto.MinStock,
+            IsActive  = true,
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            Historical = new List<LogEntry>
-            {
-                new LogEntry { Date = DateTime.UtcNow.AddDays(-10), Description = "Producto creado" },
-                new LogEntry { Date = DateTime.UtcNow.AddDays(-2), Description = "Actualización de stock" }
-            }
-        });
-    }
-
-    public Task<List<Product>> GetAllAsync() => Task.FromResult(_products.ToList());
-
-    public Task<Product?> GetByIdAsync(string id) => Task.FromResult(_products.FirstOrDefault(p => p.Id == id));
-
-    public Task CreateAsync(Product product)
-    {
-        product.Id = Guid.NewGuid().ToString();
-        product.CreatedAt = DateTime.UtcNow;
-        product.UpdatedAt = DateTime.UtcNow;
+        };
         _products.Add(product);
-        return Task.CompletedTask;
+        return Task.FromResult(product);
     }
 
-    public Task UpdateAsync(string id, Product product)
+    public Task<Product> UpdateAsync(string id, UpdateProductRequest dto)
     {
-        var existing = _products.FirstOrDefault(p => p.Id == id);
-        if (existing != null)
-        {
-            existing.Name = product.Name;
-            existing.Category = product.Category;
-            existing.Brand = product.Brand;
-            existing.Price = product.Price;
-            existing.Stock = product.Stock;
-            existing.Active = product.Active;
-            existing.Description = product.Description;
-            existing.UpdatedAt = DateTime.UtcNow;
-
-            if (product.Historical != null)
-            {
-                existing.Historical = product.Historical;
-            }
-        }
-        return Task.CompletedTask;
+        var existing = _products.FirstOrDefault(p => p.Id == id)
+                       ?? throw new KeyNotFoundException($"Producto {id} no encontrado");
+        existing.Name        = dto.Name;
+        existing.Description = dto.Description;
+        existing.Sku         = dto.Sku;
+        existing.Barcode     = dto.Barcode;
+        existing.Price       = dto.Price;
+        existing.TaxRate     = dto.TaxRate;
+        existing.Stock       = dto.Stock;
+        existing.MinStock    = dto.MinStock;
+        existing.UpdatedAt   = DateTime.UtcNow;
+        return Task.FromResult(existing);
     }
 
-    public Task DeleteAsync(string id)
+    public Task DeleteAsync(string id, string? reason = null)
     {
         var product = _products.FirstOrDefault(p => p.Id == id);
         if (product != null)
-            _products.Remove(product);
+            product.IsActive = false;
         return Task.CompletedTask;
     }
 }
