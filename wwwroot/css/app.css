@@ -67,10 +67,20 @@ code { color: #c02d76; }
    VARIABLES DE TEMA
    ============================================================ */
 
+/* Sobreescribir color primario del tema Radzen (default.css usa verde) */
+:root {
+    --rz-primary: #7F77DD;
+    --rz-primary-light: rgba(127,119,221,0.18);
+    --rz-primary-lighter: rgba(127,119,221,0.08);
+    --rz-primary-dark: #534AB7;
+    --rz-primary-darker: #3C3489;
+    --rz-on-primary: #ffffff;
+}
+
 :root[data-theme='light'] {
     --color-primary: #7F77DD;
     --color-primary-hover: #534AB7;
-    --color-background: linear-gradient(135deg, #e8e6f8 0%, #d4edea 50%, #f0eaf8 100%);
+    --color-background: linear-gradient(135deg, #e8e6f8 0%, #f0eaf8 50%, #d4edea 100%);
     --color-surface: rgba(255,255,255,0.42);
     --color-text: #1F2937;
     --color-border: rgba(255,255,255,0.65);
@@ -161,17 +171,17 @@ code { color: #c02d76; }
    ============================================================ */
 
 .rz-button {
-    background: rgba(127,119,221,0.85) !important;
-    border: 0.5px solid rgba(127,119,221,0.4) !important;
+    background: rgba(127,119,221,0.35) !important;
+    border: 0.5px solid rgba(127,119,221,0.45) !important;
     color: white !important;
     border-radius: 8px !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     transition: background 0.2s, opacity 0.2s !important;
 }
 
 .rz-button:hover {
-    background: rgba(83,74,183,0.90) !important;
+    background: rgba(83,74,183,0.55) !important;
     opacity: 1 !important;
 }
 
@@ -255,7 +265,7 @@ code { color: #c02d76; }
 .rz-panel-menu-item-link {
     background: transparent !important;
     border-radius: 8px !important;
-    color: rgba(40,30,80,0.75) !important;
+    color: #3C3489 !important;
     font-size: 13px !important;
     padding: 9px 10px !important;
     transition: background 0.15s !important;
@@ -264,16 +274,32 @@ code { color: #c02d76; }
 
 .rz-panel-menu-item:hover > .rz-panelmenu-item-content,
 .rz-panel-menu-item-link:hover {
-    background: rgba(127,119,221,0.12) !important;
+    background: rgba(127,119,221,0.22) !important;
+    border: 0.5px solid rgba(127,119,221,0.30) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
     color: rgba(40,30,80,0.90) !important;
 }
 
 .rz-panel-menu-item.rz-state-active > .rz-panelmenu-item-content,
-.rz-panel-menu-item-link.rz-state-active {
+.rz-panel-menu-item-link.rz-state-active,
+.rz-panelmenu-item.rz-state-active > .rz-panelmenu-item-content,
+.rz-panelmenu-item-link.rz-state-active {
     background: rgba(127,119,221,0.18) !important;
-    border: 0.5px solid rgba(127,119,221,0.22) !important;
+    border: 0.5px solid rgba(127,119,221,0.35) !important;
     color: #7F77DD !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
+}
+
+/* Icono del item activo */
+.rz-panel-menu-item.rz-state-active .rzi,
+.rz-panel-menu-item.rz-state-active .material-icons,
+.rz-panel-menu-item.rz-state-active .material-icons-outlined,
+.rz-panel-menu-item.rz-state-active i,
+.rz-panelmenu-item.rz-state-active .rzi,
+.rz-panelmenu-item.rz-state-active .material-icons,
+.rz-panelmenu-item.rz-state-active i {
+    color: #7F77DD !important;
 }
 
 [data-theme='dark'] .rz-panelmenu-item > .rz-panelmenu-item-content,
@@ -281,10 +307,39 @@ code { color: #c02d76; }
     color: rgba(220,215,255,0.75) !important;
 }
 
-[data-theme='dark'] .rz-panelmenu-item.rz-state-active > .rz-panelmenu-item-content {
-    color: #AFA9EC !important;
+[data-theme='dark'] .rz-panelmenu-item.rz-state-active > .rz-panelmenu-item-content,
+[data-theme='dark'] .rz-panel-menu-item.rz-state-active > .rz-panelmenu-item-content {
+    color: #A7C7E7 !important;
+    background: rgba(167,199,231,0.18) !important;
+    border: 0.5px solid rgba(167,199,231,0.30) !important;
 }
 
+[data-theme='dark'] .rz-panelmenu-item.rz-state-active .rzi,
+[data-theme='dark'] .rz-panelmenu-item.rz-state-active .material-icons,
+[data-theme='dark'] .rz-panelmenu-item.rz-state-active i {
+    color: #A7C7E7 !important;
+}
+
+
+/* ============================================================
+   SIDEBAR ICONOS
+   ============================================================ */
+
+[data-theme='light'] .rz-panel-menu .rzi,
+[data-theme='light'] .rz-panel-menu .material-icons,
+[data-theme='light'] .rz-panel-menu .material-icons-outlined,
+[data-theme='light'] .rz-panel-menu .material-icons-round,
+[data-theme='light'] .rz-panel-menu i {
+    color: #3C3489 !important;
+}
+
+[data-theme='dark'] .rz-panel-menu .rzi,
+[data-theme='dark'] .rz-panel-menu .material-icons,
+[data-theme='dark'] .rz-panel-menu .material-icons-outlined,
+[data-theme='dark'] .rz-panel-menu .material-icons-round,
+[data-theme='dark'] .rz-panel-menu i {
+    color: #4facfe !important;
+}
 
 /* ============================================================
    SIDEBAR TOGGLE
@@ -502,13 +557,13 @@ code { color: #c02d76; }
 [data-theme='light'] .rz-panel-menu-item-link,
 [data-theme='light'] .rz-panelmenu-item-link,
 [data-theme='light'] .rz-navigation-item-text {
-    color: #374151 !important;
+    color: #3C3489 !important;
 }
 
 [data-theme='dark'] .rz-panel-menu-item-link,
 [data-theme='dark'] .rz-panelmenu-item-link,
 [data-theme='dark'] .rz-navigation-item-text {
-    color: #E5E7EB !important;
+    color: #4facfe !important;
 }
 
 [data-theme='light'] .rz-panel-menu-item.rz-state-active .rz-panel-menu-item-link,

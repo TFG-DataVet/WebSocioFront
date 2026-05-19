@@ -1,4 +1,4 @@
-﻿namespace SocioWeb.ViewModels.Products;
+namespace SocioWeb.ViewModels.Products;
 
 using SocioWeb.ViewModels.Shared;
 using SocioWeb.Services.AppointmentService;
@@ -8,7 +8,6 @@ public class ProductListViewModel : BaseViewModel
 {
     private readonly IProductService _service;
 
-    // ─── LISTAS ───────────────────────────────────────────────────────────────
     public List<Product> Products { get; private set; } = new();
     public List<Product> FilteredProducts { get; private set; } = new();
 
@@ -16,27 +15,26 @@ public class ProductListViewModel : BaseViewModel
     public DateTime? DateSince { get; set; }
     public DateTime? DateTo { get; set; }
     public string CategoryFilter { get; set; } = "";
-    public string BrandFilter { get; set; } = "";
+    public string SkuFilter { get; set; } = "";
     public int? MinimumStock { get; set; }
 
     public ProductListViewModel(IProductService service) => _service = service;
 
     // ─── CRUD ─────────────────────────────────────────────────────────────────
 
-    /// <summary>GET /products — carga todos los productos.</summary>
-    public async Task LoadAsync()
+    public async Task LoadAsync(string clinicId)
     {
         IsLoading = true;
         ClearError();
         try
         {
-            Products = await _service.GetAllAsync();
+            Products = await _service.GetAllByClinicAsync(clinicId);
             Products = Products.OrderBy(p => p.CreatedAt).ToList();
             FilteredProducts = new List<Product>(Products);
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar productos");
+            SetError($"Error al cargar productos: {ex.Message}");
         }
         finally
         {
@@ -44,7 +42,6 @@ public class ProductListViewModel : BaseViewModel
         }
     }
 
-    /// <summary>DELETE /products/{id} — elimina un producto por ID.</summary>
     public async Task DeleteAsync(string id)
     {
         IsLoading = true;
@@ -75,9 +72,9 @@ public class ProductListViewModel : BaseViewModel
                 (!DateTo.HasValue   || p.CreatedAt <= DateTo) &&
                 (string.IsNullOrEmpty(CategoryFilter) ||
                  (p.Category ?? "").Contains(CategoryFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(BrandFilter) ||
-                 (p.Brand ?? "").Contains(BrandFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (!MinimumStock.HasValue || int.Parse(p.Stock) >= MinimumStock))
+                (string.IsNullOrEmpty(SkuFilter) ||
+                 (p.Sku ?? "").Contains(SkuFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (!MinimumStock.HasValue || p.Stock >= MinimumStock))
             .ToList();
     }
 
@@ -86,7 +83,7 @@ public class ProductListViewModel : BaseViewModel
         DateSince      = null;
         DateTo         = null;
         CategoryFilter = "";
-        BrandFilter    = "";
+        SkuFilter      = "";
         MinimumStock   = null;
         FilteredProducts = new List<Product>(Products);
     }

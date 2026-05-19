@@ -1,0 +1,523 @@
+@page "/create-product"
+@using SocioWeb.ViewModels.Products
+@inject NavigationManager Nav
+@inject CreateProductViewModel VM
+@inject NotificationService NotificationService
+@inject AuthenticationStateProvider AuthProvider
+
+@if (VM.IsLoading)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                       Style="margin-bottom:1rem;" />
+}
+@if (!string.IsNullOrEmpty(_validationError))
+{
+    <RadzenAlert AlertStyle="AlertStyle.Warning" Text="@_validationError" AllowClose="true"
+                 Close="@(() => _validationError = null)" />
+}
+@if (VM.HasError)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Text="@VM.ErrorMessage" AllowClose="true" />
+}
+
+<RadzenCard Style="border-radius:14px; overflow:hidden; width:100%; margin:auto;">
+
+    <!-- HEADER -->
+    <div style="background: linear-gradient(135deg, #7F77DD 0%, #534AB7 100%);
+                padding:2rem; color:white;">
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="15" AlignItems="AlignItems.Center">
+                <RadzenCard Style="width:70px; height:70px; border-radius:50%;
+                                   background:rgba(255,255,255,0.25);
+                                   display:flex; align-items:center; justify-content:center;
+                                   font-size:32px;">
+                    📦
+                </RadzenCard>
+                <RadzenStack Gap="2">
+                    <RadzenText Text="Nuevo producto" Style="font-size:22px; font-weight:700;" />
+                    <RadzenText Text="Completa la información del producto" Style="font-size:13px; opacity:0.85;" />
+                </RadzenStack>
+            </RadzenStack>
+            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light"
+                          Style="border-radius:10px;"
+                          Click="@(() => Nav.NavigateTo("/Productos"))" />
+        </RadzenStack>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div style="padding:2rem;">
+
+        <!-- ── INFORMACIÓN GENERAL ─────────────────────────────── -->
+        @SectionHeader("Información general", "#43e97b")
+
+        <RadzenRow Gap="20" Style="margin-bottom:1.5rem;">
+
+            <RadzenColumn Size="12" SizeMD="8">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Nombre *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenTextBox @bind-Value="VM.Name"
+                                   Placeholder="Ej: Amoxicilina 500mg"
+                                   Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Categoría *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenDropDown @bind-Value="VM.Category"
+                                    Data="@_categories"
+                                    ValueProperty="Value"
+                                    TextProperty="Label"
+                                    Placeholder="Selecciona categoría"
+                                    Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Descripción" Style="font-size:13px; font-weight:600;" />
+                    <RadzenTextArea @bind-Value="VM.Description" Rows="3"
+                                    Placeholder="Descripción opcional del producto…"
+                                    Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+
+        <!-- ── IDENTIFICACIÓN ──────────────────────────────────── -->
+        @SectionHeader("Identificación", "#4e73df")
+
+        <RadzenRow Gap="20" Style="margin-bottom:1.5rem;">
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="SKU" Style="font-size:13px; font-weight:600;" />
+                    <RadzenTextBox @bind-Value="VM.Sku"
+                                   Placeholder="Código interno"
+                                   Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Código de barras" Style="font-size:13px; font-weight:600;" />
+                    <RadzenTextBox @bind-Value="VM.Barcode"
+                                   Placeholder="EAN / UPC"
+                                   Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+
+        <!-- ── PRECIO Y STOCK ──────────────────────────────────── -->
+        @SectionHeader("Precio y stock", "#f6c23e")
+
+        <RadzenRow Gap="20" Style="margin-bottom:1.5rem;">
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Precio (€) *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenNumeric @bind-Value="VM.Price" Min="0" Step="0.01m"
+                                   Format="F2" Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="IVA (%)" Style="font-size:13px; font-weight:600;" />
+                    <RadzenNumeric @bind-Value="VM.TaxRate" Min="0" Max="100" Step="0.01m"
+                                   Format="F2" Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Stock inicial *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenNumeric @bind-Value="VM.Stock" Min="0"
+                                   Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenStack Gap="4">
+                    <RadzenText Text="Stock mínimo *" Style="font-size:13px; font-weight:600;" />
+                    <RadzenNumeric @bind-Value="VM.MinStock" Min="0"
+                                   Style="width:100%; border-radius:10px;" />
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+
+        <!-- ── DETALLES ESPECÍFICOS (dinámico según categoría) ─── -->
+        @if (VM.Category is not null)
+        {
+            @SectionHeader("Detalles de la categoría", "#e74a3b")
+
+            <RadzenRow Gap="20" Style="margin-bottom:1.5rem;">
+
+                @* ── FARMACIA (MEDICATION / VACCINE / ANTIPARASITIC / SUPPLEMENT) ── *@
+                @if (VM.CategoryArea == "PHARMACY")
+                {
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Principio activo" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.ActiveIngredient"
+                                           Placeholder="Ej: Amoxicilina"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Fabricante" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Manufacturer"
+                                           Placeholder="Laboratorio fabricante"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Vía de administración" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.AdministrationRoute"
+                                           Placeholder="Ej: Oral, Inyectable"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Lote" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.BatchNumber"
+                                           Placeholder="Número de lote"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Fecha de caducidad" Style="font-size:13px; font-weight:600;" />
+                            <RadzenDatePicker @bind-Value="VM.ExpirationDate"
+                                              Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Condiciones de almacenamiento" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.StorageConditions"
+                                           Placeholder="Ej: Refrigerado 2-8°C"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    @if (VM.Category != "SUPPLEMENT")
+                    {
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenStack Gap="4" Orientation="Orientation.Horizontal"
+                                         AlignItems="AlignItems.Center" Style="margin-top:1.5rem;">
+                                <RadzenSwitch @bind-Value="VM.PrescriptionRequired" />
+                                <RadzenText Text="Requiere receta" Style="font-size:13px; font-weight:600;" />
+                            </RadzenStack>
+                        </RadzenColumn>
+                    }
+                }
+
+                @* ── TIENDA: FOOD ── *@
+                @if (VM.Category == "FOOD")
+                {
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Marca" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Brand"
+                                           Placeholder="Ej: Royal Canin"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Peso (gramos)" Style="font-size:13px; font-weight:600;" />
+                            <RadzenNumeric @bind-Value="VM.WeightGrams" Min="0"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Condiciones de almacenamiento" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.StorageConditions"
+                                           Placeholder="Ej: Lugar fresco y seco"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4" Orientation="Orientation.Horizontal"
+                                     AlignItems="AlignItems.Center" Style="margin-top:1.5rem;">
+                            <RadzenSwitch @bind-Value="VM.IsVeterinaryDiet" />
+                            <RadzenText Text="Dieta veterinaria" Style="font-size:13px; font-weight:600;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                }
+
+                @* ── TIENDA: HYGIENE / ACCESSORY / TOY ── *@
+                @if (VM.Category is "HYGIENE" or "ACCESSORY" or "TOY")
+                {
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Marca" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Brand"
+                                           Placeholder="Ej: Kong"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Material" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Material"
+                                           Placeholder="Ej: Plástico, Goma, Tela"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                }
+
+                @* ── CLÍNICA: MEDICAL_SUPPLY ── *@
+                @if (VM.Category == "MEDICAL_SUPPLY")
+                {
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Fabricante" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Manufacturer"
+                                           Placeholder="Fabricante del suministro"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Código de referencia" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.ReferenceCode"
+                                           Placeholder="Ref. del fabricante"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Unidad de medida" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.UnitOfMeasure"
+                                           Placeholder="Ej: unidad, caja, ml"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Cantidad por unidad" Style="font-size:13px; font-weight:600;" />
+                            <RadzenNumeric @bind-Value="VM.QuantityPerUnit" Min="1"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Lote" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.BatchNumber"
+                                           Placeholder="Número de lote"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Fecha de caducidad" Style="font-size:13px; font-weight:600;" />
+                            <RadzenDatePicker @bind-Value="VM.ExpirationDate"
+                                              Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4" Orientation="Orientation.Horizontal"
+                                     AlignItems="AlignItems.Center" Style="margin-top:1.5rem;">
+                            <RadzenSwitch @bind-Value="VM.IsSterile" />
+                            <RadzenText Text="Estéril" Style="font-size:13px; font-weight:600;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                }
+
+                @* ── CLÍNICA: DIAGNOSTIC ── *@
+                @if (VM.Category == "DIAGNOSTIC")
+                {
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Fabricante" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Manufacturer"
+                                           Placeholder="Fabricante del equipo"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Código de referencia" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.ReferenceCode"
+                                           Placeholder="Ref. del fabricante"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                }
+
+                @* ── CLÍNICA: PROSTHESIS_IMPLANT ── *@
+                @if (VM.Category == "PROSTHESIS_IMPLANT")
+                {
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Fabricante" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Manufacturer"
+                                           Placeholder="Fabricante"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Material" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Material"
+                                           Placeholder="Ej: Titanio, Silicona"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Código de referencia" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.ReferenceCode"
+                                           Placeholder="Ref. del fabricante"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenStack Gap="4" Orientation="Orientation.Horizontal"
+                                     AlignItems="AlignItems.Center" Style="margin-top:0.5rem;">
+                            <RadzenSwitch @bind-Value="VM.IsSterile" />
+                            <RadzenText Text="Estéril" Style="font-size:13px; font-weight:600;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                }
+
+                @* ── GROOMING ── *@
+                @if (VM.Category == "GROOMING_SERVICE")
+                {
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Marca del producto" Style="font-size:13px; font-weight:600;" />
+                            <RadzenTextBox @bind-Value="VM.Brand"
+                                           Placeholder="Ej: Artero"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4">
+                            <RadzenText Text="Duración (minutos)" Style="font-size:13px; font-weight:600;" />
+                            <RadzenNumeric @bind-Value="VM.DurationMinutes" Min="0"
+                                           Style="width:100%; border-radius:10px;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenStack Gap="4" Orientation="Orientation.Horizontal"
+                                     AlignItems="AlignItems.Center" Style="margin-top:1.5rem;">
+                            <RadzenSwitch @bind-Value="VM.RequiresAppointment" />
+                            <RadzenText Text="Requiere cita" Style="font-size:13px; font-weight:600;" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                }
+
+            </RadzenRow>
+        }
+
+        <!-- ── BOTÓN ──────────────────────────────────────────── -->
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     JustifyContent="JustifyContent.End"
+                     Gap="12"
+                     Style="margin-top:1.5rem;">
+            <RadzenButton Text="Cancelar"
+                          Icon="close"
+                          ButtonStyle="ButtonStyle.Light"
+                          Style="border-radius:10px;"
+                          Click="@(() => Nav.NavigateTo("/Productos"))" />
+            <RadzenButton Text="Crear producto"
+                          Icon="inventory_2"
+                          ButtonStyle="ButtonStyle.Success"
+                          Disabled="@VM.IsLoading"
+                          Style="border-radius:10px; padding:0.7rem 2.5rem; font-size:16px;"
+                          Click="@OnSave" />
+        </RadzenStack>
+
+    </div>
+</RadzenCard>
+
+@code {
+    string? _validationError;
+    string  _clinicId = "";
+
+    record CategoryOption(string Value, string Label);
+
+    static readonly CategoryOption[] _categories =
+    [
+        // Farmacia
+        new("MEDICATION",         "💊 Medicamento"),
+        new("VACCINE",            "💉 Vacuna"),
+        new("ANTIPARASITIC",      "🦟 Antiparasitario"),
+        new("SUPPLEMENT",         "🌿 Suplemento"),
+        // Tienda
+        new("FOOD",               "🥗 Alimento"),
+        new("HYGIENE",            "🧴 Higiene"),
+        new("ACCESSORY",          "🎀 Accesorio"),
+        new("TOY",                "🧸 Juguete"),
+        // Clínica
+        new("MEDICAL_SUPPLY",     "🩺 Material médico"),
+        new("DIAGNOSTIC",         "🔬 Diagnóstico"),
+        new("PROSTHESIS_IMPLANT", "🦾 Prótesis / Implante"),
+        // Grooming
+        new("GROOMING_SERVICE",   "✂️ Grooming"),
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        _clinicId = authState.User.FindFirst("ClinicId")?.Value ?? "";
+    }
+
+    async Task OnSave()
+    {
+        _validationError = VM.Validate();
+        if (_validationError is not null) return;
+
+        var ok = await VM.SaveAsync(_clinicId);
+        if (ok)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary  = "Producto creado",
+                Detail   = $"'{VM.Name}' fue registrado correctamente.",
+                Duration = 3500
+            });
+            Nav.NavigateTo("/Productos");
+        }
+    }
+
+    RenderFragment SectionHeader(string title, string color) => __builder =>
+    {
+        <div style="@($"border-left:4px solid {color}; padding-left:12px; margin-bottom:1rem;")">
+            <RadzenText Text="@title" Style="font-size:16px; font-weight:700; margin:0;" />
+        </div>;
+    };
+}

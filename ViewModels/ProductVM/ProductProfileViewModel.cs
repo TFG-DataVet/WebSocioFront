@@ -1,4 +1,4 @@
-﻿namespace SocioWeb.ViewModels.Products;
+namespace SocioWeb.ViewModels.Products;
 
 using SocioWeb.ViewModels.Shared;
 using SocioWeb.Services.AppointmentService;
@@ -26,7 +26,7 @@ public class ProductProfileViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Error al cargar el producto");
+            SetError($"Error al cargar el producto: {ex.Message}");
         }
         finally
         {
@@ -40,8 +40,20 @@ public class ProductProfileViewModel : BaseViewModel
         ClearError();
         try
         {
-            Product.UpdatedAt = DateTime.UtcNow;
-            await _service.UpdateAsync(Product.Id, new Product());
+            var request = new UpdateProductRequest
+            {
+                Name        = Product.Name,
+                Description = Product.Description,
+                Sku         = Product.Sku,
+                Barcode     = Product.Barcode,
+                Price       = Product.Price,
+                TaxRate     = Product.TaxRate,
+                Stock       = Product.Stock,
+                MinStock    = Product.MinStock,
+                Details     = Product.Details,
+            };
+            var updated = await _service.UpdateAsync(Product.Id, request);
+            Product = updated;
             IsEditing = false;
         }
         catch (Exception ex)

@@ -35,12 +35,13 @@ builder.Services.AddScoped(sp =>
 {
     var handler = sp.GetRequiredService<CookieHandler>();
     handler.InnerHandler = new HttpClientHandler();
-    
+
     return new HttpClient(handler)
     {
         BaseAddress = new Uri("http://localhost:8080/")
     };
 });
+
 
 // Servicios de dominio
 builder.Services.AddScoped<IAppointmentService, AppointmentsApiService>();
@@ -80,6 +81,8 @@ builder.Services.AddTransient<OwnerListViewModel>();
 builder.Services.AddTransient<OwnerProfileViewModel>();
 builder.Services.AddTransient<ProductListViewModel>();
 builder.Services.AddTransient<ProductProfileViewModel>();
+builder.Services.AddTransient<CreateProductViewModel>();
+builder.Services.AddTransient<EditProductViewModel>();
 builder.Services.AddTransient<MedicalRegisterViewModel>();
 builder.Services.AddScoped<IEmployeeService, EmployeesApiService>();
 builder.Services.AddTransient<EmployeeListViewModel>();

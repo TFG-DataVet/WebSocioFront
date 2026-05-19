@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using SocioWeb.ViewModels.Shared;
 using SocioWeb.Services.AppointmentService;
 using SocioWeb.Domain.Entities;
@@ -9,65 +10,115 @@ namespace SocioWeb.ViewModels.Pets;
 
 public class PetPageVM : BaseViewModel
 {
-    private readonly IPetService _service;
+    private readonly IPetService   _petService;
+    private readonly IOwnerService _ownerService;
     private readonly NavigationManager _nav;
+    private readonly AuthenticationStateProvider _authProvider;
 
     public PetFormModel FormData { get; set; } = new();
     public bool IsSaving { get; private set; }
+
+    // ─── Lista de dueños para el buscador ─────────────────────────────────────
+    public List<Owner> Owners { get; private set; } = new();
+    public bool LoadingOwners { get; private set; }
 
     public List<string> SpeciesOptions { get; } = new() { "Perro", "Gato", "Ave", "Conejo", "Reptil", "Otro" };
     public List<string> CurrentBreeds { get; private set; } = new();
 
     private static readonly Dictionary<string, List<string>> _breedMap = new()
     {
-        { "Perro",   new() { "Labrador", "Golden Retriever", "Bulldog", "Pastor Alemán", "Caniche", "Otro" } },
-        { "Gato",    new() { "Siamés", "Persa", "Maine Coon", "Bengalí", "Común europeo", "Otro" } },
-        { "Ave",     new() { "Loro", "Canario", "Agapornis", "Cacatúa", "Otro" } },
-        { "Conejo",  new() { "Enano", "Angora", "Rex", "Otro" } },
-        { "Reptil",  new() { "Iguana", "Gecko", "Tortuga", "Otro" } },
-        { "Otro",    new() { "Otro" } },
+        { "Perro",  new() { "Labrador", "Golden Retriever", "Bulldog", "Pastor Alemán", "Caniche", "Otro" } },
+        { "Gato",   new() { "Siamés", "Persa", "Maine Coon", "Bengalí", "Común europeo", "Otro" } },
+        { "Ave",    new() { "Loro", "Canario", "Agapornis", "Cacatúa", "Otro" } },
+        { "Conejo", new() { "Enano", "Angora", "Rex", "Otro" } },
+        { "Reptil", new() { "Iguana", "Gecko", "Tortuga", "Otro" } },
+        { "Otro",   new() { "Otro" } },
     };
 
-    public PetPageVM(IPetService service, NavigationManager nav)
+    public PetPageVM(IPetService petService, IOwnerService ownerService,
+                     NavigationManager nav, AuthenticationStateProvider authProvider)
     {
-        _service = service;
-        _nav     = nav;
+        _petService   = petService;
+        _ownerService = ownerService;
+        _nav          = nav;
+        _authProvider = authProvider;
     }
 
-    // ─── CARGA DE MASCOTA PARA EDICIÓN ─────────────────────────────
+    // ─── Inicialización: obtiene clinicId y carga dueños ──────────────────────
+
+    public async Task InitAsync()
+    {
+        var authState = await _authProvider.GetAuthenticationStateAsync();
+        var clinicId  = authState.User.FindFirst("ClinicId")?.Value ?? "";
+        FormData.ClinicId = clinicId;
+        await LoadOwnersAsync();
+    }
+
+    public async Task LoadOwnersAsync()
+    {
+        LoadingOwners = true;
+        try
+        {
+            Owners = await _ownerService.GetAllAsync();
+        }
+        catch
+        {
+            Owners = new();
+        }
+        finally
+        {
+            LoadingOwners = false;
+        }
+    }
+
+    // ─── Selección de dueño desde el buscador ─────────────────────────────────
+
+    public void OnOwnerSelected(string ownerId)
+    {
+        var owner = Owners.FirstOrDefault(o => o.Id == ownerId);
+        if (owner is null) return;
+
+        FormData.Owner = new OwnerModel
+        {
+            OwnerId       = owner.Id,
+            OwnerName     = owner.Name,
+            OwnerLastName = owner.LastName,
+            OwnerPhone    = owner.Phone ?? "",
+        };
+    }
+
+    // ─── Carga de mascota para edición ────────────────────────────────────────
+
     public async Task LoadForEditAsync(string id)
     {
         IsLoading = true;
         ClearError();
-
         try
         {
-            var pet = await _service.GetByIdAsync(id);
+            await LoadOwnersAsync();
 
+            var pet = await _petService.GetByIdAsync(id);
             if (pet is not null)
             {
+                var authState = await _authProvider.GetAuthenticationStateAsync();
                 FormData = new PetFormModel
                 {
-                    ClinicId    = pet.IdClinic,
+                    ClinicId    = authState.User.FindFirst("ClinicId")?.Value ?? pet.IdClinic,
                     Name        = pet.Name,
                     Species     = pet.Specie,
                     Breed       = pet.Breed,
                     Sex         = pet.Sex,
-                 
-                    DateOfBirth = DateTime.TryParse(pet.BirthDate, out var d) ? d : (DateTime?)null,
+                    DateOfBirth = DateTime.TryParse(pet.BirthDate, out var d) ? d : null,
                     ChipNumber  = pet.Chip,
                     AvatarUrl   = pet.AvatarUrl,
-
                     Owner = new OwnerModel
                     {
-                    
-                        OwnerId       = pet.Owner?.OwnerId ?? string.Empty,
-                        OwnerName     = pet.Owner?.Name    ?? string.Empty,
-                        OwnerLastName = pet.Owner?.LastName ?? string.Empty,
-                        OwnerPhone    = pet.Owner?.Phone   ?? string.Empty
+                        OwnerId       = pet.Owner?.OwnerId   ?? "",
+                        OwnerName     = pet.Owner?.Name      ?? "",
+                        OwnerLastName = pet.Owner?.LastName  ?? "",
+                        OwnerPhone    = pet.Owner?.Phone     ?? "",
                     }
                 };
-
                 OnSpeciesChanged(FormData.Species);
             }
             else
@@ -85,16 +136,15 @@ public class PetPageVM : BaseViewModel
         }
     }
 
-    // ─── CREAR MASCOTA ────────────────────────────────────────────
+    // ─── Crear mascota ────────────────────────────────────────────────────────
+
     public async Task CreateAsync()
     {
         IsSaving = true;
         ClearError();
-
         try
         {
-            var dto = MapToDto();
-            await _service.CreateAsync(dto);
+            await _petService.CreateAsync(MapToDto());
         }
         catch (Exception ex)
         {
@@ -106,20 +156,19 @@ public class PetPageVM : BaseViewModel
         }
     }
 
-    // ─── ACTUALIZAR MASCOTA ───────────────────────────────────────
+    // ─── Actualizar mascota ───────────────────────────────────────────────────
+
     public async Task UpdateAsync(string id)
     {
         IsSaving = true;
         ClearError();
-
         try
         {
-            var dto = MapToDto();
-            await _service.UpdateAsync(id, dto);
+            await _petService.UpdateAsync(id, MapToDto());
         }
         catch (Exception ex)
         {
-            SetError($"Error al actualizar la mascota");
+            SetError($"Error al actualizar la mascota: {ex.Message}");
         }
         finally
         {
@@ -127,30 +176,31 @@ public class PetPageVM : BaseViewModel
         }
     }
 
-    // ─── MAPEO A DTO ─────────────────────────────────────────────
+    // ─── Mapeo a DTO ──────────────────────────────────────────────────────────
+
     private PetDto MapToDto() => new PetDto
     {
-        ClinicId    = FormData.ClinicId ?? string.Empty,
-        Name        = FormData.Name ?? string.Empty,
-        Species     = FormData.Species ?? string.Empty,
-        Breed       = FormData.Breed ?? string.Empty,
+        ClinicId    = FormData.ClinicId ?? "",
+        Name        = FormData.Name     ?? "",
+        Species     = FormData.Species  ?? "",
+        Breed       = FormData.Breed    ?? "",
         Sex         = FormData.Sex ?? Sex.UNKNOWN,
-        // 👇 Formato yyyy-MM-dd para que Java lo parsee como LocalDate
         DateOfBirth = FormData.DateOfBirth.HasValue
             ? FormData.DateOfBirth.Value.ToString("yyyy-MM-dd")
             : null,
         ChipNumber  = FormData.ChipNumber,
         AvatarUrl   = FormData.AvatarUrl,
-        Owner = new PetOwnerDto          // 👈 Antes usaba OwnerDto (incorrecto)
+        Owner = new PetOwnerDto
         {
-            OwnerId       = FormData.Owner.OwnerId ?? string.Empty,
-            OwnerName     = FormData.Owner.OwnerName ?? string.Empty,
-            OwnerLastName = FormData.Owner.OwnerLastName ?? string.Empty,
-            OwnerPhone    = FormData.Owner.OwnerPhone ?? string.Empty
+            OwnerId       = FormData.Owner.OwnerId       ?? "",
+            OwnerName     = FormData.Owner.OwnerName     ?? "",
+            OwnerLastName = FormData.Owner.OwnerLastName ?? "",
+            OwnerPhone    = FormData.Owner.OwnerPhone    ?? "",
         }
     };
 
-    // ─── HELPERS ────────────────────────────────────────────────
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
     public void OnSpeciesChanged(object value)
     {
         if (value is string species && _breedMap.ContainsKey(species))
@@ -164,41 +214,36 @@ public class PetPageVM : BaseViewModel
     public string AgeCalculated =>
         FormData.DateOfBirth.HasValue
             ? $"{CalculateAge(FormData.DateOfBirth.Value)} años"
-            : string.Empty;
+            : "";
 
     private static int CalculateAge(DateTime birthday)
     {
         var today = DateTime.Today;
-        int age = today.Year - birthday.Year;
-        if (birthday.Date > today.AddYears(-age))
-            age--;
+        int age   = today.Year - birthday.Year;
+        if (birthday.Date > today.AddYears(-age)) age--;
         return age;
     }
 
-    public void NavigateToNewOwner()
-    {
-        _nav.NavigateTo("/DuenoFormulario");
-    }
+    // ─── Modelos de formulario ────────────────────────────────────────────────
 
-    // ─── MODELO DE FORMULARIO ────────────────────────────────────
     public class PetFormModel
     {
-        public string? ClinicId { get; set; }
-        public string? Name { get; set; }
-        public string? Species { get; set; }
-        public string? Breed { get; set; }
-        public Sex? Sex { get; set; }
+        public string? ClinicId    { get; set; }
+        public string? Name        { get; set; }
+        public string? Species     { get; set; }
+        public string? Breed       { get; set; }
+        public Sex?    Sex         { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public string? ChipNumber { get; set; }
-        public string? AvatarUrl { get; set; }
-        public OwnerModel Owner { get; set; } = new();
+        public string? ChipNumber  { get; set; }
+        public string? AvatarUrl   { get; set; }
+        public OwnerModel Owner    { get; set; } = new();
     }
 
     public class OwnerModel
     {
-        public string? OwnerId { get; set; }
-        public string? OwnerName { get; set; }
+        public string? OwnerId       { get; set; }
+        public string? OwnerName     { get; set; }
         public string? OwnerLastName { get; set; }
-        public string? OwnerPhone { get; set; }
+        public string? OwnerPhone    { get; set; }
     }
 }
